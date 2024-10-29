@@ -1,43 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<script src="scriptRegister.js"></script>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda Express Register</title>
+    <link rel="stylesheet" href="stylesRegister.css">
+</head>
+<body>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <!-- Order Calculator on the Left Panel -->
+    <div class="left-panel">
+        <div class="cancel-order" onclick="clearOrder()">CANCEL ORDER</div>
+        <div id="currentItemPreview" class="current-item-preview"></div> <!-- Preview for current composite item -->
+        <div class="order-list" id="orderList">
+            <!-- Order items will appear here dynamically -->
+        </div>
+        <div class="total-section">
+            <div class="total">Total: $<span id="totalAmount">0.00</span></div>
+            <button class="checkout-btn" onclick="checkoutOrder()">CHECK OUT</button>
+        </div>
+    </div>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+    <div class="main-content">
+        <div class="top-buttons">
+            <div class="dropdown">
+                <button class="dropbtn">=</button>
+                <div class="dropdown-content">
+                    <a href="#">Manager View</a>
+                    <a href="#">Log Out</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main button panel -->
+        <div id="main-buttons" class="grid-buttons">
+            <div class="button" onclick="selectItemType('bowl', 8.30, 1, 2)">Bowl</div>
+            <div class="button" onclick="selectItemType('plate', 9.80, 2, 2)">Plate</div>
+            <div class="button" onclick="selectItemType('biggerPlate', 11.30, 3, 2)">Bigger Plate</div>
+            <div class="button" onclick="openPanel('drinksPanel')">Drinks</div>
+            <div class="button" onclick="openPanel('appetizersPanel')">Appetizers</div>
+            <div class="button" onclick="openPanel('alacartePanel')">A La Carte</div>
+        </div>
+
+        <!-- Example panel for adding items (e.g., Bowl) -->
+        <div id="hiddenPanelMain" class="hidden-panel">
+            <div class="cancel">
+                <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
+            </div>
+            <div class="panel-content">
+                <div class="entrees-section">
+                    <h3 class="section-header">Entrees</h3>
+                    <div class="entrees-grid">
+                        <div class="button" onclick="addComponentToCurrentOrder('entree', 'Orange Chicken')">Orange Chicken</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('entree', 'Beef Broccoli')">Beef Broccoli</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('entree', 'Honey Walnut Shrimp')">Honey Walnut Shrimp</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('entree', 'Kung Pao Chicken')">Kung Pao Chicken</div>
+                    </div>
+                </div>
+
+                <div class="sides-section">
+                    <h3 class="section-header">Sides</h3>
+                    <div class="sides-grid">
+                        <div class="button" onclick="addComponentToCurrentOrder('side', 'Fried Rice')">Fried Rice</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('side', 'White Rice')">White Rice</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('side', 'Chow Mein')">Chow Mein</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="drinksPanel" class="hidden-panel">
+            <div class="cancel">
+                <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
+            </div>
+            <h3>Drinks</h3>
+        
+            <div class="drink-columns">
+                <div class="column">
+                    <div class="button" onclick="addDrinkToOrder('Soda', 2.00, 'Small')">Small Soda</div>
+                    <div class="button" onclick="addDrinkToOrder('Soda', 2.50, 'Medium')">Medium Soda</div>
+                    <div class="button" onclick="addDrinkToOrder('Soda', 3.00, 'Large')">Large Soda</div>
+                </div>
+                <div class="column">
+                    <div class="button" onclick="addDrinkToOrder('Bottled Water', 1.50)">Bottled Water</div>
+                    <div class="button" onclick="addDrinkToOrder('Juice', 2.20)">Juice</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="appetizersPanel" class="hidden-panel">
+            <div class="cancel">
+                <button onclick="cancelCurrentCompositeItem()">Cancel</button>
+            </div>
+            <h3>Appetizers</h3>
+            <div class="appetizer-columns">
+                <div class="column">
+                    <div class="button" onclick="addAppetizerToOrder('Spring Roll', 3.50)">Spring Roll</div>
+                    <div class="button" onclick="addAppetizerToOrder('Egg Roll', 4.00)">Egg Roll</div>
+                    <div class="button" onclick="addAppetizerToOrder('Crab Rangoon', 4.50)">Crab Rangoon</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="alacartePanel" class="hidden-panel">
+            <div class="cancel">
+                <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
+            </div>
+            <!-- Size Selection for À La Carte Items -->
+            <div class="size-selection">
+                <button id="size-Small" class="size-button" onclick="setSize('Small')">Small</button>
+                <button id="size-Medium" class="size-button" onclick="setSize('Medium')">Medium</button>
+                <button id="size-Large" class="size-button" onclick="setSize('Large')">Large</button>
+            </div>
+            
+            <div class="panel-content">
+                <div class="entrees-section">
+                    <h3 class="section-header">Entrees</h3>
+                    <div class="entrees-grid">
+                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Orange Chicken')">Orange Chicken</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Beef Broccoli')">Beef Broccoli</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Honey Walnut Shrimp')">Honey Walnut Shrimp</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Kung Pao Chicken')">Kung Pao Chicken</div>
+                    </div>
+                </div>
+
+                <div class="sides-section">
+                    <h3 class="section-header">Sides</h3>
+                    <div class="sides-grid">
+                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Fried Rice')">Fried Rice</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'White Rice')">White Rice</div>
+                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Chow Mein')">Chow Mein</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
 </html>
