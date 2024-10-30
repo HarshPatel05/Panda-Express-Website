@@ -10,20 +10,28 @@ fetch('http://localhost:5000/api/employees')
 */
 
 
-
-// setup 
+/** Initial Setup and Configuration
+ *  Express is required to create and manage the web server.
+ *  pg is the PostgreSQL client for Node.js, allowing us to connect to and query a PostgreSQL database.
+ *  dotenv is used to load environment variables from a .env file
+**/
 const express = require('express');
 const { Pool } = require('pg');
 const dotenv = require('dotenv').config();
 
-// Create express app
-const app = express();
 
-// Allow use on different ports 
+/** Create the Express App and Enable CORS
+ * app is the main Express application.
+ * CORS (Cross-Origin Resource Sharing) is enabled to allow the frontend (running on a different port) to communicate with this server.
+ */
+const app = express();
 const cors = require('cors');
 app.use(cors());
 
-// Create pool
+
+/** Database Connection Pool
+ * Pool is used to manage a group of connections to the database
+ */
 const pool = new Pool({
 user: process.env.PSQL_USER,
 host: process.env.PSQL_HOST,
@@ -33,12 +41,13 @@ port: process.env.PSQL_PORT,
 ssl: {rejectUnauthorized: false}
 })
 
-
+// This code establishes a connection to the database and logs a message to confirm the connection or to print any errors.
 pool.connect()
   .then(() => console.log('Connected to the database'))
   .catch((err) => console.error('Database connection error:', err.stack));
 
 
+  
 // API Request to get list of employees
 app.get('/api/employees', async (req, res) => {
     try {
