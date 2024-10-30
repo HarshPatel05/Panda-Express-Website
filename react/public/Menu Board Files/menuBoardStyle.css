@@ -1,0 +1,115 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; /* Prevent scrolling */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    display: flex; /* Use Flexbox layout */
+    align-items: center; /* Center items vertically */
+    background-color: #f8f8f8; /* Adjust as needed */
+    padding: 10px 20px; /* Adjust padding */
+    width: 100%; /* Make header full width */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+nav {
+    margin-right: 20px; /* Space between icon and title */
+}
+
+h1 {
+    margin: 0; /* Remove default margin */
+    flex-grow: 1; /* Allow the title to take remaining space */
+    font-size: 70px; /* Change this value to adjust the size */
+}
+
+.Panda-Logo {
+    width: 100px; /* Adjust the size as needed */
+    height: auto; /* Maintain aspect ratio */
+    vertical-align: middle; /* Align with text if needed */
+    margin: 0; /* Remove margin if any */
+    display: inline-block; /* Ensure it behaves like an inline element */
+}
+
+main {
+    display: flex; /* Use flexbox for vertical sections */
+    flex: 1; /* Take remaining space */
+}
+
+.section {
+    flex: 1; /* Each section takes equal space */
+    border: 1px solid #ccc; /* Optional: for visual separation */
+    padding: 20px; /* Optional: for spacing within sections */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+#section2 {
+    flex: 1.25;
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    height: 100%; /* Ensure it takes full height */
+}
+
+#section2 h2 {
+    margin: 0; /* Remove default margin */
+    padding-bottom: 10px; /* Space below the heading */
+    font-size: 24px; /* Adjust font size as needed */
+    color: #333; /* Change color if desired */
+}
+
+.top-half-sec2 {
+    flex: .025; /* Take half of the section */
+    display: flex;
+    align-items: center; /* Center the text vertically */
+    justify-content: center; /* Center the text horizontally */
+}
+
+.bottom-half-sec2 {
+    flex: 1; /* Take the other half of the section */
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    grid-template-rows: repeat(4, 1fr); /* 4 rows to accommodate 13 boxes */
+    gap: 10px; /* Space between boxes */
+    width: 100%; /* Full width of section */
+    max-width: 2000px; /* Optional: set a max width for the grid */
+}
+
+.box {
+    background-color: #e0e0e0; /* Background color for boxes */
+    display: flex;
+    flex-direction: column; /* Stack image and text */
+    justify-content: flex-end; /* Align text to the bottom */
+    border: 1px solid #ccc; /* Border for each box */
+    height: 0; /* Set height to 0 for responsive sizing */
+    padding-top: 100%; /* Aspect ratio of 1:1 */
+    position: relative; /* Position for absolute image */
+    overflow: hidden; /* Hide overflow */
+}
+
+.box img {
+    position: absolute; /* Position the image */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust position to center */
+    width: 100%; /* Make image take full width */
+    height: 100%; /* Make image take full height */
+    object-fit: cover; /* Ensure image covers the box while maintaining aspect ratio */
+}
+
+.box-text {
+    text-align: center; /* Center the text */
+    padding: 5px; /* Add some padding */
+    background-color: rgba(255, 255, 255, 0.7); /* Optional: semi-transparent background */
+    width: 100%; /* Full width of the box */
+    box-sizing: border-box; /* Include padding in width calculation */
+    font-weight: bold; /* Make text bold */
+}
