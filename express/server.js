@@ -1,3 +1,16 @@
+/*
+
+Example fetch request for frontend people to get information from database 
+
+fetch('http://localhost:5000/api/employees')
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+
+*/
+
+
+
 // setup 
 const express = require('express');
 const { Pool } = require('pg');
