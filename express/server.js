@@ -47,6 +47,47 @@ pool.connect()
   .catch((err) => console.error('Database connection error:', err.stack));
 
 
+
+/**
+ * Frontend code to get a menu item’s ID by name:
+ * 
+ * fetch('http://localhost:5000/api/menu/Burger')
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+
+*/
+// API Request to get menuItemId by menuItem name
+app.get('/api/menu/:name', async (req, res) => { 
+
+  const menuName = req.params.name;  // Extract menuName from request parameters
+  
+  try 
+  {
+    // Query the database for menuItemId by menuItem name
+    const result = await pool.query( 'SELECT menuitemID FROM menuitems WHERE menuitem = $1', [menuName] );
+      
+    // Check if a matching menu item was found
+    if (result.rows.length > 0)
+    {
+      // If true, it sends a JSON response with the menuItemId from the first row
+      res.json({ menuItemId: result.rows[0].menuItemid });
+    }
+    else
+    {
+      // If no rows were found, it sends a 404 (Not Found) status with a message, indicating the item doesn’t exist in the database
+      res.status(404).json({ message: 'Menu item not found' });
+    }
+  } 
+  catch (err) // catch any error while querying the database
+  {
+    console.error('Error fetching menu item:', err.stack);
+    res.status(500).send('Server error');
+  }
+
+});
+
+
   
 // API Request to get list of employees
 app.get('/api/employees', async (req, res) => {
