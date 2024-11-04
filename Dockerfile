@@ -26,7 +26,7 @@ RUN npm install
 
 # Copy both the Express server and the built React files
 COPY express/ ./
-COPY --from=build /app/client/build ./public
+COPY --from=build express/build ./public
 
 # Expose the desired port (change if needed)
 EXPOSE 5000
