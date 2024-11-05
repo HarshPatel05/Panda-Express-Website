@@ -48,8 +48,7 @@ pool.connect()
 
 
 
-/**
- * Frontend code to get a menu item’s ID by name:
+/** Sample Fetch Request in the Frontend code to get a menu item’s ID by name:
  * 
  * fetch('http://localhost:5000/api/menu/Burger')
     .then(response => response.json())
@@ -86,6 +85,75 @@ app.get('/api/menu/:name', async (req, res) => {
   }
 
 });
+
+
+/** Sample Fetch Request in the Frontend toget the menuItemId and price by menuItem name and size:
+ * 
+ * fetch('http://localhost:5000/api/menu/Burger/Large')
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+
+ */
+// API Request to get menuItemId and price by menuItem name and size
+app.get('/api/menu/:name/:size', async (req, res) => {
+
+  const { name, size } = req.params;  // Extract 'name' and 'size' from URL parameters
+
+  try 
+  {
+    // Query the database for menuItemId and price based on menuItem name and size
+    const query = 'SELECT menuItemId, price FROM menuItems WHERE menuItem = $1 AND size = $2';
+    const result = await pool.query(query, [name, size]);
+
+    // Check if any result was found for the provided name and size
+    if (result.rows.length > 0)
+    {
+      // If found, extract 'menuitemid' and 'price' from the first result ro
+      const { menuitemid, price } = result.rows[0];
+
+      // Send the menuItemId and price as a JSON response
+      res.json({ menuItemId: menuitemid, price });
+    } 
+    else
+    {
+      // If no matching item is found, send a 404 status with a 'not found' message
+      res.status(404).json({ message: 'Menu item not found' });
+    }
+  } 
+  catch (err)
+  {
+    // Log any error that occurs during the database query
+    console.error('Error fetching menu item:', err.stack);
+
+    // Send a 500 status indicating a server error
+    res.status(500).send('Server error');
+  }
+
+});
+
+
+// MenuItem class to store menuItemId, menuItemName, and price
+class MenuItem
+{
+  // In Javascript feilds like menuItemId, menuItemName, and price are initialized through the constructor
+  constructor(menuItemId, menuItemName, price)
+  {
+    this.menuItemId = menuItemId;
+    this.menuItemName = menuItemName;
+    this.price = price;
+  }
+
+  // Getter for menuItemId
+  getMenuItemId() { return this.menuItemId; }
+
+  // Getter for menuItemName
+  getMenuItemName() { return this.menuItemName; }
+
+  // Getter for price
+  getPrice() { return this.price; }
+}
+
 
 
   
