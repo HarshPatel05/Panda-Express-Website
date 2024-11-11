@@ -272,7 +272,7 @@ if (!fs.existsSync(downloadFolder)) {
 // Function to tailor and format the JSON data
 const tailorMenuData = (data) => {
   return data.map(item => ({
-      menuitem: item.menuitem ? item.menuitem.toUpperCase() : 'UNKNOWN ITEM',  // Convert menuitem name to uppercase
+      menuitem: item.menuitem, // ? item.menuitem.toUpperCase() : 'UNKNOWN ITEM',  // Convert menuitem name to uppercase
       size: item.size,  // Keep the size unchanged
       price: item.price, // Keep the price unchanged
   }));
