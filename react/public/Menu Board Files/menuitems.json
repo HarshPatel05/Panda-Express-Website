@@ -1,0 +1,362 @@
+[
+  {
+    "menuitem": "BLACKPEPPERSTEAK",
+    "size": "sm",
+    "price": 6.7
+  },
+  {
+    "menuitem": "BLACKPEPPERSTEAK",
+    "size": "md",
+    "price": 11.5
+  },
+  {
+    "menuitem": "BLACKPEPPERSTEAK",
+    "size": "lg",
+    "price": 15.7
+  },
+  {
+    "menuitem": "HONEYWALNUTSHRIMP",
+    "size": "sm",
+    "price": 6.7
+  },
+  {
+    "menuitem": "HONEYWALNUTSHRIMP",
+    "size": "md",
+    "price": 11.5
+  },
+  {
+    "menuitem": "HONEYWALNUTSHRIMP",
+    "size": "lg",
+    "price": 15.7
+  },
+  {
+    "menuitem": "KUNGPAOCHICKEN",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "KUNGPAOCHICKEN",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "KUNGPAOCHICKEN",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "BOURBONCHICKEN",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "BOURBONCHICKEN",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "BOURBONCHICKEN",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "BROCCOLIBEEF",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "BROCCOLIBEEF",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "BROCCOLIBEEF",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "HONEYSESAMECHICKEN",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "HONEYSESAMECHICKEN",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "HONEYSESAMECHICKEN",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "ORANGECHICKEN",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "ORANGECHICKEN",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "ORANGECHICKEN",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "BEIJINGBEEF",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "BEIJINGBEEF",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "BEIJINGBEEF",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "STRINGBEANCHICKEN",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "STRINGBEANCHICKEN",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "STRINGBEANCHICKEN",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "MUSHROOMCHICKEN",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "MUSHROOMCHICKEN",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "MUSHROOMCHICKEN",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "SWEETFIRECHICKEN",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "SWEETFIRECHICKEN",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "SWEETFIRECHICKEN",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "BLACKPEPPERCHICKEN",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "BLACKPEPPERCHICKEN",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "BLACKPEPPERCHICKEN",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "GRILLEDTERIYAKICHICKEN",
+    "size": "sm",
+    "price": 5.2
+  },
+  {
+    "menuitem": "GRILLEDTERIYAKICHICKEN",
+    "size": "md",
+    "price": 8.5
+  },
+  {
+    "menuitem": "GRILLEDTERIYAKICHICKEN",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "SUPERGREENS",
+    "size": "sm",
+    "price": 0
+  },
+  {
+    "menuitem": "SUPERGREENS",
+    "size": "md",
+    "price": 4.4
+  },
+  {
+    "menuitem": "SUPERGREENS",
+    "size": "lg",
+    "price": 5.4
+  },
+  {
+    "menuitem": "CHOWMEIN",
+    "size": "sm",
+    "price": 0
+  },
+  {
+    "menuitem": "CHOWMEIN",
+    "size": "md",
+    "price": 4.4
+  },
+  {
+    "menuitem": "CHOWMEIN",
+    "size": "lg",
+    "price": 5.4
+  },
+  {
+    "menuitem": "WHITERICE",
+    "size": "sm",
+    "price": 0
+  },
+  {
+    "menuitem": "WHITERICE",
+    "size": "md",
+    "price": 4.4
+  },
+  {
+    "menuitem": "WHITERICE",
+    "size": "lg",
+    "price": 5.4
+  },
+  {
+    "menuitem": "FRIEDRICE",
+    "size": "sm",
+    "price": 0
+  },
+  {
+    "menuitem": "FRIEDRICE",
+    "size": "md",
+    "price": 4.4
+  },
+  {
+    "menuitem": "FRIEDRICE",
+    "size": "lg",
+    "price": 5.4
+  },
+  {
+    "menuitem": "VEGGIESPRINGROLLS",
+    "size": "sm",
+    "price": 2
+  },
+  {
+    "menuitem": "VEGGIESPRINGROLLS",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "CREAMCHEESERANGOONS",
+    "size": "sm",
+    "price": 2
+  },
+  {
+    "menuitem": "CREAMCHEESERANGOONS",
+    "size": "lg",
+    "price": 8
+  },
+  {
+    "menuitem": "CHICKENEGGROLL",
+    "size": "sm",
+    "price": 2
+  },
+  {
+    "menuitem": "CHICKENEGGROLL",
+    "size": "lg",
+    "price": 11.2
+  },
+  {
+    "menuitem": "APPLEPIEROLL",
+    "size": "sm",
+    "price": 2
+  },
+  {
+    "menuitem": "APPLEPIEROLL",
+    "size": "md",
+    "price": 6.2
+  },
+  {
+    "menuitem": "APPLEPIEROLL",
+    "size": "lg",
+    "price": 8
+  },
+  {
+    "menuitem": "FOUNTAINDRINK",
+    "size": "sm",
+    "price": 2.1
+  },
+  {
+    "menuitem": "FOUNTAINDRINK",
+    "size": "md",
+    "price": 2.3
+  },
+  {
+    "menuitem": "FOUNTAINDRINK",
+    "size": "lg",
+    "price": 2.5
+  },
+  {
+    "menuitem": "WATER",
+    "size": "sm",
+    "price": 2.3
+  },
+  {
+    "menuitem": "WATER",
+    "size": "md",
+    "price": 2.7
+  },
+  {
+    "menuitem": "WATER",
+    "size": "lg",
+    "price": 3
+  },
+  {
+    "menuitem": "EXTRADRINK",
+    "size": "n/a",
+    "price": 2.4
+  },
+  {
+    "menuitem": "BOWL",
+    "size": "n/a",
+    "price": 8.3
+  },
+  {
+    "menuitem": "PLATE",
+    "size": "n/a",
+    "price": 9.8
+  },
+  {
+    "menuitem": "BIGGERPLATE",
+    "size": "n/a",
+    "price": 11.3
+  },
+  {
+    "menuitem": "APPBAG",
+    "size": "n/a",
+    "price": 0
+  },
+  {
+    "menuitem": "JUICE",
+    "size": "sm",
+    "price": 2.3
+  }
+]

@@ -18,3 +18,20 @@ document.addEventListener("DOMContentLoaded", function() {
         setInterval(changeImage, 7000); // Change image every 3 seconds
     });
 });
+
+fetch('menuitems.json')
+  .then(response => response.json()) // Parse the JSON response
+  .then(data => {
+    // Loop through each item in the data array and update the corresponding element by ID
+    data.forEach(item => {
+      // Find the price element by matching the menuitem name
+      const priceElement = document.getElementById(item.menuitem.toLowerCase() + 'Price');
+      if (priceElement) {
+        // Update the innerText with the formatted price
+        priceElement.innerText = `$${item.price.toFixed(2)}`;
+      }
+    });
+  })
+  .catch(error => {
+    console.error('Error loading JSON:', error);
+  });

@@ -1,19 +1,21 @@
-# react/Dockerfile
-FROM node:18
+FROM node:18 AS build
 
-# Set working directory
-WORKDIR /app
+COPY react/package.json react/package-lock.json ./
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies and build the React app
 RUN npm install
-COPY . .
+
+COPY react/ .
+
 RUN npm run build
 
-# Expose port 3000 for React app
-EXPOSE 3000
+# Use a lightweight HTTP server to serve the built React app
+FROM nginx:alpine
 
-# Start React app
-CMD ["npm", "start"]
+# Copy the built React app from the build stage to the Nginx html directory
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expose port 80 for the React app
+EXPOSE 80
+
+# Run Nginx to serve the React app
+CMD ["nginx", "-g", "daemon off;"]

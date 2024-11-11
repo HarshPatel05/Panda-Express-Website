@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu Board</title>
     <link rel="stylesheet" href="menuBoardStyle.css"> <!-- Link to your CSS file -->
+    <script>
+        window.onload = function() {
+            // The URL to the endpoint that handles the file download
+            const url = 'http://localhost:5000/download-menu';
+
+            // Fetch the file without triggering a download
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('File has been successfully saved:', data);
+                })
+                .catch(error => console.error('Error:', error));
+        };
+    </script>
 </head>
 <body>
     <header>
@@ -32,7 +46,7 @@
                     <div class="text-container">
                         <h3>Bowl</h3>
                         <p>A single entree with a side of your choice</p>
-                        <span class="price">$8.30</span>
+                        <span class="price" id="bowlPrice"></span>
                     </div>
                 </div>
                 <div class="meal-option">
@@ -42,7 +56,7 @@
                     <div class="text-container">
                         <h3>Plate</h3>
                         <p>Two entrees with a side of your choice</p>
-                        <span class="price">$9.80</span>
+                        <span class="price" id="platePrice"></span>
                     </div>
                 </div>
                 <div class="meal-option">
@@ -52,7 +66,7 @@
                     <div class="text-container">
                         <h3>Bigger Plate</h3>
                         <p>Three entrees with a side of your choice</p>
-                        <span class="price">$11.30</span>
+                        <span class="price" id="biggerplatePrice"></span>
                     </div>
                 </div>
                 <div class="meal-option">
@@ -75,7 +89,7 @@
                             <span class="price">$11.20</span>
                         </div>
                         <div class="price-group">
-                            <span class="price-label">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+                            <span class="price-label">~~~~~~~~~~~</span>
                             <span class="price"> </span>
                         </div>
                         <div class="price-group">
@@ -159,7 +173,7 @@
                     <div class="Logo-Legend">
                         <div class="legend-item">
                             <img src="../Panda Express Photos/PremiumLogo.png" alt="Premium-Logo" class="Premium-Logo premium-logo">
-                            <h3>Premium Item</h3>
+                            <h3>Premium Items + $1.50</h3>
                         </div>
                         <div class="legend-item">
                             <img src="../Panda Express Photos/FavoriteLogo.png" alt="Favorite-Logo" class="Favorite-Logo favorite-logo">
