@@ -226,3 +226,53 @@ function closePanel() {
 function capitalize(word) {
     return word.charAt(0).toUpperCase() + word.slice(1);
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    const animatedImages = document.querySelectorAll('.animated-img');
+
+    animatedImages.forEach(imgElement => {
+        const images = JSON.parse(imgElement.getAttribute('data-images'));
+        let currentIndex = 0;
+
+        function changeImage() {
+            currentIndex = (currentIndex + 1) % images.length; // Cycle through images
+            imgElement.style.opacity = 0; // Start fade out
+            
+            setTimeout(() => {
+                imgElement.src = images[currentIndex]; // Change the image
+                imgElement.style.opacity = 1; // Fade back in
+            }, 500); // Match this to the CSS transition duration
+        }
+
+        setInterval(changeImage, 7000); // Change image every 3 seconds
+    });
+
+    // Fetch menu items and dynamically create buttons
+    fetch('menuitems.json')
+      .then(response => response.json())
+      .then(data => {
+          const buttonContainer = document.getElementById('buttonContainer'); // Make sure you have an element with this ID in your HTML
+          
+          data.forEach(item => {
+              // Create a button for each menu item
+              const button = document.createElement('button');
+              button.id = item.menuitem.toLowerCase() + 'Button';
+              button.className = 'menu-item-button'; // You can style all buttons with this class
+
+              // Set the button text
+              button.innerText = `${item.menuitem} - $${item.price.toFixed(2)}`;
+              
+              // Set an event listener if needed (e.g., to add the item to an order)
+              button.addEventListener('click', () => {
+                  // Add item to order logic here
+                  console.log(`Added ${item.menuitem} to order!`);
+              });
+
+              // Append the button to the container
+              buttonContainer.appendChild(button);
+          });
+      })
+      .catch(error => {
+          console.error('Error loading JSON:', error);
+      });
+});

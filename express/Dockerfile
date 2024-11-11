@@ -1,10 +1,10 @@
 FROM node:18
 
-COPY express/package.json express/package-lock.json ./
+COPY package.json package-lock.json ./
 
 RUN npm install
 
-COPY express/ .
+COPY . .
 
 EXPOSE 5000
 
