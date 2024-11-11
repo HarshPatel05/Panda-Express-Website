@@ -1,361 +1,361 @@
 [
   {
-    "menuitem": "BLACKPEPPERSTEAK",
+    "menuitem": "blackPepperSteak",
     "size": "sm",
     "price": 6.7
   },
   {
-    "menuitem": "BLACKPEPPERSTEAK",
+    "menuitem": "blackPepperSteak",
     "size": "md",
     "price": 11.5
   },
   {
-    "menuitem": "BLACKPEPPERSTEAK",
+    "menuitem": "blackPepperSteak",
     "size": "lg",
     "price": 15.7
   },
   {
-    "menuitem": "HONEYWALNUTSHRIMP",
+    "menuitem": "honeyWalnutShrimp",
     "size": "sm",
     "price": 6.7
   },
   {
-    "menuitem": "HONEYWALNUTSHRIMP",
+    "menuitem": "honeyWalnutShrimp",
     "size": "md",
     "price": 11.5
   },
   {
-    "menuitem": "HONEYWALNUTSHRIMP",
+    "menuitem": "honeyWalnutShrimp",
     "size": "lg",
     "price": 15.7
   },
   {
-    "menuitem": "KUNGPAOCHICKEN",
+    "menuitem": "kungPaoChicken",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "KUNGPAOCHICKEN",
+    "menuitem": "kungPaoChicken",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "KUNGPAOCHICKEN",
+    "menuitem": "kungPaoChicken",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "BOURBONCHICKEN",
+    "menuitem": "bourbonChicken",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "BOURBONCHICKEN",
+    "menuitem": "bourbonChicken",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "BOURBONCHICKEN",
+    "menuitem": "bourbonChicken",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "BROCCOLIBEEF",
+    "menuitem": "broccoliBeef",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "BROCCOLIBEEF",
+    "menuitem": "broccoliBeef",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "BROCCOLIBEEF",
+    "menuitem": "broccoliBeef",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "HONEYSESAMECHICKEN",
+    "menuitem": "honeySesameChicken",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "HONEYSESAMECHICKEN",
+    "menuitem": "honeySesameChicken",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "HONEYSESAMECHICKEN",
+    "menuitem": "honeySesameChicken",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "ORANGECHICKEN",
+    "menuitem": "orangeChicken",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "ORANGECHICKEN",
+    "menuitem": "orangeChicken",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "ORANGECHICKEN",
+    "menuitem": "orangeChicken",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "BEIJINGBEEF",
+    "menuitem": "beijingBeef",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "BEIJINGBEEF",
+    "menuitem": "beijingBeef",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "BEIJINGBEEF",
+    "menuitem": "beijingBeef",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "STRINGBEANCHICKEN",
+    "menuitem": "stringBeanChicken",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "STRINGBEANCHICKEN",
+    "menuitem": "stringBeanChicken",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "STRINGBEANCHICKEN",
+    "menuitem": "stringBeanChicken",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "MUSHROOMCHICKEN",
+    "menuitem": "mushroomChicken",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "MUSHROOMCHICKEN",
+    "menuitem": "mushroomChicken",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "MUSHROOMCHICKEN",
+    "menuitem": "mushroomChicken",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "SWEETFIRECHICKEN",
+    "menuitem": "sweetFireChicken",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "SWEETFIRECHICKEN",
+    "menuitem": "sweetFireChicken",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "SWEETFIRECHICKEN",
+    "menuitem": "sweetFireChicken",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "BLACKPEPPERCHICKEN",
+    "menuitem": "blackPepperChicken",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "BLACKPEPPERCHICKEN",
+    "menuitem": "blackPepperChicken",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "BLACKPEPPERCHICKEN",
+    "menuitem": "blackPepperChicken",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "GRILLEDTERIYAKICHICKEN",
+    "menuitem": "grilledTeriyakiChicken",
     "size": "sm",
     "price": 5.2
   },
   {
-    "menuitem": "GRILLEDTERIYAKICHICKEN",
+    "menuitem": "grilledTeriyakiChicken",
     "size": "md",
     "price": 8.5
   },
   {
-    "menuitem": "GRILLEDTERIYAKICHICKEN",
+    "menuitem": "grilledTeriyakiChicken",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "SUPERGREENS",
+    "menuitem": "superGreens",
     "size": "sm",
     "price": 0
   },
   {
-    "menuitem": "SUPERGREENS",
+    "menuitem": "superGreens",
     "size": "md",
     "price": 4.4
   },
   {
-    "menuitem": "SUPERGREENS",
+    "menuitem": "superGreens",
     "size": "lg",
     "price": 5.4
   },
   {
-    "menuitem": "CHOWMEIN",
+    "menuitem": "chowMein",
     "size": "sm",
     "price": 0
   },
   {
-    "menuitem": "CHOWMEIN",
+    "menuitem": "chowMein",
     "size": "md",
     "price": 4.4
   },
   {
-    "menuitem": "CHOWMEIN",
+    "menuitem": "chowMein",
     "size": "lg",
     "price": 5.4
   },
   {
-    "menuitem": "WHITERICE",
+    "menuitem": "whiteRice",
     "size": "sm",
     "price": 0
   },
   {
-    "menuitem": "WHITERICE",
+    "menuitem": "whiteRice",
     "size": "md",
     "price": 4.4
   },
   {
-    "menuitem": "WHITERICE",
+    "menuitem": "whiteRice",
     "size": "lg",
     "price": 5.4
   },
   {
-    "menuitem": "FRIEDRICE",
+    "menuitem": "friedRice",
     "size": "sm",
     "price": 0
   },
   {
-    "menuitem": "FRIEDRICE",
+    "menuitem": "friedRice",
     "size": "md",
     "price": 4.4
   },
   {
-    "menuitem": "FRIEDRICE",
+    "menuitem": "friedRice",
     "size": "lg",
     "price": 5.4
   },
   {
-    "menuitem": "VEGGIESPRINGROLLS",
+    "menuitem": "veggieSpringRolls",
     "size": "sm",
     "price": 2
   },
   {
-    "menuitem": "VEGGIESPRINGROLLS",
+    "menuitem": "veggieSpringRolls",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "CREAMCHEESERANGOONS",
+    "menuitem": "creamCheeseRangoons",
     "size": "sm",
     "price": 2
   },
   {
-    "menuitem": "CREAMCHEESERANGOONS",
+    "menuitem": "creamCheeseRangoons",
     "size": "lg",
     "price": 8
   },
   {
-    "menuitem": "CHICKENEGGROLL",
+    "menuitem": "chickenEggRoll",
     "size": "sm",
     "price": 2
   },
   {
-    "menuitem": "CHICKENEGGROLL",
+    "menuitem": "chickenEggRoll",
     "size": "lg",
     "price": 11.2
   },
   {
-    "menuitem": "APPLEPIEROLL",
+    "menuitem": "applePieRoll",
     "size": "sm",
     "price": 2
   },
   {
-    "menuitem": "APPLEPIEROLL",
+    "menuitem": "applePieRoll",
     "size": "md",
     "price": 6.2
   },
   {
-    "menuitem": "APPLEPIEROLL",
+    "menuitem": "applePieRoll",
     "size": "lg",
     "price": 8
   },
   {
-    "menuitem": "FOUNTAINDRINK",
+    "menuitem": "fountainDrink",
     "size": "sm",
     "price": 2.1
   },
   {
-    "menuitem": "FOUNTAINDRINK",
+    "menuitem": "fountainDrink",
     "size": "md",
     "price": 2.3
   },
   {
-    "menuitem": "FOUNTAINDRINK",
+    "menuitem": "fountainDrink",
     "size": "lg",
     "price": 2.5
   },
   {
-    "menuitem": "WATER",
+    "menuitem": "water",
     "size": "sm",
     "price": 2.3
   },
   {
-    "menuitem": "WATER",
+    "menuitem": "water",
     "size": "md",
     "price": 2.7
   },
   {
-    "menuitem": "WATER",
+    "menuitem": "water",
     "size": "lg",
     "price": 3
   },
   {
-    "menuitem": "EXTRADRINK",
+    "menuitem": "extraDrink",
     "size": "n/a",
     "price": 2.4
   },
   {
-    "menuitem": "BOWL",
+    "menuitem": "bowl",
     "size": "n/a",
     "price": 8.3
   },
   {
-    "menuitem": "PLATE",
+    "menuitem": "plate",
     "size": "n/a",
     "price": 9.8
   },
   {
-    "menuitem": "BIGGERPLATE",
+    "menuitem": "biggerPlate",
     "size": "n/a",
     "price": 11.3
   },
   {
-    "menuitem": "APPBAG",
+    "menuitem": "appBag",
     "size": "n/a",
     "price": 0
   },
   {
-    "menuitem": "JUICE",
+    "menuitem": "juice",
     "size": "sm",
     "price": 2.3
   }
