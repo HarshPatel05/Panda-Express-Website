@@ -168,7 +168,7 @@ app.get('/api/menu/:name/:size', async (req, res) =>
 
 // API request to update an order
 /**
- * fetch('/api/orders', 
+ * fetch('/api/updateorders', 
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -183,7 +183,7 @@ app.get('/api/menu/:name/:size', async (req, res) =>
     .then(data => console.log(data))
     .catch(error => console.error('Error:', error));
  */
-app.post('/api/orders', async (req, res) => 
+app.post('/api/updateorders', async (req, res) => 
   {
 
     const { totalCost, menuItemIDs } = req.body;
