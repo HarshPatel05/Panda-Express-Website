@@ -1,19 +1,23 @@
-# react/Dockerfile
-FROM node:18
+FROM node:18 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
-# Install dependencies and build the React app
 RUN npm install
-COPY . .
+
+COPY . ./
+
 RUN npm run build
 
-# Expose port 3000 for React app
+FROM node:18
+
+WORKDIR /app
+
+RUN npm install -g serve
+
+COPY --from=build /app/build /app/build
+
 EXPOSE 3000
 
-# Start React app
-CMD ["npm", "start"]
+CMD ["serve", "-s", "build", "-l", "3000"]
