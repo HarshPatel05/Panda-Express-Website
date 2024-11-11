@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu Board</title>
     <link rel="stylesheet" href="menuBoardStyle.css"> <!-- Link to your CSS file -->
+    <script>
+        window.onload = function() {
+            // The URL to the endpoint that handles the file download
+            const url = 'http://localhost:5000/download-menu';
+
+            // Fetch the file without triggering a download
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('File has been successfully saved:', data);
+                })
+                .catch(error => console.error('Error:', error));
+        };
+    </script>
 </head>
 <body>
     <header>
@@ -75,7 +89,7 @@
                             <span class="price">$11.20</span>
                         </div>
                         <div class="price-group">
-                            <span class="price-label">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+                            <span class="price-label">~~~~~~~~~~~</span>
                             <span class="price"> </span>
                         </div>
                         <div class="price-group">

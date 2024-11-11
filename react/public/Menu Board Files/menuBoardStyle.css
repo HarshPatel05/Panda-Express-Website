@@ -379,40 +379,19 @@ Section 1 Content Formatting
     ------------------------------ */
     
     #section1 h2 {
-        margin: 0; /* Remove default margin */
-        padding-bottom: 20px; /* Space below the heading */
         font-size: 2em; /* Adjust font size as needed */
-        color: #333; /* Change color if desired */
-        margin-top: 20px; /* Adjust spacing from the top */
-        text-align: center; /* Center the text horizontally */
     }
     
     #section2 h2 {
-        margin: 0; /* Remove default margin */
-        padding-bottom: 20px; /* Space below the heading */
         font-size: 2em; /* Adjust font size as needed */
-        color: #333; /* Change color if desired */
     }
     
     #section3 h2 {
-        margin: 0; /* Remove default margin */
-        padding-bottom: 20px; /* Space below the heading */
         font-size: 2em; /* Adjust font size as needed */
-        color: #333; /* Change color if desired */
     }
 
     #section2 {
-        flex: 1.5; /* Flex value for 3:2 */
-    }
-
-    .box-text {
-        text-align: center;
-        padding: 1%; /* Change the amount of padding around the entree names */
-        background-color: rgba(255, 255, 255, 0.7);
-        width: 100%;
-        box-sizing: border-box;
-        font-weight: bold;
-        font-size: 1.5em;
+        flex: 1.1; /* Flex value for 4:3 */
     }
 
     /* ------------------------------
@@ -425,54 +404,37 @@ Section 1 Content Formatting
     }
 
     .ALaCarte-logo {
-        margin-left: 50%;
+        margin-left: 15%;
     }
+
+    /* Made it this far 😎 */
 
     .meal-option {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
         margin-bottom: 15%; /* Adjust the gap between each meal option */
-        padding-right: 5%; /* Adjust the margin of the pricing and text and the right side */
-    }
-    
-    .image-container {
-        margin-right: 20%; /* Adjust the gap between the symbol and the descriptive text */
-        width: 17%; /* Does something similar but tbh I am not sure of  */
     }
 
-    .text-container {
-        flex-grow: 1; /* Effects the a la carte image only? */
-    }
     
     .text-container h3 {
         font-size: 1.5em;
-        color: #333;
-        margin: 0;
     }
     
     .text-container p {
         font-size: 1em;
-        color: #666;
     }
     
     /* Price group for each item */
     .price-group {
-        display: flex;
-        justify-content: space-between;
         margin-top: 1%; /* Spacing between each price group */
     }
     
     /* Price label styling */
     .price-label {
         font-size: 1em;
-        color: #333;
     }
     
     /* Price styling (already defined) */
     .price {
         font-size: 1.25em;
-        color: #ff6347;
     }
 
     /* ------------------------------
