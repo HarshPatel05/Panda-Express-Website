@@ -1,9 +1,6 @@
 ////////////////////////////////////  BASIC BACKEND FUNCTIONALITY TO FETCH DATA FROM THE DATABASE OR UPDATE DATA IN THE DATABASE  ////////////////////////////////////
 
 
-
-
-
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   ####################### SETTING UP THE BACKEND SERVER AND CONNECTING IT TO `PostgreSQL` DATABSE USING `pg` LIBRARY ###########################   |   ####
@@ -19,16 +16,18 @@
 const express = require('express');
 const { Pool } = require('pg');
 const dotenv = require('dotenv').config();
-
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+const cors = require('cors');
 
 /** Create the Express App and Enable CORS
  * app is the main Express application.
  * CORS (Cross-Origin Resource Sharing) is enabled to allow the frontend (running on a different port) to communicate with this server.
  */
 const app = express();
-const cors = require('cors');
+const port = process.env.PORT || 5000;
 app.use(cors());
-
 
 /** Database Connection Pool
  * Pool is used to manage a group of connections to the database
@@ -52,8 +51,6 @@ pool.connect()
 
 
 
-
-
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   #######################################################  SETTING UP API ENDPOINTS  ###########################################################   |   ####
@@ -61,7 +58,7 @@ pool.connect()
 //####  \|/  ##############################################################################################################################################  \|/  ####
 
 
-// API request to get all the of employees
+// API request to get all the employees
 app.get('/api/employees', async (req, res) =>
   {
     try
@@ -78,7 +75,7 @@ app.get('/api/employees', async (req, res) =>
 );
 
 
-// API request to get all the of menuitems
+// API request to get all the menuitems
 app.get('/api/menuitems', async (rec, res) =>
   {
     try
@@ -96,7 +93,7 @@ app.get('/api/menuitems', async (rec, res) =>
 );
 
 
-// API Request to get the all the menuItemIds associated with the given menuItem name
+// API Request to get all the menuItemIds associated with the given menuItem name
 app.get('/api/menu/:name', async (req, res) =>
   { 
 
@@ -243,9 +240,6 @@ app.post('/api/orders', async (req, res) =>
 );
 
 
-
-
-
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   ######## AFTER DEFINING ALL THE API ENDPOINTS, START THE SERVER AND LISTEN FOR ANY INCOMING REQUESTS(API CALLS) FROM THE FRONTEND ############   |   ####
@@ -254,12 +248,65 @@ app.post('/api/orders', async (req, res) =>
 
 /** This piece of code need to be in end o ensure all routes and middleware are set up before the server starts listening for requests.
  * 
- * Its purpose is to start the Express server and tells it to listen of incoming HTTP requests on a specific port.
- * It also logs a confiermation message to the console, so you know the server is up and running.
+ * Its purpose is to start the Express server and tells it to listen of incoming HTTP requests on a specific port 
  */
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  {
-    console.log(`Server is running on port ${PORT}`);
-  }
-);
+app.listen(port, () =>
+{
+  console.log(`Server is running on port ${port}`);
+});
+
+
+
+
+////////////////////////////////////  FILE DOWNLOADER FUNCTIONALITY  ////////////////////////////////////
+
+// Correct the path: Use relative paths from the root of your project (not from the express folder)
+const downloadFolder = path.join(__dirname, '..', 'react', 'public', 'Menu Board Files');
+
+// Ensure the folder exists, and if not, create it along with any missing parent directories
+if (!fs.existsSync(downloadFolder)) {
+  fs.mkdirSync(downloadFolder, { recursive: true });
+}
+
+// Function to tailor and format the JSON data
+const tailorMenuData = (data) => {
+  return data.map(item => ({
+      menuitem: item.menuitem ? item.menuitem.toUpperCase() : 'UNKNOWN ITEM',  // Convert menuitem name to uppercase
+      size: item.size,  // Keep the size unchanged
+      price: item.price, // Keep the price unchanged
+  }));
+};
+
+
+// API endpoint to download the JSON file
+app.get('/download-menu', async (req, res) => {
+    try {
+        // Fetch data from the menuitems API
+        const response = await axios.get('http://localhost:5000/api/menuitems');
+        
+        // Tailor the fetched data using the tailorMenuData function
+        const tailoredData = tailorMenuData(response.data);
+
+        if (!tailoredData) {
+            return res.status(500).send('Error formatting the menu data');
+        }
+
+        // Set custom file path relative to the project folder
+        const filePath = path.join(downloadFolder, 'menuitems.json');
+
+        // Save the tailored JSON data to a file in the specified folder
+        fs.writeFileSync(filePath, JSON.stringify(tailoredData, null, 2));
+
+        // Send a success response with the file path
+        res.status(200).json({
+            message: 'File has been successfully updated and saved.',
+            filePath: filePath
+        });
+
+    } catch (error) {
+        console.error('Error downloading the file:', error);
+        res.status(500).send('Failed to process the file');
+    }
+});
+
+

@@ -391,7 +391,7 @@ Section 1 Content Formatting
     }
 
     #section2 {
-        flex: 1.5; /* Flex value for 4:3 */
+        flex: 1.1; /* Flex value for 4:3 */
     }
 
     /* ------------------------------
