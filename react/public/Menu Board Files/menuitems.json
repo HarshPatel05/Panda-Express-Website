@@ -330,6 +330,31 @@
     "price": 3
   },
   {
+    "menuitem": "EXTRADRINK",
+    "size": "n/a",
+    "price": 2.4
+  },
+  {
+    "menuitem": "BOWL",
+    "size": "n/a",
+    "price": 8.3
+  },
+  {
+    "menuitem": "PLATE",
+    "size": "n/a",
+    "price": 9.8
+  },
+  {
+    "menuitem": "BIGGERPLATE",
+    "size": "n/a",
+    "price": 11.3
+  },
+  {
+    "menuitem": "APPBAG",
+    "size": "n/a",
+    "price": 0
+  },
+  {
     "menuitem": "JUICE",
     "size": "sm",
     "price": 2.3
