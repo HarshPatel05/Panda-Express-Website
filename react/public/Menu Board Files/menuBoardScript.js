@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-fetch('menuitems.json')
+fetch('../JSON Files/menuitems.json')
   .then(response => response.json()) // Parse the JSON response
   .then(data => {
     // Loop through each item in the data array and update the corresponding element by ID

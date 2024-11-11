@@ -262,7 +262,7 @@ app.listen(port, () =>
 ////////////////////////////////////  FILE DOWNLOADER FUNCTIONALITY  ////////////////////////////////////
 
 // Correct the path: Use relative paths from the root of your project (not from the express folder)
-const downloadFolder = path.join(__dirname, '..', 'react', 'public', 'Menu Board Files');
+const downloadFolder = path.join(__dirname, '..', 'react', 'public', 'JSON Files');
 
 // Ensure the folder exists, and if not, create it along with any missing parent directories
 if (!fs.existsSync(downloadFolder)) {
