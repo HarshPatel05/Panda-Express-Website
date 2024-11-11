@@ -83,7 +83,8 @@ app.get('/api/menuitems', async (rec, res) =>
   {
     try
     {
-      const query = `SELECT menuitem, size, price FROM menuitems WHERE size = 'sm' OR size = 'md' OR size = 'lg';`;
+      // const query = `SELECT menuitem, size, price FROM menuitems WHERE size = 'sm' OR size = 'md' OR size = 'lg';`;
+      const query = `SELECT menuitem, size, price FROM menuitems`;
       const result = await pool.query(query);
       res.json(result.rows);
     }
