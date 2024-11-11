@@ -1,10 +1,10 @@
 FROM node:18 AS build
 
-COPY react/package.json react/package-lock.json ./
+COPY package.json package-lock.json ./
 
 RUN npm install
 
-COPY react/ .
+COPY . .
 
 RUN npm run build
 
