@@ -1,21 +1,23 @@
 FROM node:18 AS build
 
+WORKDIR /app
+
 COPY package.json package-lock.json ./
 
 RUN npm install
 
-COPY . .
+COPY . ./
 
 RUN npm run build
 
-# Use a lightweight HTTP server to serve the built React app
-FROM nginx:alpine
+FROM node:18
 
-# Copy the built React app from the build stage to the Nginx html directory
-COPY --from=build /app/build /usr/share/nginx/html
+WORKDIR /app
 
-# Expose port 80 for the React app
-EXPOSE 80
+RUN npm install -g serve
 
-# Run Nginx to serve the React app
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build /app/build /app/build
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "build", "-l", "3000"]
