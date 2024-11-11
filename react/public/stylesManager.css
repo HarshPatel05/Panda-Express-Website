@@ -1,0 +1,50 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #e60000; /* Panda Express red */
+    flex-direction: column;
+}
+
+.logo {
+    width: 20vw; 
+    max-width: 600px; 
+}
+
+.tableContainer {
+    background-color: white;
+    width: 90%; 
+    height: 80%;
+    padding: 5vh 2vw; 
+    border-radius: 1.5vw; 
+    text-align: center;
+    box-shadow: 0 2vw 5vw rgba(0, 0, 0, 0.2); 
+}
+
+h1 {
+    color: #e60000;
+    font-size: 3vw; 
+    margin-bottom: 3vh;
+}
+
+.tabs button {
+    padding: 1.5vh;
+    background-color: #e60000;
+    color: white;
+    font-size: 1.8vw; 
+    font-weight: bold;
+    border: none;
+
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+}
+
