@@ -29,6 +29,19 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
+// Routes to render pages
+app.get('/', (req, res) => {
+  res.render('index'); // Render the views/index.ejs file
+});
+
+app.get('/index', (req, res) => {
+  res.render('index'); // Render the views/index.ejs file
+});
+
+app.get('/menuBoard', (req, res) => {
+  res.render('menuBoard'); // Render the views/menuBoard.ejs file
+});
+
 // Render the employees page with data from the database
 app.get('/employees', async (req, res) => {
   try {
@@ -51,20 +64,10 @@ app.get('/menuitems', async (req, res) => {
   }
 });
 
-// API Endpoints
-app.get('/api/employees', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM employees;');
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error fetching employees:', err.stack);
-    res.status(500).json({ error: 'Server Error' });
-  }
-});
-
+// API Endpoint to get all menu items
 app.get('/api/menuitems', async (req, res) => {
   try {
-    const result = await pool.query('SELECT menuitem, size, price FROM menuitems');
+    const result = await pool.query('SELECT menuItemId, menuItem, price, size FROM menuItems');
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching menu items:', error.stack);
@@ -72,10 +75,9 @@ app.get('/api/menuitems', async (req, res) => {
   }
 });
 
-// Additional APIs...
 
 // File Download Endpoint
-const downloadFolder = path.join(__dirname, '..', 'react', 'public', 'JSON Files');
+const downloadFolder = path.join(__dirname, 'public', 'JSON Files');
 
 if (!fs.existsSync(downloadFolder)) {
   fs.mkdirSync(downloadFolder, { recursive: true });
@@ -91,7 +93,7 @@ const tailorMenuData = (data) => {
 
 app.get('/download-menu', async (req, res) => {
   try {
-    const response = await axios.get('http://localhost:5000/api/menuitems');
+    const response = await axios.get(`http://localhost:${port}/api/menuitems`);
     const tailoredData = tailorMenuData(response.data);
 
     if (!tailoredData) {
@@ -105,40 +107,17 @@ app.get('/download-menu', async (req, res) => {
       message: 'File has been successfully updated and saved.',
       filePath: filePath,
     });
-
   } catch (error) {
     console.error('Error downloading the file:', error);
     res.status(500).send('Failed to process the file');
   }
 });
 
-// Route to render the index (home) page
-app.get('/', (req, res) => {
-  res.render('index'); // Render the views/index.ejs file
-});
-
-// Route to render the index (home) page
-app.get('/index', (req, res) => {
-  res.render('index'); // Render the views/index.ejs file
-});
-
-// Route to render the menuBoard page
-app.get('/menuBoard', (req, res) => {
-  res.render('menuBoard'); // Render the views/menuBoard.ejs file
-});
-
 // Start the server
-(async () => {
-  const open = (await import('open')).default;
-  await open(`http://localhost:${port}`);
-})();
-
-// Start the server and open the page in the default browser
 app.listen(port, '127.0.0.1', async () => {
   console.log(`Server is running on port ${port}`);
+  
   // Open the browser window after the server starts
-  (async () => {
-    const open = (await import('open')).default;
-    await open(`http://localhost:${port}`);
-  })();
+  const open = (await import('open')).default;
+  await open(`http://localhost:${port}`);
 });

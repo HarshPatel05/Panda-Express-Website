@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<script src="/js/scriptRegister.js"></script>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panda Express Register</title>
     <link rel="stylesheet" href="/css/stylesRegister.css">
+    <script src="/js/scriptRegister.js"></script>
 </head>
 <body>
-
-    <div id="buttonContainer"></div>
 
     <!-- Order Calculator on the Left Panel -->
     <div class="left-panel">
         <div class="cancel-order" onclick="clearOrder()">CANCEL ORDER</div>
-        <div id="currentItemPreview" class="current-item-preview"></div> <!-- Preview for current composite item -->
-        <div class="order-list" id="orderList">
-            <!-- Order items will appear here dynamically -->
-        </div>
+        <div id="currentItemPreview" class="current-item-preview"></div>
+        <div class="order-list" id="orderList"></div>
         <div class="total-section">
             <div class="total">Total: $<span id="totalAmount">0.00</span></div>
             <button class="checkout-btn" onclick="checkoutOrder()">CHECK OUT</button>
@@ -37,7 +32,6 @@
             </div>
         </div>
 
-        <!-- Main button panel -->
         <div id="main-buttons" class="grid-buttons">
             <div class="button" onclick="selectItemType('bowl', 8.30, 1, 2)">Bowl</div>
             <div class="button" onclick="selectItemType('plate', 9.80, 2, 2)">Plate</div>
@@ -47,7 +41,7 @@
             <div class="button" onclick="openPanel('alacartePanel')">A La Carte</div>
         </div>
 
-        <!-- Example panel for adding items (e.g., Bowl) -->
+        <!-- Panels for each category with added IDs for dynamic buttons -->
         <div id="hiddenPanelMain" class="hidden-panel">
             <div class="cancel">
                 <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
@@ -55,21 +49,12 @@
             <div class="panel-content">
                 <div class="entrees-section">
                     <h3 class="section-header">Entrees</h3>
-                    <div class="entrees-grid">
-                        <div class="button" onclick="addComponentToCurrentOrder('entree', 'Orange Chicken')">Orange Chicken</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('entree', 'Beef Broccoli')">Beef Broccoli</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('entree', 'Honey Walnut Shrimp')">Honey Walnut Shrimp</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('entree', 'Kung Pao Chicken')">Kung Pao Chicken</div>
-                    </div>
+                    <div id="entree-buttons" class="entrees-grid"></div>
                 </div>
 
                 <div class="sides-section">
                     <h3 class="section-header">Sides</h3>
-                    <div class="sides-grid">
-                        <div class="button" onclick="addComponentToCurrentOrder('side', 'Fried Rice')">Fried Rice</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('side', 'White Rice')">White Rice</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('side', 'Chow Mein')">Chow Mein</div>
-                    </div>
+                    <div id="side-buttons" class="sides-grid"></div>
                 </div>
             </div>
         </div>
@@ -79,18 +64,7 @@
                 <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
             </div>
             <h3>Drinks</h3>
-        
-            <div class="drink-columns">
-                <div class="column">
-                    <div class="button" onclick="addDrinkToOrder('Soda', 2.00, 'Small')">Small Soda</div>
-                    <div class="button" onclick="addDrinkToOrder('Soda', 2.50, 'Medium')">Medium Soda</div>
-                    <div class="button" onclick="addDrinkToOrder('Soda', 3.00, 'Large')">Large Soda</div>
-                </div>
-                <div class="column">
-                    <div class="button" onclick="addDrinkToOrder('Bottled Water', 1.50)">Bottled Water</div>
-                    <div class="button" onclick="addDrinkToOrder('Juice', 2.20)">Juice</div>
-                </div>
-            </div>
+            <div class="drink-columns" id="drink-buttons"></div>
         </div>
         
         <div id="appetizersPanel" class="hidden-panel">
@@ -98,48 +72,30 @@
                 <button onclick="cancelCurrentCompositeItem()">Cancel</button>
             </div>
             <h3>Appetizers</h3>
-            <div class="appetizer-columns">
-                <div class="column">
-                    <div class="button" onclick="addAppetizerToOrder('Spring Roll', 3.50)">Spring Roll</div>
-                    <div class="button" onclick="addAppetizerToOrder('Egg Roll', 4.00)">Egg Roll</div>
-                    <div class="button" onclick="addAppetizerToOrder('Crab Rangoon', 4.50)">Crab Rangoon</div>
-                </div>
-            </div>
+            <div class="appetizer-columns" id="appetizer-buttons"></div>
         </div>
 
         <div id="alacartePanel" class="hidden-panel">
             <div class="cancel">
                 <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
             </div>
-            <!-- Size Selection for À La Carte Items -->
             <div class="size-selection">
                 <button id="size-Small" class="size-button" onclick="setSize('Small')">Small</button>
                 <button id="size-Medium" class="size-button" onclick="setSize('Medium')">Medium</button>
                 <button id="size-Large" class="size-button" onclick="setSize('Large')">Large</button>
             </div>
-            
             <div class="panel-content">
                 <div class="entrees-section">
                     <h3 class="section-header">Entrees</h3>
-                    <div class="entrees-grid">
-                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Orange Chicken')">Orange Chicken</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Beef Broccoli')">Beef Broccoli</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Honey Walnut Shrimp')">Honey Walnut Shrimp</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Kung Pao Chicken')">Kung Pao Chicken</div>
-                    </div>
+                    <div id="alacarte-entree-buttons" class="entrees-grid"></div>
                 </div>
 
                 <div class="sides-section">
                     <h3 class="section-header">Sides</h3>
-                    <div class="sides-grid">
-                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Fried Rice')">Fried Rice</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'White Rice')">White Rice</div>
-                        <div class="button" onclick="addComponentToCurrentOrder('alacarte', 'Chow Mein')">Chow Mein</div>
-                    </div>
+                    <div id="alacarte-side-buttons" class="sides-grid"></div>
                 </div>
             </div>
         </div>
-
     </div>
 </body>
 </html>
