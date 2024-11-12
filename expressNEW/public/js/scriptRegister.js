@@ -20,7 +20,11 @@ async function loadMenuItems() {
         const appetizerContainer = document.getElementById('appetizer-buttons');
         const drinkContainer = document.getElementById('drink-buttons');
 
-        menuItems.forEach(item => {
+        menuItems.forEach((item, index) => {
+            // Check if item should be added (every third item)
+            if (item.menuitemid >= 1 && item.menuitemid <= 39 && index % 3 !== 0) return; // Skip to get first of each three for entrees
+            if (item.menuitemid >= 40 && item.menuitemid <= 51 && index % 3 !== 0) return; // Skip to get first of each three for sides
+
             const button = document.createElement('button');
             button.innerText = `${item.menuitem} (${item.size}) - $${item.price.toFixed(2)}`;
             button.classList.add('menu-item-button');
@@ -43,6 +47,7 @@ async function loadMenuItems() {
         console.error('Error loading menu items:', error);
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', loadMenuItems);
 

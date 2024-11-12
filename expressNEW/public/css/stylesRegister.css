@@ -13,7 +13,8 @@ Left Panel / Order Calculator
 .left-panel {
     background-color: #fff;
     width: 25%;
-    padding: 20px;
+    max-width: 350px;  /* Restrict max width for larger screens */
+    padding: 2%;
     border-right: 1px solid #ccc;
     display: flex;
     flex-direction: column;
@@ -23,41 +24,43 @@ Left Panel / Order Calculator
     background-color: red;
     color: white;
     width: 100%;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding: 1.5% 0;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 5%;
     cursor: pointer;
     font-weight: bold;
+    font-size: 1.2vw;
 }
 
 .order-list {
     flex: 1;
     overflow-y: auto;
-    margin-bottom: 20px;
+    margin-bottom: 5%;
 }
 
 .order-item {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 14px;
+    margin-bottom: 2%;
+    font-size: 1vw;
 }
 
 .total-section {
     text-align: center;
     width: 100%;
     font-weight: bold;
-    margin-bottom: 10px;
+    font-size: 1.2vw;
+    margin-bottom: 2%;
 }
 
 .checkout-btn {
     background-color: green;
     color: white;
-    padding: 10px;
+    padding: 2%;
     width: 100%;
     text-align: center;
     cursor: pointer;
+    font-size: 1.2vw;
 }
 
 /*********************************************************************************************************************************
@@ -65,7 +68,7 @@ Main Content / Dropdown Buttons
 *********************************************************************************************************************************/
 .main-content {
     flex: 1;
-    padding: 10px;
+    padding: 2%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -74,10 +77,10 @@ Main Content / Dropdown Buttons
 /* Style for the top buttons container */
 .top-buttons {
     position: absolute;
-    top: 10px;       /* Distance from the top */
-    right: 10px;     /* Distance from the right */
+    top: 1%;
+    right: 2%;
     display: flex;
-    gap: 15px;
+    gap: 1.5vw;
 }
 
 /* Dropdown container */
@@ -90,10 +93,10 @@ Main Content / Dropdown Buttons
 .dropbtn {
     background-color: #333;
     color: white;
-    padding: 10px 15px;
+    padding: 0.8vw 1.5vw;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1.2vw;
 }
 
 /* Dropdown content (hidden by default) */
@@ -101,16 +104,16 @@ Main Content / Dropdown Buttons
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    min-width: 160px;
+    min-width: 10vw;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
-    right: 0;  /* Aligns the dropdown menu to the right */
+    right: 0;
 }
 
 /* Dropdown links */
 .dropdown-content a {
     color: black;
-    padding: 12px 16px;
+    padding: 1vw 1.5vw;
     text-decoration: none;
     display: block;
 }
@@ -130,32 +133,37 @@ Main Content / Dropdown Buttons
     background-color: #555;
 }
 
-
 /*********************************************************************************************************************************
 Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
 *********************************************************************************************************************************/
 .grid-buttons {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-top: 50px;
-    cursor: pointer;
+    gap: 5%;  /* Increased gap to spread out buttons */
+    margin-top: 5vh;
+    padding: 2%;
+    width: 80%;  /* Increased width to take up more horizontal space */
 }
 
 .grid-buttons .button {
     background-color: gray;
-    width: 200px;
-    height: 150px;
+    width: 100%;
+    max-width: 250px;  /* Increased max width */
+    height: 15vh;  /* Increased height for larger buttons */
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 18px;
+    font-size: 1.5vw;  /* Larger font size */
+    padding: 1%;
+    border-radius: 8px;  /* Slight rounding */
 }
+
 
 /* Hidden panels (JPanel-like) */
 .hidden-panel {
-    display: none; /* Initially hidden */
+    display: none;
+    padding: 2%;
 }
 
 /* Panel content container with side-by-side layout */
@@ -163,91 +171,88 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
     display: flex;
     justify-content: space-between;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 2%;
 }
 
 /* Section styling for Entrees and Sides */
 .entrees-section, .sides-section {
-    width: 48%; /* Adjust to fit next to each other */
+    width: 48%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-right: 80px;
+    padding-right: 5%;
 }
 
 /* Section header styling */
 .section-header {
-    font-size: 20px;
+    font-size: 1.8vw;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 2%;
 }
 
 /* Grids for Entrees and Sides */
-.entrees-grid {
+.entrees-grid, .sides-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 2 buttons wide */
-    gap: 10px;
+    gap: 1vw;
     width: 100%;
 }
 
+.entrees-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
 .sides-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 buttons wide */
-    gap: 10px;
-    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .hidden-panel .button {
     background-color: gray;
-    width: 150px;
-    height: 100px;
+    width: 100%;
+    max-width: 130px;
+    height: 6vh;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 16px;
+    font-size: 1vw;
     cursor: pointer;
 }
 
 .hidden-panel button {
-    margin-bottom: 20px;
+    margin-bottom: 5%;
 }
 
-.size-selection button {
-    width: 150px;
-    height: 50px;
+.size-selection button, .cancel button {
+    width: 100%;
+    max-width: 150px;
+    height: 6vh;
     color: white;
     background-color: grey;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 5%;
     cursor: pointer;
     font-weight: bold;
+    font-size: 1vw;
 }
+
 .cancel button {
-    width: 150px;
-    height: 50px;
-    color: white;
     background-color: red;
-    text-align: center;
-    margin-bottom: 20px;
-    cursor: pointer;
-    font-weight: bold;
 }
+
 /*********************************************************************************************************************************
 Drink / Appetizer Columns
 *********************************************************************************************************************************/
-
 .drink-columns {
     display: flex;
-    gap: 15px; /* Space between columns */
+    gap: 2%;
     justify-content: center;
+    flex-wrap: wrap;  /* Wraps on smaller screens */
 }
 
 .column {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 1vw;
 }
-
