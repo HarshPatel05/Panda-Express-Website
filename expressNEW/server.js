@@ -1,3 +1,6 @@
+// npm install open
+// node server.js
+
 const express = require('express');
 const { Pool } = require('pg');
 const dotenv = require('dotenv').config();
