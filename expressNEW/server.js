@@ -1,6 +1,13 @@
 // npm install open
 // node server.js
 
+
+/*
+THIS IS HOW TO RUN THE WEBSITE LOCALLY 
+FIRST IN THE TERMINAL: docker build -t ourapp .
+SECOND IN THE TERMINAL: docker run -p 5000:5000 ourapp
+*/
+
 const express = require('express');
 const { Pool } = require('pg');
 const dotenv = require('dotenv').config();
