@@ -2,10 +2,15 @@
 // node server.js
 
 
-/*
-THIS IS HOW TO RUN THE WEBSITE LOCALLY 
-FIRST IN THE TERMINAL: docker build -t ourapp .
-SECOND IN THE TERMINAL: docker run -p 5000:5000 ourapp
+/**
+ * STEPS TO RUN THE WEBSITE LOCALLY:
+ * 
+ * STEP 1: Open Docker on your laptop/desktop
+ * STEP 2: Go into the New express folder ` cd expressNEW `
+ * STEP 3: Then type, ` docker build -t ourapp . `
+ * STEP 4: Then type, ` docker run -p 5000:5000 ourapp `
+ * END: ` Ctrl+C `
+ * 
 */
 
 const express = require('express');
