@@ -138,10 +138,6 @@ app.get('/download-menu', async (req, res) => {
 });
 
 // Start the server
-app.listen(port, '127.0.0.1', async () => {
+app.listen(port, '0.0.0.0', async () => {
   console.log(`Server is running on port ${port}`);
-  
-  // Open the browser window after the server starts
-  const open = (await import('open')).default;
-  await open(`http://localhost:${port}`);
 });
