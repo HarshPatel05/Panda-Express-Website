@@ -58,23 +58,15 @@ app.get('/menuBoard', (req, res) => {
 app.get('/employees', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM employees;');
-    res.render('employees', { employees: result.rows });
+    res.json(result.rows);
+    // res.render('employees', { employees: result.rows });
   } catch (err) {
     console.error('Error fetching employees:', err.stack);
     res.status(500).send('Server Error');
   }
 });
 
-// Render the menu page with menu items from the database
-app.get('/menuitems', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM menuitems;');
-    res.render('menu', { menuitems: result.rows });
-  } catch (err) {
-    console.error('Error fetching menu items:', err.stack);
-    res.status(500).send('Server Error');
-  }
-});
+
 
 //endpoint to get x report 
 app.get('/api/xreport', async (req, res) =>
