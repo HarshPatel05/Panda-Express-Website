@@ -95,7 +95,7 @@ app.get('/api/xreport', async (req, res) =>
 // API Endpoint to get all menu items
 app.get('/api/menuitems', async (req, res) => {
   try {
-    const result = await pool.query('SELECT menuItemId, menuItem, price, size FROM menuItems');
+    const result = await pool.query('SELECT menuItemId, menuItem, price, size, displayName FROM menuItems');
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching menu items:', error.stack);
