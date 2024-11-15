@@ -133,6 +133,21 @@ app.get('/api/menuitems', async (req, res) =>
   }
 );
 
+// API request to get all the employees
+app.get('/api/orderhistory', async (req, res) =>
+  {
+    try
+    {
+      const result = await pool.query('SELECT * FROM orderhistory;');  
+      res.json(result.rows); 
+    }
+    catch (err)
+    {
+      console.error('Error fetching orderhistory:', err.stack);
+      res.status(500).json({ error: 'Server Error' });
+    }
+  }
+);
 
 // API request to update an order
 /**
