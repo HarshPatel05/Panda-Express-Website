@@ -27,6 +27,7 @@
                 <div class="dropdown-content">
                     <a href="#">Manager View</a>
                     <a href="/menuBoard">Menu Board</a>
+                    <a href="/kiosk">Kiosk</a>
                     <a href="#">Log Out</a>
                 </div>
             </div>
@@ -79,23 +80,49 @@
             <div class="cancel">
                 <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
             </div>
+            <div class="add">
+                <button onclick="finalizeAlaCarteItem()">Add to Order</button>
+            </div>
+            <div id="currentAlaCartePreview" class="current-item-preview"></div>
             <div class="size-selection">
                 <button id="size-Small" class="size-button" onclick="setSize('Small')">Small</button>
                 <button id="size-Medium" class="size-button" onclick="setSize('Medium')">Medium</button>
                 <button id="size-Large" class="size-button" onclick="setSize('Large')">Large</button>
             </div>
-            <div class="panel-content">
-                <div class="entrees-section">
-                    <h3 class="section-header">Entrees</h3>
-                    <div id="alacarte-entree-buttons" class="entrees-grid"></div>
+            <div id="sizePanels">
+                <div id="size-Small-panel" class="hidden-panel" aria-hidden="true">
+                    <div class="entrees-section">
+                        <h3 class="section-header">Entrees</h3>
+                        <div id="small-entree-buttons" class="entrees-grid"></div>
+                    </div>
+                    <div class="sides-section">
+                        <h3 class="section-header">Sides</h3>
+                        <div id="small-side-buttons" class="sides-grid"></div>
+                    </div>
                 </div>
-
-                <div class="sides-section">
-                    <h3 class="section-header">Sides</h3>
-                    <div id="alacarte-side-buttons" class="sides-grid"></div>
+                <div id="size-Medium-panel" class="hidden-panel" aria-hidden="true">
+                    <div class="entrees-section">
+                        <h3 class="section-header">Entrees</h3>
+                        <div id="medium-entree-buttons" class="entrees-grid"></div>
+                    </div>
+                    <div class="sides-section">
+                        <h3 class="section-header">Sides</h3>
+                        <div id="medium-side-buttons" class="sides-grid"></div>
+                    </div>
+                </div>
+                <div id="size-Large-panel" class="hidden-panel" aria-hidden="true">
+                    <div class="entrees-section">
+                        <h3 class="section-header">Entrees</h3>
+                        <div id="large-entree-buttons" class="entrees-grid"></div>
+                    </div>
+                    <div class="sides-section">
+                        <h3 class="section-header">Sides</h3>
+                        <div id="large-side-buttons" class="sides-grid"></div>
+                    </div>
                 </div>
             </div>
         </div>
+        
     </div>
 </body>
 </html>

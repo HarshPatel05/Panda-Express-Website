@@ -7,6 +7,20 @@ body {
     background-color: #f0f0f0;
 }
 
+.menu-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.menu-item-label {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    text-align: center;
+    color: #555;
+}
+
 /*********************************************************************************************************************************
 Left Panel / Order Calculator
 *********************************************************************************************************************************/
@@ -223,7 +237,7 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
     margin-bottom: 5%;
 }
 
-.size-selection button, .cancel button {
+.size-selection button, .cancel button, .add button {
     width: 100%;
     max-width: 150px;
     height: 6vh;
@@ -238,6 +252,10 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
 
 .cancel button {
     background-color: red;
+}
+
+.add button {
+    background-color: green;
 }
 
 /*********************************************************************************************************************************
@@ -255,4 +273,33 @@ Drink / Appetizer Columns
     flex-direction: column;
     align-items: center;
     gap: 1vw;
+}
+
+.size-button {
+    width: 100%;
+    max-width: 150px;
+    height: 6vh;
+    color: white;
+    background-color: grey;
+    text-align: center;
+    margin-bottom: 5%;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1vw;
+    transition: background-color 0.3s ease;
+}
+
+.size-button:hover {
+    background-color: darkgray;
+}
+
+.size-button:active {
+    background-color: green;
+}
+
+.no-items {
+    color: gray;
+    text-align: center;
+    font-style: italic;
+    margin: 10px 0;
 }
