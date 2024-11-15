@@ -58,6 +58,9 @@ app.get('/menuBoard', (req, res) => {
   res.render('menuBoard'); // Render the views/menuBoard.ejs file
 });
 
+app.get('/kiosk', (req, res) => {
+  res.render('kiosk'); // Render the views/kiosk.ejs file
+});
 
 
 

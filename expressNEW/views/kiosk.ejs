@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiosk</title>
+    <link rel="stylesheet" href="/css/stylesKiosk.css">
+    <script src="/js/scriptKiosk.js"></script>
+</head>
+<body>
+    <!-- Top Buttons (Dropdown) -->
+    <div class="top-buttons">
+        <div class="dropdown">
+            <button class="dropbtn">=</button>
+            <div class="dropdown-content">
+                <a href="#">Manager View</a>
+                <a href="/menuBoard">Menu Board</a>
+                <a href="/index">Register</a>
+                <a href="#">Log Out</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Kiosk Layout -->
+    <div class="kiosk-container">
+        <!-- Order Summary on the Left -->
+        <div id="orderSummary" class="order-panel">
+            <h2>Your Order</h2>
+            <div id="orderItems" class="order-items"></div>
+            <div class="total">
+                <span>Total: $<span id="totalAmount">0.00</span></span>
+            </div>
+            <button class="checkout-button" onclick="goToCheckout()">Checkout</button>
+        </div>
+
+        <!-- Main Kiosk Interface -->
+        <div id="kioskMainPage" class="kiosk-panel">
+            <h1>Welcome to the Kiosk</h1>
+            <div class="categories-grid">
+                <button class="category-button" onclick="openCategory('bowl')">
+                    <img src="/images/bowl.jpg" alt="Bowl">
+                    <span>Bowl</span>
+                </button>
+                <button class="category-button" onclick="openCategory('plate')">
+                    <img src="/images/plate.jpg" alt="Plate">
+                    <span>Plate</span>
+                </button>
+                <button class="category-button" onclick="openCategory('bigger plate')">
+                    <img src="/images/biggerplate.jpg" alt="Bigger Plate">
+                    <span>Bigger Plate</span>
+                </button>
+                <button class="category-button" onclick="openCategory('appetizers')">
+                    <img src="/images/appetizers.jpg" alt="Appetizers">
+                    <span>Appetizers</span>
+                </button>
+                <button class="category-button" onclick="openCategory('drinks')">
+                    <img src="/images/drinks.jpg" alt="Drinks">
+                    <span>Drinks</span>
+                </button>
+                <button class="category-button" onclick="openCategory('alacarte')">
+                    <img src="/images/alacarte.jpg" alt="A La Carte">
+                    <span>À La Carte</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
