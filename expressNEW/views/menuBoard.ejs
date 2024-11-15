@@ -31,7 +31,7 @@
                         <img src="../Panda Express Photos/BowlLogo.png" alt="Bowl-Logo" class="Bowl-logo">
                     </div>
                     <div class="text-container">
-                        <h3>Bowl</h3>
+                        <h3 id="bowlName"></h3>
                         <p>A single entree with a side of your choice</p>
                         <span class="price" id="bowlPrice"></span>
                     </div>
@@ -41,7 +41,7 @@
                         <img src="../Panda Express Photos/PlateLogo.png" alt="Plate-Logo" class="Plate-logo">
                     </div>
                     <div class="text-container">
-                        <h3>Plate</h3>
+                        <h3 id="plateName"></h3>
                         <p>Two entrees with a side of your choice</p>
                         <span class="price" id="platePrice"></span>
                     </div>
@@ -51,7 +51,7 @@
                         <img src="../Panda Express Photos/BiggerPlateLogo.png" alt="BiggerPlate-Logo" class="BiggerPlate-logo">
                     </div>
                     <div class="text-container">
-                        <h3>Bigger Plate</h3>
+                        <h3 id="biggerPlateName"></h3>
                         <p>Three entrees with a side of your choice</p>
                         <span class="price" id="biggerPlatePrice"></span>
                     </div>
@@ -65,27 +65,27 @@
                         <p>Your choice of entree or side</p>
                         <div class="price-group">
                             <span class="price-label">Entree (Sm):</span>
-                            <span class="price">$5.20</span>
+                            <span class="price" id="aLaCarteSmEntreeName"></span>
                         </div>
                         <div class="price-group">
                             <span class="price-label">Entree (Med):</span>
-                            <span class="price">$8.50</span>
+                            <span class="price" id="aLaCarteMedEntreeName"></span>
                         </div>
                         <div class="price-group">
                             <span class="price-label">Entree (Lg):</span>
-                            <span class="price">$11.20</span>
+                            <span class="price" id="aLaCarteLgEntreeName"></span>
                         </div>
                         <div class="price-group">
                             <span class="price-label">~~~~~~~~~~~</span>
-                            <span class="price"> </span>
+                            <span class="price"></span>
                         </div>
                         <div class="price-group">
                             <span class="price-label">Side (Med):</span>
-                            <span class="price">$4.40</span>
+                            <span class="price" id="aLaCarteMedSideName"></span>
                         </div>
                         <div class="price-group">
                             <span class="price-label">Side (Lg):</span>
-                            <span class="price">$5.40</span>
+                            <span class="price" id="aLaCarteLgSideName"></span>
                         </div>
                     </div>
                 </div>
@@ -191,16 +191,16 @@
                             <div class="text-container-sec3">
                                 <h3>Sides</h3>
                                 <div class="price-group">
-                                    <span class="price-label">Fried Rice</span>
+                                    <span class="price-label" id="friedRiceName"></span>
                                 </div>
                                 <div class="price-group">
-                                    <span class="price-label">Chow Mein</span>
+                                    <span class="price-label" id="chowMeinName"></span>
                                 </div>
                                 <div class="price-group">
-                                    <span class="price-label">Super Greens</span>
+                                    <span class="price-label" id="superGreensName"></span>
                                 </div>
                                 <div class="price-group">
-                                    <span class="price-label">White Rice</span>
+                                    <span class="price-label" id="whiteRiceName"></span>
                                 </div>
                             </div>
                         </div>
@@ -221,20 +221,20 @@
                             <div class="text-container-sec3">
                                 <h3>Appetizers</h3>
                                 <div class="price-group-sec3">
-                                    <span class="price-label-sec3">Chicken Egg Roll:</span>
-                                    <span class="price-sec3">$2.00</span>
+                                    <span class="price-label-sec3" id="chickenEggRollName"></span>
+                                    <span class="price-sec3" id="chickenEggRollPrice"></span>
                                 </div>
                                 <div class="price-group-sec3">
-                                    <span class="price-label-sec3">Veggie Spring Roll:</span>
-                                    <span class="price-sec3">$2.00</span>
+                                    <span class="price-label-sec3" id="veggieSpringRollName"></span>
+                                    <span class="price-sec3" id="veggieSpringRollPrice"></span>
                                 </div>
                                 <div class="price-group-sec3">
-                                    <span class="price-label-sec3">Cream Cheese Rangoon:</span>
-                                    <span class="price-sec3">$2.00</span>
+                                    <span class="price-label-sec3" id="creamCheeseRangoonName"></span>
+                                    <span class="price-sec3" id="creamCheeseRangoonPrice"></span>
                                 </div>
                                 <div class="price-group-sec3">
-                                    <span class="price-label-sec3">Apple Pie Roll:</span>
-                                    <span class="price-sec3">$2.00</span>
+                                    <span class="price-label-sec3" id="applePieRollName"></span>
+                                    <span class="price-sec3" id="applePieRollPrice"></span>
                                 </div>
                             </div>
                         </div>
@@ -257,24 +257,24 @@
                             <div class="text-container-sec3">
                                 <h3>Drinks</h3>
                                 <div class="price-group-sec3">
-                                    <span class="price-label-sec3">Fountain Drink (Sm):</span>
-                                    <span class="price-sec3">$2.10</span>
+                                    <span class="price-label-sec3" id="smallDrinkName"></span>
+                                    <span class="price-sec3" id="smallDrinkPrice"></span>
                                 </div>
                                 <div class="price-group-sec3">
-                                    <span class="price-label-sec3">Fountain Drink (Med):</span>
-                                    <span class="price-sec3">$2.30</span>
+                                    <span class="price-label-sec3" id="mediumDrinkName"></span>
+                                    <span class="price-sec3" id="mediumDrinkPrice"></span>
                                 </div>
                                 <div class="price-group-sec3">
-                                    <span class="price-label-sec3">Fountain Drink (Lg):</span>
-                                    <span class="price-sec3">$2.50</span>
+                                    <span class="price-label-sec3" id="largeDrinkName"></span>
+                                    <span class="price-sec3" id="largeDrinkPrice"></span>
                                 </div>
                                 <div class="price-group-sec3">
-                                    <span class="price-label-sec3">Aquafina:</span>
-                                    <span class="price-sec3">$2.30</span>
+                                    <span class="price-label-sec3" id="bottleWaterName"></span>
+                                    <span class="price-sec3" id="bottleWaterPrice"></span>
                                 </div>
                                 <div class="price-group-sec3">
-                                    <span class="price-label-sec3">Gatorade:</span>
-                                    <span class="price-sec3">$2.70</span>
+                                    <span class="price-label-sec3" id="gatoradeName"></span>
+                                    <span class="price-sec3" id="gatoradePrice"></span>
                                 </div>
                             </div>
                         </div>

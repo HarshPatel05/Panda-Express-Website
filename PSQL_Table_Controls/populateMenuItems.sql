@@ -138,10 +138,10 @@ VALUES
 (66,'water', 3.00, 'lg', 'Aquafina:'),
 
 -- Juice
-(67,'juice', 2.30, 'n/a', ''),
+(67,'juice', 2.30, 'n/a', 'Juice:'),
 
 -- Extra Drinks
-(68,'extraDrink', 2.40, 'n/a', ''), 
+(68,'gatorade', 2.70, 'n/a', 'Gatorade:'), 
 
 --containers
 
