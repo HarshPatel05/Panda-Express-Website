@@ -498,16 +498,65 @@ function getFullSizeName(abbreviation) {
     return sizeMap[abbreviation.toLowerCase()] || abbreviation; // Fallback to original if not found
 }
 
-function checkoutOrder() {
-    if (orderItems.length === 0) {
+// function checkoutOrder() {
+//     if (orderItems.length === 0) {
+//         alert('Your order is empty. Please add items before checking out.');
+//         return;
+//     }
+
+//     const menuIds = orderItems
+//         .flatMap(item => item.menuIds) // Flatten array of menuIds
+//         .join(', ');
+
+//     alert(`Order total is $${totalAmount.toFixed(2)}.\nMenu IDs: ${menuIds}`);
+//     clearOrder();
+// }
+
+function checkoutOrder()
+{
+    // Check if there are no items in the order
+    if (orderItems.length === 0)
+    {
         alert('Your order is empty. Please add items before checking out.');
-        return;
+        return; // Exit the function if order is empty
     }
 
-    const menuIds = orderItems
-        .flatMap(item => item.menuIds) // Flatten array of menuIds
-        .join(', ');
+    // Flatten the array of menuIds from each order item
+    const menuItemIDs = orderItems.flatMap(item => item.menuIds); // Flatten array of menuIds
 
-    alert(`Order total is $${totalAmount.toFixed(2)}.\nMenu IDs: ${menuIds}`);
-    clearOrder();
+    // Make the POST request to the server to update the order
+    fetch('/api/updateorders',
+    {
+        method: 'POST', // HTTP method for sending data
+        headers: { 'Content-Type': 'application/json' }, // Tell the server the data is in JSON format
+        body: JSON.stringify
+        ({
+            totalCost: totalAmount, // Send the total cost of the order (totalAmount is a global variable)
+            menuItemIDs: menuItemIDs, // Send the array of menu item IDs
+        })
+    })
+
+    .then(response =>
+    {
+        // If the response is not OK, throw an error to be caught in the catch block
+        if (!response.ok)
+        {
+            throw new Error('Failed to update order.');
+        }
+        return response.json(); // If the response is OK, parse the JSON response (which contains the server message from server.js)
+    })
+
+    .then(data =>
+    {
+        // Show a success message with the total cost and the server's response message
+        alert(`Order placed successfully!\nOrder total: $${totalAmount.toFixed(2)}\n${data.message}`);
+        clearOrder(); // Clear the order items after successful checkout
+    })
+
+    .catch(error =>
+    {
+        // Log and display an error message if something went wrong
+        console.error('Error:', error);
+        alert('An error occurred while placing your order. Please try again.');
+    });
 }
