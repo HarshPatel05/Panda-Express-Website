@@ -38,6 +38,8 @@ const pool = new Pool({
 });
 
 
+
+
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   ############################################################# RENDERING THE PAGES ############################################################   |   ####
@@ -64,6 +66,7 @@ app.get('/kiosk', (req, res) => {
 
 
 
+
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   #######################################################  SETTING UP API ENDPOINTS  ###########################################################   |   ####
@@ -71,7 +74,7 @@ app.get('/kiosk', (req, res) => {
 //####  \|/  ##############################################################################################################################################  \|/  ####
 
 
-// Render the employees page with data from the database
+// API Endpoint to get all the employees
 app.get('/employees', async (req, res) => 
   {
     try
@@ -88,36 +91,7 @@ app.get('/employees', async (req, res) =>
 );
 
 
-//endpoint to get x report 
-app.get('/api/xreport', async (req, res) =>
-  {
-    const date = req.body; // Expecting date in 'YYYY-MM-DD' format
-  
-    const client = await pool.connect();
-  
-    try
-    {
-      const result = await client.query(
-        'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum FROM orderhistory WHERE date >= $1 AND date < $2 GROUP BY hour ORDER BY hour ',
-        ['${date} 10:00', '${date} 22:00']
-      );
-  
-      res.json(result.rows);
-    }
-    catch (error)
-    {
-      console.error("Error fetching x report:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    } 
-    finally
-    {
-      client.release();
-    }
-  }
-);
-
-
-// API Endpoint to get all menu items
+// API Endpoint to get all the menu items
 app.get('/api/menuitems', async (req, res) => 
   {
     try 
@@ -133,7 +107,8 @@ app.get('/api/menuitems', async (req, res) =>
   }
 );
 
-// API request to get all the employees
+
+// API Endpoint to get the orderhistory
 app.get('/api/orderhistory', async (req, res) =>
   {
     try
@@ -148,6 +123,7 @@ app.get('/api/orderhistory', async (req, res) =>
     }
   }
 );
+
 
 // API request to update an order
 /**
@@ -327,6 +303,40 @@ app.post('/api/updateinventory', async (req, res) =>
     }
   }
 );
+
+
+
+
+//######################################################################  FEATURES ENDPOINTS  ########################################################################
+
+//endpoint to get x report 
+app.get('/api/xreport', async (req, res) =>
+  {
+    const date = req.body; // Expecting date in 'YYYY-MM-DD' format
+  
+    const client = await pool.connect();
+  
+    try
+    {
+      const result = await client.query(
+        'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum FROM orderhistory WHERE date >= $1 AND date < $2 GROUP BY hour ORDER BY hour ',
+        ['${date} 10:00', '${date} 22:00']
+      );
+  
+      res.json(result.rows);
+    }
+    catch (error)
+    {
+      console.error("Error fetching x report:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    } 
+    finally
+    {
+      client.release();
+    }
+  }
+);
+
 
 
 
