@@ -152,11 +152,14 @@ app.post('/api/updateorders', async (req, res) =>
     const { totalCost, menuItemIDs } = req.body;
 
     // Create a map to count occurrences of each menuItemID
-    const itemCountMap = menuItemIDs.reduce((acc, id) =>
-    {
-      acc[id] = (acc[id] || 0) + 1;
-      return acc;
-    }, {});
+    const itemCountMap = new Map();
+
+    menuItemIDs.forEach( 
+      id =>
+        { 
+          itemCountMap.set(id, (itemCountMap.get(id) || 0) + 1); 
+        } 
+    );
 
     const client = await pool.connect();
 
@@ -195,6 +198,110 @@ app.post('/api/updateorders', async (req, res) =>
       // Rollback transaction on error
       await client.query('ROLLBACK');
       res.status(500).json({ error: 'Failed to update order' });
+    }
+    finally
+    {
+      client.release();
+    }
+  }
+);
+
+
+// Endpoint to update inventory based on menu items
+/**
+  fetch('/api/updateinventory', 
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ menuItemIDs: [1, 2, 3] }) // Sending an example array of menuItemIDs
+    }
+  )
+  .then(response => response.json()) // Parse JSON response
+  .then(data => console.log(data))    // Log the response data
+  .catch(error => console.error('Error:', error)); // Handle any errors
+*/
+app.post('/api/updateinventory', async (req, res) => 
+  {
+    const { menuItemIDs } = req.body; // Get menuItemIDs from the request body
+    
+    if (!menuItemIDs || menuItemIDs.length === 0)
+    {
+      return res.status(400).json({ error: 'No menuItemIDs provided' });
+    }
+
+    const client = await pool.connect();
+
+    try
+    {
+      const ingredientCountMap = new Map();
+
+      // Loop through each menu item and accumulate ingredient usage
+      for (const id of menuItemIDs)
+      {
+        const result = await client.query(
+          'SELECT ingredient, quantity FROM menuitemingredients WHERE menuitemid = $1', 
+          [id]
+        );
+        
+        result.rows.forEach(row => {
+          const ingredient = row.ingredient;
+          const newQuantity = row.quantity;
+          const currentQuantity = ingredientCountMap.get(ingredient) || 0;
+          ingredientCountMap.set(ingredient, currentQuantity + newQuantity);
+        });
+      }
+
+      // Loop through each ingredient and update the inventory
+      for (const [ingredient, quantity] of ingredientCountMap.entries())
+      {
+        const quantityResult = await client.query(
+          'SELECT quantityavailable, unit FROM inventory WHERE ingredient = $1', 
+          [ingredient]
+        );
+
+        if (quantityResult.rows.length > 0)
+        {
+          const { quantityavailable, unit } = quantityResult.rows[0];
+          let quantityToAdd = 0;
+
+          if (quantityavailable === 0)
+          {
+            if (unit.toLowerCase() === 'unit')
+            {
+              quantityToAdd = 20;
+            }
+            else if (unit.toLowerCase() === 'lbs')
+            {
+              quantityToAdd = 5;
+            }
+
+            await client.query(
+              'UPDATE inventory SET quantityavailable = quantityavailable + $1 WHERE ingredient = $2', 
+              [quantityToAdd, ingredient]
+            );
+
+            await client.query(
+              'UPDATE menuitemingredients SET quantity = quantity - $1 WHERE ingredient = $2', 
+              [quantityToAdd, ingredient]
+            );
+          }
+
+          // Update inventory by reducing the quantity used
+          await client.query(
+            'UPDATE inventory SET quantityavailable = GREATEST(quantityavailable - $1, 0) WHERE ingredient = $2', 
+            [quantity, ingredient]
+          );
+        }
+      }
+
+      res.status(200).json({ message: 'Inventory updated successfully!' });
+    }
+    catch (error)
+    {
+      console.error('Error updating inventory:', error);
+      res.status(500).json({ error: 'Failed to update inventory' });
     }
     finally
     {
