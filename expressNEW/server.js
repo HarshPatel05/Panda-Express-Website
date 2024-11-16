@@ -82,7 +82,7 @@ app.get('/manager', (req, res) => {
 
 
 // API Endpoint to get all the employees
-app.get('/employees', async (req, res) => 
+app.get('/api/employees', async (req, res) => 
   {
     try
     {
@@ -116,7 +116,7 @@ app.get('/api/menuitems', async (req, res) =>
 
 
 // API Endpoint to get the orderhistory
-app.get('/api/orderhistory', async (req, res) =>
+app.get('/api/orderHistory', async (req, res) =>
   {
     try
     {
@@ -317,7 +317,7 @@ app.post('/api/updateinventory', async (req, res) =>
 //######################################################################  FEATURES ENDPOINTS  ########################################################################
 
 //endpoint to get x report 
-app.get('/api/xreport', async (req, res) =>
+app.get('/api/xReport', async (req, res) =>
   {
     const date = req.body; // Expecting date in 'YYYY-MM-DD' format
   
