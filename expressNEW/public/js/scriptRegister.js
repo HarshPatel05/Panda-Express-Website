@@ -498,20 +498,6 @@ function getFullSizeName(abbreviation) {
     return sizeMap[abbreviation.toLowerCase()] || abbreviation; // Fallback to original if not found
 }
 
-// function checkoutOrder() {
-//     if (orderItems.length === 0) {
-//         alert('Your order is empty. Please add items before checking out.');
-//         return;
-//     }
-
-//     const menuIds = orderItems
-//         .flatMap(item => item.menuIds) // Flatten array of menuIds
-//         .join(', ');
-
-//     alert(`Order total is $${totalAmount.toFixed(2)}.\nMenu IDs: ${menuIds}`);
-//     clearOrder();
-// }
-
 function checkoutOrder()
 {
     // Check if there are no items in the order
@@ -551,6 +537,8 @@ function checkoutOrder()
         // Show a success message with the total cost and the server's response message
         alert(`Order placed successfully!\nOrder total: $${totalAmount.toFixed(2)}\n${data.message}`);
         clearOrder(); // Clear the order items after successful checkout
+
+        updateInventory(menuItemIDs); // inventory update should only happen if the order update succeeds
     })
 
     .catch(error =>
@@ -558,5 +546,43 @@ function checkoutOrder()
         // Log and display an error message if something went wrong
         console.error('Error:', error);
         alert('An error occurred while placing your order. Please try again.');
+    });
+}
+
+
+function updateInventory(menuItemIDs)
+{
+    // Make the POST request to update the inventory
+    fetch('/api/updateinventory',
+    {
+        method: 'POST', // HTTP method for sending data
+        headers: { 'Content-Type': 'application/json' }, // Tell the server the data is in JSON format
+        body: JSON.stringify
+        ({
+            menuItemIDs: menuItemIDs // Send the array of menu item IDs for inventory update
+        })
+    })
+
+    .then(response =>
+    {
+        // If the response is not OK, throw an error to be caught in the catch block
+        if (!response.ok)
+        {
+            throw new Error('Failed to update inventory.');
+        }
+        return response.json(); // If the response is OK, parse the JSON response
+    })
+
+    .then(data =>
+    {
+        // Show a success message for inventory update
+        alert(`Inventory updated successfully!\n${data.message}`);
+    })
+
+    .catch(error =>
+    {
+        // Log and display an error message if something went wrong
+        console.error('Error:', error);
+        alert('An error occurred while updating inventory. Please try again.');
     });
 }
