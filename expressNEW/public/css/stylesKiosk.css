@@ -203,3 +203,81 @@ body {
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: adds a shadow for separation */
     z-index: 10; /* Ensure it stays on top */
 }
+
+
+.hidden {
+    display: none;
+}
+
+.kiosk-panel {
+    padding: 20px;
+    width: 100%;
+    height: calc(100vh - 120px); /* Adjust for top and bottom bars */
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.item-button {
+    background-color: white;
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.item-button img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.item-button span {
+    display: block;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.item-button:hover {
+    transform: scale(1.05);
+}
+
+.back-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #DB372E;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    display: block;
+    width: 150px;
+    text-align: center;
+}
+
+.feedback-popup {
+    position: fixed;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: fade-in-out 2s ease-in-out;
+}
+
+@keyframes fade-in-out {
+    0%, 100% { opacity: 0; }
+    20%, 80% { opacity: 1; }
+}
