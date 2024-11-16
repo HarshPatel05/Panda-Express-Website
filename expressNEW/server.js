@@ -56,16 +56,16 @@ app.get('/index', (req, res) => {
   res.render('index'); // Render the views/index.ejs file
 });
 
+app.get('/register', (req, res) => {
+  res.render('register'); // Render the views/register.ejs file
+});
+
 app.get('/menuBoard', (req, res) => {
   res.render('menuBoard'); // Render the views/menuBoard.ejs file
 });
 
 app.get('/kiosk', (req, res) => {
   res.render('kiosk'); // Render the views/kiosk.ejs file
-});
-
-app.get('/login', (req, res) => {
-  res.render('login'); // Render the views/login.ejs file
 });
 
 app.get('/manager', (req, res) => {
@@ -131,6 +131,30 @@ app.get('/api/orderHistory', async (req, res) =>
   }
 );
 
+
+// API Endpoint for login
+app.post('/api/login', async (req, res) =>
+  {
+    const {username, password} = req.body;
+    try
+    {
+      userQuery = "SELECT * FROM employees WHERE employeeid = " + username;
+      const result = await pool.query(userQuery);  
+
+      const user = result.rows[0];
+
+    if (user.password !== password) {
+        return res.status(401).json({ error: 'Invalid username or password' });
+    }
+    return res.json({ message: 'Login successful', user });
+    }
+    catch (err)
+    {
+      console.error('Error during login:', err.stack);
+      res.status(500).json({ error: 'Server Error' });
+    }
+  }
+);
 
 // API request to update an order
 /**
