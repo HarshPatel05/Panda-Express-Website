@@ -307,30 +307,18 @@ Section 1 Content Formatting
 
 
 
-
 /* ------------------------------
    Media Queries for Responsive Design
    ------------------------------ */
 
-/* Styles for 3:2 Aspect Ratio */
-@media (min-aspect-ratio: 3/2) {
+   @media (min-aspect-ratio: 2/1) {
     #section2 {
-        flex: 1.6555; /* Flex value for 3:2 */
-    }
-
-    .box-text {
-        text-align: center;
-        padding: 1%; /* Change the amount of padding around the entree names */
-        background-color: rgba(255, 255, 255, 0.7);
-        width: 100%;
-        box-sizing: border-box;
-        font-weight: bold;
-        font-size: 1.5em;
+        flex: 1.655;
     }
 }
 
 /* Styles for 4:3 Aspect Ratio */
-@media (min-aspect-ratio: 4/3) {
+@media (max-aspect-ratio: 3/2) {
 
     /* ------------------------------
            Header Formatting
