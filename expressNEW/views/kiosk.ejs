@@ -9,17 +9,14 @@
 </head>
 <body>
     <!-- Top Buttons (Dropdown) -->
-    <div class="top-buttons">
-        <div class="dropdown">
-            <button class="dropbtn">=</button>
-            <div class="dropdown-content">
-                <a href="#">Manager View</a>
-                <a href="/menuBoard">Menu Board</a>
-                <a href="/index">Register</a>
-                <a href="#">Log Out</a>
-            </div>
-        </div>
+    <div class="top-menu">
+        <a href="/index">
+            <img src="../Panda Express Photos/Panda Express Logo.png" alt="Home" class="Panda-Logo">
+        </a>
+        <h1 class="kiosk-title">Welcome to the Kiosk!!!</h1>
+        <button class="rewards-button">Rewards Member</button>
     </div>
+    
 
     <!-- Main Kiosk Layout -->
     <div class="kiosk-container">
@@ -31,36 +28,36 @@
                 <span>Total: $<span id="totalAmount">0.00</span></span>
             </div>
             <button class="checkout-button" onclick="goToCheckout()">Checkout</button>
-        </div>
+        </div>        
 
         <!-- Main Kiosk Interface -->
         <div id="kioskMainPage" class="kiosk-panel">
-            <h1>Welcome to the Kiosk</h1>
             <div class="categories-grid">
-                <button class="category-button" onclick="openCategory('bowl')">
-                    <img src="/images/bowl.jpg" alt="Bowl">
-                    <span>Bowl</span>
-                </button>
-                <button class="category-button" onclick="openCategory('plate')">
-                    <img src="/images/plate.jpg" alt="Plate">
-                    <span>Plate</span>
-                </button>
-                <button class="category-button" onclick="openCategory('bigger plate')">
-                    <img src="/images/biggerplate.jpg" alt="Bigger Plate">
-                    <span>Bigger Plate</span>
-                </button>
-                <button class="category-button" onclick="openCategory('appetizers')">
-                    <img src="/images/appetizers.jpg" alt="Appetizers">
-                    <span>Appetizers</span>
-                </button>
-                <button class="category-button" onclick="openCategory('drinks')">
-                    <img src="/images/drinks.jpg" alt="Drinks">
-                    <span>Drinks</span>
-                </button>
-                <button class="category-button" onclick="openCategory('alacarte')">
-                    <img src="/images/alacarte.jpg" alt="A La Carte">
-                    <span>À La Carte</span>
-                </button>
+                <div class="category-button" onclick="openCategory('bowl')">
+                    <img src="/Panda Express Photos/Bowl.png" alt="Bowl">
+                    <span>Bowl<br>2 Side + 1 Entree<br>$8.30+</span>
+                </div>
+                <div class="category-button" onclick="openCategory('plate')">
+                    <img src="/Panda Express Photos/Plate.png" alt="Plate">
+                    <span>Plate<br>2 Side + 2 Entree<br>$9.80+</span>
+                </div>
+                <div class="category-button" onclick="openCategory('bigger plate')">
+                    <img src="/Panda Express Photos/BgPlate.png" alt="Bigger Plate">
+                    <span>Bigger Plate<br>2 Side + 3 Entree<br>$11.30+</span>
+                </div>
+                <div class="category-button" onclick="openCategory('bigger plate')">
+                    <img src="/Panda Express Photos/ALaCarte.png" alt="Bigger Plate">
+                    <span>A La Carte<br>$11.30+</span>
+                </div>
+                <div class="category-button" onclick="openCategory('bigger plate')">
+                    <img src="/Panda Express Photos/Apple Pie Roll.png" alt="Bigger Plate">
+                    <span>Appetizers<br>$11.30+</span>
+                </div>
+                <div class="category-button" onclick="openCategory('bigger plate')">
+                    <img src="/Panda Express Photos/Pepsi.png" alt="Bigger Plate">
+                    <span>Drinks<br>$11.30+</span>
+                </div>
+                <!-- Add other categories similarly -->
             </div>
         </div>
     </div>
