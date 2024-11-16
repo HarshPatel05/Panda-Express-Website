@@ -14,10 +14,9 @@ body {
     background-color: #DB372E;
     padding: 10px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    box-sizing: border-box;
+    align-items: center; /* Vertically center items */
+    justify-content: space-between; /* Spread items evenly across the bar */
+    position: relative;
 }
 
 .Panda-Logo {
@@ -25,13 +24,15 @@ body {
 }
 
 .kiosk-title {
-    font-size: clamp(16px, 2vw, 24px); /* min: 16px, preferred: 2vw, max: 24px */
     color: white;
+    font-size: clamp(16px, 2vw, 24px); /* Responsive font size */
     font-weight: bold;
     margin: 0;
     text-align: center;
+    position: absolute; /* Center the title relative to the top bar */
+    left: 50%; /* Position at the middle of the bar */
+    transform: translateX(-50%); /* Adjust to center properly */
 }
-
 
 .rewards-button {
     background-color: #fff;
@@ -42,14 +43,14 @@ body {
     cursor: pointer;
     border-radius: 4px;
     font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .rewards-button:hover {
     background-color: #DB372E;
     color: white;
-    box-shadow: 0 0 0 3px white; /* Adds a white outline on hover */
 }
+
 
 /* Dropdown Button */
 .dropbtn {
@@ -99,8 +100,9 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
-    box-sizing: border-box;
+    height: calc(100vh - 145px); /* Adjusted height to subtract top-menu (50px) + bottom-bar (50px) + padding */
+    box-sizing: border-box; /* Ensure padding doesn't add extra height */
+    overflow-y: auto; /* Add scrolling for content that exceeds the height */
 }
 
 .order-panel h2 {
@@ -185,4 +187,18 @@ body {
 .category-button:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-bar {
+    background-color: #DB372E;
+    width: 100%;
+    height: 50px; /* Adjust as needed */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center any content added later */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: adds a shadow for separation */
+    z-index: 10; /* Ensure it stays on top */
 }
