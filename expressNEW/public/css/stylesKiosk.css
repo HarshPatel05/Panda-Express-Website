@@ -39,16 +39,17 @@ body {
     color: #DB372E;
     border: 2px solid #DB372E;
     padding: 8px 16px;
-    font-size: clamp(16px, 1.5vw, 20px);
+    font-size: clamp(16px, 2vw, 20px);
     cursor: pointer;
     border-radius: 4px;
     font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .rewards-button:hover {
     background-color: #DB372E;
     color: white;
+    box-shadow: 0 0 0 3px white; /* Adds a white outline on hover */
 }
 
 
