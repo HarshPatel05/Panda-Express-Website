@@ -10,7 +10,7 @@ async function populateTable(APIEndpoint, tableID) {
     const response = await fetch(APIEndpoint);
     const data = await response.json();
     query = '#' + tableID; 
-    const tableBody = document.querySelectorAll(query);
+    const tableBody = document.querySelector(query);
 
     tableBody.innerHTML = "";
 
