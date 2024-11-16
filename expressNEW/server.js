@@ -64,6 +64,13 @@ app.get('/kiosk', (req, res) => {
   res.render('kiosk'); // Render the views/kiosk.ejs file
 });
 
+app.get('/login', (req, res) => {
+  res.render('login'); // Render the views/login.ejs file
+});
+
+app.get('/manager', (req, res) => {
+  res.render('manager'); // Render the views/manager.ejs file
+});
 
 
 
