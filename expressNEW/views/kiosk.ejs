@@ -13,10 +13,9 @@
         <a href="/index">
             <img src="../Panda Express Photos/Panda Express Logo.png" alt="Home" class="Panda-Logo">
         </a>
-        <h1 class="kiosk-title">Welcome to the Panda Express!!!</h1>
+        <h1 class="kiosk-title">Welcome to Panda Express!</h1>
         <button class="rewards-button">Rewards Member</button>
     </div>
-    
 
     <!-- Main Kiosk Layout -->
     <div class="kiosk-container">
@@ -27,24 +26,23 @@
             <div class="total">
                 <span>Total: $<span id="totalAmount">0.00</span></span>
             </div>
-            <button class="checkout-button" onclick="goToCheckout()">Checkout</button>
-        </div>        
+            <button class="checkout-button" onclick="checkoutOrder()">Checkout</button>
+        </div>
 
         <!-- Main Kiosk Interface -->
-        <!-- Main Page Panel -->
         <div id="mainPanel" class="kiosk-panel">
             <div class="categories-grid">
                 <div class="category-button" onclick="showPanel('bowlPanel')">
                     <img src="/Panda Express Photos/Bowl.png" alt="Bowl">
-                    <span>Bowl<br>2 Side + 1 Entree<br>$8.30+</span>
+                    <span>Bowl<br>2 Sides + 1 Entree<br>$8.30+</span>
                 </div>
                 <div class="category-button" onclick="showPanel('platePanel')">
                     <img src="/Panda Express Photos/Plate.png" alt="Plate">
-                    <span>Plate<br>2 Side + 2 Entree<br>$9.80+</span>
+                    <span>Plate<br>2 Sides + 2 Entrees<br>$9.80+</span>
                 </div>
                 <div class="category-button" onclick="showPanel('biggerPlatePanel')">
                     <img src="/Panda Express Photos/BgPlate.png" alt="Bigger Plate">
-                    <span>Bigger Plate<br>2 Side + 3 Entree<br>$11.30+</span>
+                    <span>Bigger Plate<br>2 Sides + 3 Entrees<br>$11.30+</span>
                 </div>
                 <div class="category-button" onclick="showPanel('aLaCartePanel')">
                     <img src="/Panda Express Photos/ALaCarte.png" alt="A La Carte">
@@ -60,51 +58,68 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Hidden Panels -->
         <div id="bowlPanel" class="kiosk-panel hidden">
             <h1>Choose Your Entree and Sides</h1>
-            <div id="bowl-items" class="items-grid"></div>
+            <!-- Placeholder for entree buttons -->
+            <div id="entree-buttons" class="items-grid">
+                <!-- Entree buttons will be added here dynamically -->
+            </div>
+            <!-- Placeholder for side buttons -->
+            <div id="side-buttons" class="items-grid">
+                <!-- Side buttons will be added here dynamically -->
+            </div>
             <button class="back-button" onclick="showPanel('mainPanel')">Back</button>
-        </div>
-        
+        </div>        
+
         <div id="platePanel" class="kiosk-panel hidden">
-            <h1>Choose Your Entrees and Sides</h1>
-            <div id="plate-items" class="items-grid"></div>
+            <h1>Choose Your Entree and Sides</h1>
+            <!-- Placeholder for entree buttons -->
+            <div id="entree-buttons" class="items-grid">
+                <!-- Entree buttons will be added here dynamically -->
+            </div>
+            <!-- Placeholder for side buttons -->
+            <div id="side-buttons" class="items-grid">
+                <!-- Side buttons will be added here dynamically -->
+            </div>
             <button class="back-button" onclick="showPanel('mainPanel')">Back</button>
         </div>
-        
+
         <div id="biggerPlatePanel" class="kiosk-panel hidden">
-            <h1>Choose Your Entrees and Sides</h1>
-            <div id="bigger-plate-items" class="items-grid"></div>
+            <h1>Choose Your Entree and Sides</h1>
+            <!-- Placeholder for entree buttons -->
+            <div id="entree-buttons" class="items-grid">
+                <!-- Entree buttons will be added here dynamically -->
+            </div>
+            <!-- Placeholder for side buttons -->
+            <div id="side-buttons" class="items-grid">
+                <!-- Side buttons will be added here dynamically -->
+            </div>
             <button class="back-button" onclick="showPanel('mainPanel')">Back</button>
         </div>
-        
+
         <div id="aLaCartePanel" class="kiosk-panel hidden">
             <h1>Choose A La Carte Items</h1>
             <div id="a-la-carte-items" class="items-grid"></div>
             <button class="back-button" onclick="showPanel('mainPanel')">Back</button>
         </div>
-        
+
         <div id="appetizersPanel" class="kiosk-panel hidden">
             <h1>Choose Your Appetizers</h1>
-            <div id="appetizers-items" class="items-grid"></div>
+            <div id="appetizer-buttons" class="items-grid"></div>
             <button class="back-button" onclick="showPanel('mainPanel')">Back</button>
         </div>
-        
+
         <div id="drinksPanel" class="kiosk-panel hidden">
-            <h1>Choose Your Drink</h1>
-            <div id="drinks-items" class="items-grid"></div>
+            <h1>Choose Your Drinks</h1>
+            <div id="drink-buttons" class="items-grid"></div>
             <button class="back-button" onclick="showPanel('mainPanel')">Back</button>
         </div>
-        
-
-
     </div>
-    
+
     <div id="bottomBar" class="bottom-bar">
-        <!-- Future content can go here -->
+        <!-- Future content -->
     </div>
 </body>
 </html>
-
