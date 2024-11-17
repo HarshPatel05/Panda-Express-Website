@@ -25,8 +25,7 @@
             <div class="order-list" id="orderList"></div>
             <div class="total-section">
                 <div class="total">Total: $<span id="totalAmount">0.00</span></div>
-                <button class="checkout-btn">CHECK OUT</button>
-                <!-- <button class="checkout-btn" onclick="checkoutOrder()">CHECK OUT</button> -->
+                <button class="checkout-btn" onclick="checkoutOrder()">CHECK OUT</button>
             </div>
         </div>
         
@@ -35,7 +34,7 @@
                 <div class="button" onclick="selectItemType('bowl', 8.30, 1, 2)">
                     <img src="/Panda Express Photos/Bowl.png" alt="Bowl">
                     <div class="content">
-                        <h3>BOWL</h3>
+                        <h3>Bowl</h3>
                         <p>1 Side & 1 Entree</p>
                         <p class="price">$8.30+</p>
                     </div>
@@ -43,7 +42,7 @@
                 <div class="button" onclick="selectItemType('plate', 9.80, 2, 2)">
                     <img src="/Panda Express Photos/Plate.png" alt="Plate">
                     <div class="content">
-                        <h3>PLATE</h3>
+                        <h3>Plate</h3>
                         <p>1 Side & 2 Entrees</p>
                         <p class="price">$9.80+</p>
                     </div>
@@ -51,7 +50,7 @@
                 <div class="button" onclick="selectItemType('biggerPlate', 11.30, 3, 2)">
                     <img src="/Panda Express Photos/BgPlate.png" alt="Bigger Plate">
                     <div class="content">
-                        <h3>BIGGER PLATE</h3>
+                        <h3>Bigger Plate</h3>
                         <p>1 Side & 3 Entrees</p>
                         <p class="price">$11.30+</p>
                     </div>
@@ -103,64 +102,105 @@
 
         <div id="drinksPanel" class="hidden-panel">
             <div class="cancel">
-                <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
+                <button onclick="closePanel()">Cancel Item</button>
             </div>
             <h3>Drinks</h3>
-            <div class="drink-columns" id="drink-buttons"></div>
-        </div>
-        
-        <div id="appetizersPanel" class="hidden-panel">
-            <div class="cancel">
-                <button onclick="cancelCurrentCompositeItem()">Cancel</button>
+            <div class="drink-columns" id="drink-buttons">
+                <!-- Hardcoded drink buttons -->
+                <button class="menu-item-button" onclick="selectDrink('Dr Pepper')">
+                    <img src="/Panda Express Photos/Dr Pepper.png" class="button-image" alt="Dr Pepper">
+                    <div class="button-text">Dr Pepper</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Sweet Tea')">
+                    <img src="/Panda Express Photos/Sweet Tea.png" class="button-image" alt="Sweet Tea">
+                    <div class="button-text">Sweet Tea</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Pepsi')">
+                    <img src="/Panda Express Photos/Pepsi.png" class="button-image" alt="Pepsi">
+                    <div class="button-text">Pepsi</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Diet Pepsi')">
+                    <img src="/Panda Express Photos/Diet Pepsi.png" class="button-image" alt="Diet Pepsi">
+                    <div class="button-text">Diet Pepsi</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Mountain Dew')">
+                    <img src="/Panda Express Photos/Mountain Dew.png" class="button-image" alt="Mountain Dew">
+                    <div class="button-text">Mountain Dew</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Brisk Raspberry Tea')">
+                    <img src="/Panda Express Photos/Brisk Raspberry Tea.png" class="button-image" alt="Brisk Raspberry Tea">
+                    <div class="button-text">Brisk Raspberry Tea</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Sierra Mist')">
+                    <img src="/Panda Express Photos/Sierra Mist.png" class="button-image" alt="Sierra Mist">
+                    <div class="button-text">Sierra Mist</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Tropicana Lemonade')">
+                    <img src="/Panda Express Photos/Tropicana Lemonade.png" class="button-image" alt="Tropicana Lemonade">
+                    <div class="button-text">Tropicana Lemonade</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Aquafina')">
+                    <img src="/Panda Express Photos/Aquafina.png" class="button-image" alt="Aquafina">
+                    <div class="button-text">Aquafina</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Gatorade Lemon Lime')">
+                    <img src="/Panda Express Photos/Gatorade Lemon Lime.png" class="button-image" alt="Gatorade Lemon Lime">
+                    <div class="button-text">Gatorade Lemon Lime</div>
+                </button>
             </div>
-            <h3>Appetizers</h3>
-            <div class="appetizer-columns" id="appetizer-buttons"></div>
         </div>
 
+        <div id="drinkModal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeDrinkModal()">✖</button>
+                <img id="drinkImage" src="" alt="Drink" class="modal-drink-image">
+                <h3 id="drinkName"></h3>
+                <div id="sizeSelection" class="size-selection">
+                    <button id="smallSize" class="drink-size-button" onclick="selectDrinkSize('sm')">Small<br>$2.10</button>
+                    <button id="mediumSize" class="drink-size-button" onclick="selectDrinkSize('md')">Medium<br>$2.30</button>
+                    <button id="largeSize" class="drink-size-button" onclick="selectDrinkSize('lg')">Large<br>$2.50</button>
+                </div>                
+                <div class="quantity-selection">
+                    <button onclick="decreaseQuantity()">-</button>
+                    <span id="quantity">1</span>
+                    <button onclick="increaseQuantity()">+</button>
+                </div>
+                <button class="add-to-order" onclick="addDrinkToOrderFromModal()">ADD TO ORDER</button>
+            </div>
+        </div>        
+        
         <div id="alacartePanel" class="hidden-panel">
             <div class="cancel">
                 <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
             </div>
-            <div class="add">
-                <button onclick="finalizeAlaCarteItem()">Add to Order</button>
+            <div class="panel-content">
+                <div class="entrees-section">
+                    <h3 class="section-header">Entrees</h3>
+                    <div id="ALaCarte-entrees" class="entrees-grid"></div>
+                </div>
+                <div class="sides-section">
+                    <h3 class="section-header">Sides</h3>
+                    <div id="ALaCarte-sides" class="sides-grid"></div>
+                </div>
             </div>
-            <div id="currentAlaCartePreview" class="current-item-preview"></div>
-            <div class="size-selection">
-                <button id="size-Small" class="size-button" onclick="setSize('Small')">Small</button>
-                <button id="size-Medium" class="size-button" onclick="setSize('Medium')">Medium</button>
-                <button id="size-Large" class="size-button" onclick="setSize('Large')">Large</button>
-            </div>
-            <div id="sizePanels">
-                <div id="size-Small-panel" class="hidden-panel" aria-hidden="true">
-                    <div class="entrees-section">
-                        <h3 class="section-header">Entrees</h3>
-                        <div id="small-entree-buttons" class="entrees-grid"></div>
-                    </div>
-                    <div class="sides-section">
-                        <h3 class="section-header">Sides</h3>
-                        <div id="small-side-buttons" class="sides-grid"></div>
-                    </div>
+        </div>
+
+        <div id="alaCarteModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAlaCarteModal()">&times;</span>
+                <img id="alaCarteImage" src="" alt="Selected Item" class="modal-image">
+                <h3 id="alaCarteItemName">Item Name</h3>
+                <div id="sizeSelection">
+                    <button id="smSize" class="size-button" onclick="selectAlaCarteSize('sm')">Small</button>
+                    <button id="mdSize" class="size-button" onclick="selectAlaCarteSize('md')">Medium</button>
+                    <button id="lgSize" class="size-button" onclick="selectAlaCarteSize('lg')">Large</button>
+                </div>                
+                <div class="quantity-selector">
+                    <button onclick="decreaseAlaCarteQuantity()">-</button>
+                    <span id="alaCarteQuantity">1</span>
+                    <button onclick="increaseAlaCarteQuantity()">+</button>
                 </div>
-                <div id="size-Medium-panel" class="hidden-panel" aria-hidden="true">
-                    <div class="entrees-section">
-                        <h3 class="section-header">Entrees</h3>
-                        <div id="medium-entree-buttons" class="entrees-grid"></div>
-                    </div>
-                    <div class="sides-section">
-                        <h3 class="section-header">Sides</h3>
-                        <div id="medium-side-buttons" class="sides-grid"></div>
-                    </div>
-                </div>
-                <div id="size-Large-panel" class="hidden-panel" aria-hidden="true">
-                    <div class="entrees-section">
-                        <h3 class="section-header">Entrees</h3>
-                        <div id="large-entree-buttons" class="entrees-grid"></div>
-                    </div>
-                    <div class="sides-section">
-                        <h3 class="section-header">Sides</h3>
-                        <div id="large-side-buttons" class="sides-grid"></div>
-                    </div>
-                </div>
+                <button onclick="addAlaCarteToOrder()">Add to Order</button>
             </div>
         </div>
         

@@ -327,3 +327,125 @@ body {
     align-items: start; /* Align the buttons to the top of the grid cell */
     padding: 20px; /* Add some padding around the grid */
 }
+
+
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-drink-image {
+    width: 100px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.size-selection {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.drink-size-button {
+    background-color: white; /* Default background */
+    color: black; /* Default text color */
+    border: 1px solid #ccc; /* Optional border */
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.drink-size-button.selected {
+    background-color: green !important; /* Force green background */
+    color: white !important; /* Force white text */
+    border-color: green;
+}
+
+
+
+.quantity-selection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.quantity-selection button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.quantity-selection button:hover {
+    background-color: #ddd;
+}
+
+.add-to-order {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.add-to-order:hover {
+    background-color: #c9302c;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#alaCarteModal img {
+    max-width: 100%; /* Ensure the image doesn't exceed the modal width */
+    max-height: 70vh; /* Ensure the image doesn't overflow the screen vertically */
+    margin: 0; /* Reset margins */
+    display: block; /* Ensure it behaves as a block element */
+    object-fit: contain; /* Scale the image properly to fit within bounds */
+    padding: 10px; /* Add some padding for better spacing */
+    align-self: center; /* Ensure the image aligns with the center of the modal */
+}
+
+
+#alaCarteModal img {
+    max-width: 100%; /* Ensure the image doesn't exceed the modal width */
+    max-height: 70vh; /* Ensure the image doesn't overflow the screen vertically */
+    margin: 0; /* Reset margins */
+    display: block; /* Ensure it behaves as a block element */
+    object-fit: contain; /* Scale the image properly to fit within bounds */
+    padding: 10px; /* Add some padding for better spacing */
+    align-self: center; /* Ensure the image aligns with the center of the modal */
+    transform: translateX(-10px); /* Move the image slightly to the left */
+}
