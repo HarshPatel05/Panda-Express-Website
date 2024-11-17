@@ -153,6 +153,22 @@ app.get('/api/employees', async (req, res) =>
 );
 
 
+// API Endpoint to get the inventory
+app.get('/api/inventory', async (req, res) => 
+  {
+    try
+    {
+      const result = await pool.query('SELECT * FROM inventory;');
+      res.json(result.rows);
+    }
+    catch (err)
+    {
+      console.error('Error fetching iventory:', err.stack);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
 // API Endpoint to get all the menu items
 app.get('/api/menuitems', async (req, res) => 
   {
