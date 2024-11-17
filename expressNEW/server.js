@@ -153,6 +153,22 @@ app.get('/api/employees', async (req, res) =>
 );
 
 
+// API Endpoint to get the inventory
+app.get('/api/inventory', async (req, res) => 
+  {
+    try
+    {
+      const result = await pool.query('SELECT * FROM inventory;');
+      res.json(result.rows);
+    }
+    catch (err)
+    {
+      console.error('Error fetching iventory:', err.stack);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
 // API Endpoint to get all the menu items
 app.get('/api/menuitems', async (req, res) => 
   {
@@ -186,6 +202,20 @@ app.get('/api/orderHistory', async (req, res) =>
   }
 );
 
+// API Endpoint to get restock report 
+app.get('/api/restockReport', async (req, res) => {
+  try {
+    const query = `SELECT ingredient, quantity, minimumquantity
+                   FROM inventory
+                   WHERE quantity < minimumquantity
+                   ORDER BY quantity DESC;`;
+    const result = await pool.query(query);  
+    res.json(result.rows); 
+  } catch (err) {
+    console.error('Error fetching restock report:', err.stack);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
 
 // API Endpoint for login
 app.post('/api/login', async (req, res) =>
@@ -210,6 +240,71 @@ app.post('/api/login', async (req, res) =>
     }
   }
 );
+
+// API Endpoint to get sales report
+app.get('/api/salesReport', async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    return res.status(400).json({ error: 'Start date and end date are required.' });
+  }
+
+  try {
+    const startOrderQuery = `SELECT * FROM orderhistory WHERE date::date = $1::date ORDER BY date ASC LIMIT 1`;
+    const startResult = await pool.query(startOrderQuery, [startDate]);
+
+    const endOrderQuery = `SELECT * FROM orderhistory WHERE date::date = $1::date ORDER BY date DESC LIMIT 1`;
+    const endResult = await pool.query(endOrderQuery, [endDate]);
+
+    if (startResult.rowCount === 0 || endResult.rowCount === 0) {
+      return res.status(404).json({ error: 'No results found for the given dates.' });
+    }
+
+    const startOrderId = startResult.rows[0].orderid;
+    const endOrderId = endResult.rows[0].orderid;
+
+    const countQuery = 'SELECT COUNT(*) FROM menuitems';
+    const countResult = await pool.query(countQuery);
+    const numberOfMenuItems = countResult.rows[0].count;
+
+    const reportData = [];
+
+    for (let i = 1; i <= numberOfMenuItems; i++) {
+      const menuQuery = 'SELECT * FROM menuitems WHERE menuitemid = $1';
+      const menuResult = await pool.query(menuQuery, [i]);
+
+      if (menuResult.rowCount === 0) {
+        continue; 
+      }
+
+      const { menuitem: item, price, size } = menuResult.rows[0];
+
+      const orderQuery = `
+        SELECT SUM(quantity) 
+        FROM orderitems 
+        WHERE menuitemid = $1 AND orderid >= $2 AND orderid <= $3
+      `;
+      const orderResult = await pool.query(orderQuery, [i, startOrderId, endOrderId]);
+
+      const unitsSold = orderResult.rows[0].sum || 0; 
+      const totalSales = price * unitsSold;
+
+      reportData.push({
+        menuitemid: i,
+        item,
+        size,
+        totalSales,
+        unitsSold
+      });
+    }
+
+    res.json(reportData);
+
+  } catch (err) {
+    console.error('Error generating sales report:', err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
 
 // API request to update an order
 /**
