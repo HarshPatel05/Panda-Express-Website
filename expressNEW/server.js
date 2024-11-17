@@ -191,7 +191,7 @@ app.get('/api/orderHistory', async (req, res) =>
   {
     try
     {
-      const result = await pool.query('SELECT * FROM orderhistory;');  
+      const result = await pool.query('SELECT * FROM orderhistory ORDER BY orderid DESC;');  
       res.json(result.rows); 
     }
     catch (err)
@@ -478,10 +478,6 @@ app.post('/api/updateinventory', async (req, res) =>
       console.error('Error updating inventory:', error);
       res.status(500).json({ error: 'Failed to update inventory' });
     }
-    finally
-    {
-      client.release();
-    }
   }
 );
 
@@ -492,32 +488,41 @@ app.post('/api/updateinventory', async (req, res) =>
 
 
 //endpoint to get x report 
-app.get('/api/xReport', async (req, res) =>
-  {
-    const date = req.body; // Expecting date in 'YYYY-MM-DD' format
-  
-    const client = await pool.connect();
-  
-    try
-    {
-      const result = await client.query(
-        'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum FROM orderhistory WHERE date >= $1 AND date < $2 GROUP BY hour ORDER BY hour ',
-        ['${date} 10:00', '${date} 22:00']
-      );
-  
-      res.json(result.rows);
-    }
-    catch (error)
-    {
-      console.error("Error fetching x report:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    } 
-    finally
-    {
-      client.release();
-    }
+app.get('/api/xReport', async (req, res) => {
+  const { date } = req.query; // Expecting date in 'YYYY-MM-DD' 
+
+  if (!date) {
+    return res.status(400).json({ error: "Date is required" });
   }
-);
+
+  const client = await pool.connect();
+
+  try {
+    const startDate = `${date} 10:00:00`;
+    const endDate = `${date} 22:00:00`;
+
+    const result = await client.query(
+      'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum ' +
+      'FROM orderhistory ' +
+      'WHERE date >= $1 AND date < $2 ' +
+      'GROUP BY hour ' +
+      'ORDER BY hour',
+      [startDate, endDate]
+    );
+
+    const totalSum = result.rows.reduce((acc, row) => acc + (row.total_sum || 0), 0);
+
+    result.rows.push({
+      hour: 'Total',
+      total_sum: totalSum
+    });
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching x report:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  } 
+});
 
 
 /**
