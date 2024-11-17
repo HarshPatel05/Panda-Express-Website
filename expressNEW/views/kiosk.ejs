@@ -3,68 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiosk</title>
+    <title>Panda Express Register</title>
     <link rel="stylesheet" href="/css/stylesKiosk.css">
     <script src="/js/scriptKiosk.js"></script>
 </head>
 <body>
-    <!-- Top Buttons (Dropdown) -->
-    <div class="top-menu">
+
+    <div class="top-bar">
         <a href="/index">
-            <img src="../Panda Express Photos/Panda Express Logo.png" alt="Home" class="Panda-Logo">
+            <img src="../Panda Express Photos/Panda Express Logo.png" alt="Logo" class="logo">
         </a>
-        <h1 class="kiosk-title">Welcome to the Panda Express!!!</h1>
-        <button class="rewards-button">Rewards Member</button>
+        <h1 class="title">Panda Express Kiosk</h1>
+        <button class="rewards-button" onclick="redirectToRewards()">Rewards Member</button>
     </div>
-    
 
-    <!-- Main Kiosk Layout -->
-    <div class="kiosk-container">
-        <!-- Order Summary on the Left -->
-        <div id="orderSummary" class="order-panel">
-            <h2>Your Order</h2>
-            <div id="orderItems" class="order-items"></div>
-            <div class="total">
-                <span>Total: $<span id="totalAmount">0.00</span></span>
-            </div>
-            <button class="checkout-button" onclick="goToCheckout()">Checkout</button>
-        </div>        
-
-        <!-- Main Kiosk Interface -->
-        <div id="kioskMainPage" class="kiosk-panel">
-            <div class="categories-grid">
-                <div class="category-button" onclick="openCategory('bowl')">
-                    <img src="/Panda Express Photos/Bowl.png" alt="Bowl">
-                    <span>Bowl<br>2 Side + 1 Entree<br>$8.30+</span>
-                </div>
-                <div class="category-button" onclick="openCategory('plate')">
-                    <img src="/Panda Express Photos/Plate.png" alt="Plate">
-                    <span>Plate<br>2 Side + 2 Entree<br>$9.80+</span>
-                </div>
-                <div class="category-button" onclick="openCategory('bigger plate')">
-                    <img src="/Panda Express Photos/BgPlate.png" alt="Bigger Plate">
-                    <span>Bigger Plate<br>2 Side + 3 Entree<br>$11.30+</span>
-                </div>
-                <div class="category-button" onclick="openCategory('bigger plate')">
-                    <img src="/Panda Express Photos/ALaCarte.png" alt="Bigger Plate">
-                    <span>A La Carte<br>$11.30+</span>
-                </div>
-                <div class="category-button" onclick="openCategory('bigger plate')">
-                    <img src="/Panda Express Photos/Apple Pie Roll.png" alt="Bigger Plate">
-                    <span>Appetizers<br>$11.30+</span>
-                </div>
-                <div class="category-button" onclick="openCategory('bigger plate')">
-                    <img src="/Panda Express Photos/Pepsi.png" alt="Bigger Plate">
-                    <span>Drinks<br>$11.30+</span>
-                </div>
-                <!-- Add other categories similarly -->
+    <div class="main-content">
+        <!-- Order Calculator on the Left Panel -->
+        <div class="left-panel">
+            <div class="cancel-order" onclick="clearOrder()">CANCEL ORDER</div>
+            <div id="currentItemPreview" class="current-item-preview"></div>
+            <div class="order-list" id="orderList"></div>
+            <div class="total-section">
+                <div class="total">Total: $<span id="totalAmount">0.00</span></div>
+                <button class="checkout-btn" onclick="checkoutOrder()">CHECK OUT</button>
             </div>
         </div>
-    </div>
-    
-    <div id="bottomBar" class="bottom-bar">
-        <!-- Future content can go here -->
+        
+        <div class="grid-container">
+            <div id="main-buttons" class="grid-buttons">
+                <div class="button" onclick="selectItemType('bowl', 8.30, 1, 2)">
+                    <img src="/Panda Express Photos/Bowl.png" alt="Bowl">
+                    <div class="content">
+                        <h3>Bowl</h3>
+                        <p>1 Side & 1 Entree</p>
+                        <p class="price">$8.30+</p>
+                    </div>
+                </div>
+                <div class="button" onclick="selectItemType('plate', 9.80, 2, 2)">
+                    <img src="/Panda Express Photos/Plate.png" alt="Plate">
+                    <div class="content">
+                        <h3>Plate</h3>
+                        <p>1 Side & 2 Entrees</p>
+                        <p class="price">$9.80+</p>
+                    </div>
+                </div>
+                <div class="button" onclick="selectItemType('biggerPlate', 11.30, 3, 2)">
+                    <img src="/Panda Express Photos/BgPlate.png" alt="Bigger Plate">
+                    <div class="content">
+                        <h3>Bigger Plate</h3>
+                        <p>1 Side & 3 Entrees</p>
+                        <p class="price">$11.30+</p>
+                    </div>
+                </div>
+                <div class="button" onclick="openPanel('drinksPanel')">
+                    <img src="/Panda Express Photos/Pepsi.png" alt="Drinks">
+                    <div class="content">
+                        <h3>Drinks</h3>
+                        <p>Add a Refreshing Beverage</p>
+                        <p class="price">$2.10+</p>
+                    </div>
+                </div>
+                <div class="button" onclick="openPanel('alacartePanel')">
+                    <img src="/Panda Express Photos/ALaCarte.png" alt="A La Carte">
+                    <div class="content">
+                        <h3>A La Carte</h3>
+                        <p>Individual Entrees & Sides</p>
+                        <p class="price">$4.40+</p>
+                    </div>
+                </div>
+                <div class="button" onclick="openPanel('appetizersPanel')">
+                    <img src="/Panda Express Photos/Apple Pie Roll.png" alt="Appetizers">
+                    <div class="content">
+                        <h3>Appetizers</h3>
+                        <p>Something Extra with Your Meal</p>
+                        <p class="price">$2.00+</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panels for each category with added IDs for dynamic buttons -->
+        <div id="hiddenPanelMain" class="hidden-panel">
+            <div class="cancel">
+                <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
+            </div>
+            <div class="panel-content">
+                <div class="entrees-section">
+                    <h3 class="section-header">Entrees</h3>
+                    <div id="entree-buttons" class="entrees-grid"></div>
+                </div>
+
+                <div class="sides-section">
+                    <h3 class="section-header">Sides</h3>
+                    <div id="side-buttons" class="sides-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="drinksPanel" class="hidden-panel">
+            <div class="cancel">
+                <button onclick="closePanel()">Cancel Item</button>
+            </div>
+            <h3>Drinks</h3>
+            <div class="drink-columns" id="drink-buttons">
+                <!-- Hardcoded drink buttons -->
+                <button class="menu-item-button" onclick="selectDrink('Dr Pepper')">
+                    <img src="/Panda Express Photos/Dr Pepper.png" class="button-image" alt="Dr Pepper">
+                    <div class="button-text">Dr Pepper</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Sweet Tea')">
+                    <img src="/Panda Express Photos/Sweet Tea.png" class="button-image" alt="Sweet Tea">
+                    <div class="button-text">Sweet Tea</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Pepsi')">
+                    <img src="/Panda Express Photos/Pepsi.png" class="button-image" alt="Pepsi">
+                    <div class="button-text">Pepsi</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Diet Pepsi')">
+                    <img src="/Panda Express Photos/Diet Pepsi.png" class="button-image" alt="Diet Pepsi">
+                    <div class="button-text">Diet Pepsi</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Mountain Dew')">
+                    <img src="/Panda Express Photos/Mountain Dew.png" class="button-image" alt="Mountain Dew">
+                    <div class="button-text">Mountain Dew</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Brisk Raspberry Tea')">
+                    <img src="/Panda Express Photos/Brisk Raspberry Tea.png" class="button-image" alt="Brisk Raspberry Tea">
+                    <div class="button-text">Brisk Raspberry Tea</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Sierra Mist')">
+                    <img src="/Panda Express Photos/Sierra Mist.png" class="button-image" alt="Sierra Mist">
+                    <div class="button-text">Sierra Mist</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Tropicana Lemonade')">
+                    <img src="/Panda Express Photos/Tropicana Lemonade.png" class="button-image" alt="Tropicana Lemonade">
+                    <div class="button-text">Tropicana Lemonade</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Aquafina')">
+                    <img src="/Panda Express Photos/Aquafina.png" class="button-image" alt="Aquafina">
+                    <div class="button-text">Aquafina</div>
+                </button>
+                <button class="menu-item-button" onclick="selectDrink('Gatorade Lemon Lime')">
+                    <img src="/Panda Express Photos/Gatorade Lemon Lime.png" class="button-image" alt="Gatorade Lemon Lime">
+                    <div class="button-text">Gatorade Lemon Lime</div>
+                </button>
+            </div>
+        </div>
+
+        <div id="drinkModal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeDrinkModal()">✖</button>
+                <img id="drinkImage" src="" alt="Drink" class="modal-drink-image">
+                <h3 id="drinkName"></h3>
+                <div id="sizeSelection" class="size-selection">
+                    <button id="smallSize" class="drink-size-button" onclick="selectDrinkSize('sm')">Small<br>$2.10</button>
+                    <button id="mediumSize" class="drink-size-button" onclick="selectDrinkSize('md')">Medium<br>$2.30</button>
+                    <button id="largeSize" class="drink-size-button" onclick="selectDrinkSize('lg')">Large<br>$2.50</button>
+                </div>                
+                <div class="quantity-selection">
+                    <button onclick="decreaseQuantity()">-</button>
+                    <span id="quantity">1</span>
+                    <button onclick="increaseQuantity()">+</button>
+                </div>
+                <button class="add-to-order" onclick="addDrinkToOrderFromModal()">ADD TO ORDER</button>
+            </div>
+        </div>        
+        
+        <div id="alacartePanel" class="hidden-panel">
+            <div class="cancel">
+                <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
+            </div>
+            <div class="panel-content">
+                <div class="entrees-section">
+                    <h3 class="section-header">Entrees</h3>
+                    <div id="ALaCarte-entrees" class="entrees-grid"></div>
+                </div>
+                <div class="sides-section">
+                    <h3 class="section-header">Sides</h3>
+                    <div id="ALaCarte-sides" class="sides-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="alaCarteModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAlaCarteModal()">&times;</span>
+                <img id="alaCarteImage" src="" alt="Selected Item" class="modal-image">
+                <h3 id="alaCarteItemName">Item Name</h3>
+                <div id="sizeSelection">
+                    <button id="smSize" class="size-button" onclick="selectAlaCarteSize('sm')">Small</button>
+                    <button id="mdSize" class="size-button" onclick="selectAlaCarteSize('md')">Medium</button>
+                    <button id="lgSize" class="size-button" onclick="selectAlaCarteSize('lg')">Large</button>
+                </div>                
+                <div class="quantity-selector">
+                    <button onclick="decreaseAlaCarteQuantity()">-</button>
+                    <span id="alaCarteQuantity">1</span>
+                    <button onclick="increaseAlaCarteQuantity()">+</button>
+                </div>
+                <button onclick="addAlaCarteToOrder()">Add to Order</button>
+            </div>
+        </div>
+        
     </div>
 </body>
 </html>
-
