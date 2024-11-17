@@ -9,37 +9,39 @@ body {
     flex-direction: column;
 }
 
-/* Top Menu Styles */
-.top-menu {
+/* Top Bar Styles */
+.top-bar {
     background-color: #DB372E;
     padding: 10px;
     display: flex;
-    align-items: center; /* Vertically center items */
-    justify-content: space-between; /* Spread items evenly across the bar */
+    align-items: center; /* Center vertically */
+    justify-content: space-between; /* Spread logo, title, and button evenly */
     position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add slight shadow for depth */
 }
 
-.Panda-Logo {
-    height: 75px;
+.logo {
+    height: 50px;
+    cursor: pointer;
 }
 
-.kiosk-title {
+.title {
     color: white;
     font-size: clamp(16px, 2vw, 24px); /* Responsive font size */
     font-weight: bold;
     margin: 0;
     text-align: center;
-    position: absolute; /* Center the title relative to the top bar */
-    left: 50%; /* Position at the middle of the bar */
-    transform: translateX(-50%); /* Adjust to center properly */
+    position: absolute;
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for proper centering */
 }
 
 .rewards-button {
-    background-color: #fff;
+    background-color: white;
     color: #DB372E;
     border: 2px solid #DB372E;
     padding: 8px 16px;
-    font-size: clamp(16px, 2vw, 20px);
+    font-size: clamp(14px, 1.5vw, 16px);
     cursor: pointer;
     border-radius: 4px;
     font-weight: bold;
@@ -52,79 +54,74 @@ body {
     box-shadow: 0 0 0 3px white; /* Adds a white outline on hover */
 }
 
-
-/* Dropdown Button */
-.dropbtn {
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1vw; /* Responsive font size */
-    cursor: pointer;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: white;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-    min-width: 160px;
-}
-
-.dropdown-content a {
-    text-decoration: none;
-    color: black;
-    padding: 10px;
-    display: block;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-/* Kiosk Container Styles */
-.kiosk-container {
+/* Main Content Layout */
+.main-content {
     display: flex;
     flex-direction: row;
-    height: calc(100vh - 70px); /* Adjust height based on top-menu */
-    width: 100%;
+    flex: 1;
+    gap: 20px; /* Space between left panel and grid or other panels */
     box-sizing: border-box;
+    padding: 20px;
+    align-items: stretch; /* Ensure all items match the same height */
+    height: calc(100vh - 70px); /* Set consistent height based on viewport */
+    overflow: hidden; /* Prevent extra scrollbars or white space */
 }
 
-/* Order Panel */
-.order-panel {
-    width: 25%;
+/* Left Panel with Fixed Height */
+.left-panel {
+    width: 300px; /* Fixed width for the left panel */
     background-color: white;
     padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Add rounded corners */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Visual separation */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: calc(100vh - 145px); /* Adjusted height to subtract top-menu (50px) + bottom-bar (50px) + padding */
-    box-sizing: border-box; /* Ensure padding doesn't add extra height */
-    overflow-y: auto; /* Add scrolling for content that exceeds the height */
+    box-sizing: border-box;
+    height: 100%; /* Ensure the height stays consistent */
 }
 
-.order-panel h2 {
+.left-panel h2 {
     text-align: center;
     font-size: 1.5em;
-    margin: 0 0 20px 0; /* Optional: adds some spacing below the title */
+    margin: 0 0 20px;
 }
 
-
-.order-items {
+.order-list {
     flex-grow: 1;
     overflow-y: auto;
 }
 
-.total,
-.checkout-button {
-    margin-top: 10px;
+.cancel-order {
+    background-color: #DB372E; /* Same red background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Same padding */
+    font-size: clamp(16px, 1vw, 16px); /* Responsive font size */
+    cursor: pointer; /* Pointer cursor for interactivity */
+    width: 85%; /* Full width */
+    align-self: flex-start; /* Align to the start */
+    border-radius: 4px; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+    text-align: center; /* Center text */
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-/* Styling for the checkout button */
-.checkout-button {
+.cancel-order:hover {
+    background-color: white; /* White background on hover */
+    color: #DB372E; /* Red text on hover */
+    box-shadow: 0 0 0 3px #DB372E; /* Red outline on hover */
+}
+
+.total-section, .cancel-order {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Space between the buttons */
+    align-items: center; /* Center-align both buttons */
+}
+
+.checkout-btn {
     background-color: #DB372E;
     color: white;
     border: none;
@@ -138,117 +135,111 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.checkout-button:hover {
+.checkout-btn:hover {
     background-color: white;
     color: #DB372E;
     box-shadow: 0 0 0 3px #DB372E; /* Adds a red outline on hover */
 }
 
-
-/* Kiosk Panel */
-.kiosk-panel {
-    flex: 1;
+.grid-container {
+    flex: 1; /* Take up the remaining space */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the grid horizontally */
+    justify-content: flex-start; /* Align the grid to the top */
     padding: 20px;
-    overflow-y: auto;
+    background-color: white;
+    border-radius: 8px; /* Add rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Clear separation shadow */
     box-sizing: border-box;
 }
 
-.categories-grid {
+/* Grid Buttons */
+.grid-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr); /* 3 buttons per row */
+    gap: calc(20px + 1vw); /* Start slightly bigger and grow with screen size */
+    justify-items: center; /* Center buttons within each grid cell */
+    align-items: start; /* Align buttons to the top of each cell */
+    width: 100%;
+    max-width: 1200px; /* Optional: Limit grid width */
+    box-sizing: border-box;
 }
 
-.category-button {
+/* Individual Buttons */
+.button {
     background-color: white;
     border: 1px solid #ddd;
-    padding: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for buttons */
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 100%; /* Full width of grid column */
+    height: auto; /* Adjust height based on content */
 }
 
-.category-button img {
-    width: 100%;
-    height: auto;
+/* Dynamically Resize Images */
+.button img {
+    width: 100%; /* Full width */
+    height: calc(150px + 2vw); /* Images grow dynamically with screen */
+    object-fit: cover; /* Maintain aspect ratio */
     border-bottom: 1px solid #ddd;
-    margin-bottom: 10px;
 }
 
-.category-button span {
-    display: block;
-    font-weight: bold;
-    font-size: clamp(16px, 1vw, 16px);
-}
-
-.category-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.bottom-bar {
-    background-color: #DB372E;
-    width: 100%;
-    height: 50px; /* Adjust as needed */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Center any content added later */
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Optional: adds a shadow for separation */
-    z-index: 10; /* Ensure it stays on top */
-}
-
-
-.hidden {
-    display: none;
-}
-
-.kiosk-panel {
-    padding: 20px;
-    width: 100%;
-    height: calc(100vh - 120px); /* Adjust for top and bottom bars */
-    box-sizing: border-box;
-    overflow-y: auto;
-}
-
-.items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
-}
-
-.item-button {
-    background-color: white;
-    border: 1px solid #ddd;
-    text-align: center;
+/* Button Content */
+.button .content {
     padding: 10px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
 }
 
-.item-button img {
-    width: 100%;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-.item-button span {
-    display: block;
+.button h3 {
+    font-size: clamp(16px, 1vw, 18px); /* Responsive font size */
     font-weight: bold;
-    font-size: 16px;
+    margin: 10px 0;
+    color: #333;
 }
 
-.item-button:hover {
+.button p {
+    font-size: clamp(14px, 1vw, 16px); /* Responsive font size */
+    color: #666;
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.button .price {
+    font-size: clamp(16px, 1vw, 18px); /* Responsive font size */
+    font-weight: bold;
+    color: #DB372E;
+    margin-top: 10px;
+}
+
+/* Hover Effect */
+.button:hover {
     transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-.back-button {
+
+
+/* Hidden Panel Styles */
+.hidden-panel {
+    display: none;
+    flex: 1; /* Take up the remaining space */
+    flex-direction: column;
+    align-items: center; /* Center the grid horizontally */
+    justify-content: flex-start; /* Align the grid to the top */
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px; /* Add rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Clear separation shadow */
+    box-sizing: border-box;
+}
+
+.hidden-panel .cancel button {
     margin-top: 20px;
     padding: 10px 20px;
     background-color: #DB372E;
@@ -262,6 +253,7 @@ body {
     text-align: center;
 }
 
+/* Feedback Popup */
 .feedback-popup {
     position: fixed;
     bottom: 10%;
@@ -280,4 +272,58 @@ body {
 @keyframes fade-in-out {
     0%, 100% { opacity: 0; }
     20%, 80% { opacity: 1; }
+}
+
+@media (max-width: 1024px) {
+    .grid-buttons {
+        grid-template-columns: repeat(2, 1fr); /* 2 buttons per row on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-buttons {
+        grid-template-columns: 1fr; /* 1 button per row on small screens */
+    }
+}
+
+
+
+.menu-item-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.menu-item-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.button-image {
+    width: calc(10vw + 40px); /* Dynamically adjust size with viewport */
+    max-width: 120px; /* Prevent it from growing too large */
+    height: auto;
+    margin-bottom: 8px; /* Space between image and text */
+}
+
+.button-text {
+    font-size: clamp(12px, 1vw, 16px); /* Clamp font size between 12px and 16px */
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+}
+
+.entrees-grid, .sides-grid, .appetizer-columns, .drink-columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Create 4 columns */
+    gap: calc(1vw + 10px); /* Dynamically adjust spacing between buttons */
+    justify-items: center; /* Center the buttons horizontally */
+    align-items: start; /* Align the buttons to the top of the grid cell */
+    padding: 20px; /* Add some padding around the grid */
 }

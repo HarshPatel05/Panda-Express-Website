@@ -4,16 +4,7 @@ let totalAmount = 0;
 let selectedSize = 'Medium'; // Default size for A La Carte
 let currentAlaCarteItem = null;
 
-// Utility Functions
-const capitalize = word => word.charAt(0).toUpperCase() + word.slice(1);
-const camelCaseToNormal = str =>
-    str.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, s => s.toUpperCase());
-const getFullSizeName = abbreviation => {
-    const sizeMap = { sm: "Small", md: "Medium", lg: "Large" };
-    return sizeMap[abbreviation.toLowerCase()] || abbreviation;
-};
 
-// Load Menu Items
 async function loadMenuItems() {
     try {
         const response = await fetch('/api/menuitems');
@@ -74,19 +65,51 @@ async function loadMenuItems() {
             if (item.size === 'sm') {
                 if (item.menuitemid >= 1 && item.menuitemid <= 39) {
                     const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
                     button.classList.add('menu-item-button');
                     button.dataset.menuId = item.menuitemid;
                     button.onclick = () => addComponentToCurrentOrder('entree', item.menuitemid, item.menuitem);
+            
+                    // Convert `item.menuitem` to normal case for the image file name
+                    const normalizedMenuItem = camelCaseToNormal(item.menuitem); // Remove spaces for file path
+            
+                    // Add the image
+                    const image = document.createElement('img');
+                    image.src = `/Panda Express Photos/${normalizedMenuItem}.png`; // Image path
+                    image.alt = camelCaseToNormal(item.menuitem); // Alt text for accessibility
+                    image.classList.add('button-image'); // Optional: Add a class for styling
+                    button.appendChild(image);
+            
+                    // Add the text
+                    const text = document.createElement('div');
+                    text.innerText = camelCaseToNormal(item.menuitem);
+                    text.classList.add('button-text'); // Optional: Add a class for styling
+                    button.appendChild(text);
+            
                     entreeContainer.appendChild(button);
                 }
-
+            
                 if (item.menuitemid >= 40 && item.menuitemid <= 51) {
                     const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
                     button.classList.add('menu-item-button');
                     button.dataset.menuId = item.menuitemid;
                     button.onclick = () => addComponentToCurrentOrder('side', item.menuitemid, item.menuitem);
+            
+                    // Convert `item.menuitem` to normal case for the image file name
+                    const normalizedMenuItem = camelCaseToNormal(item.menuitem); // Remove spaces for file path
+            
+                    // Add the image
+                    const image = document.createElement('img');
+                    image.src = `/Panda Express Photos/${normalizedMenuItem}.png`; // Image path
+                    image.alt = camelCaseToNormal(item.menuitem); // Alt text for accessibility
+                    image.classList.add('button-image'); // Optional: Add a class for styling
+                    button.appendChild(image);
+            
+                    // Add the text
+                    const text = document.createElement('div');
+                    text.innerText = camelCaseToNormal(item.menuitem);
+                    text.classList.add('button-text'); // Optional: Add a class for styling
+                    button.appendChild(text);
+            
                     sideContainer.appendChild(button);
                 }
             }
@@ -187,183 +210,441 @@ async function loadMenuItems() {
     }
 }
 
-// Populate Menu Buttons
-function populateMenuButtons(menuItems) {
-    const panelMap = {
-        bowl: 'bowl-items',
-        plate: 'plate-items',
-        biggerPlate: 'bigger-plate-items',
-        aLaCarte: 'a-la-carte-items',
-        appetizers: 'appetizers-items',
-        drinks: 'drinks-items',
-    };
+// Handle size selection and panel toggling
+function setSize(size) {
+    const panels = document.querySelectorAll('#sizePanels > .hidden-panel');
+    panels.forEach((panel) => (panel.style.display = 'none')); // Hide all panels
 
-    menuItems.forEach(item => {
-        const panelId = panelMap[item.category];
-        if (!panelId) return;
+    const selectedPanel = document.getElementById(`size-${size}-panel`);
+    if (selectedPanel) {
+        selectedPanel.style.display = 'block'; // Show the selected size panel
+    }
 
-        const panel = document.getElementById(panelId);
-        const button = document.createElement('button');
-        button.classList.add('menu-item-button');
-        button.innerText = `${camelCaseToNormal(item.menuitem)} (${getFullSizeName(item.size)}) - $${item.price.toFixed(2)}`;
-        button.onclick = () => handleItemClick(item);
-        panel.appendChild(button);
+    const sizeButtons = document.querySelectorAll('.size-button');
+    sizeButtons.forEach((button) => {
+        button.style.backgroundColor = button.id === `size-${size}` ? 'green' : '';
     });
-}
 
-// Handle Item Click
-function handleItemClick(item) {
-    if (currentCompositeItem) {
-        addComponentToCurrentOrder(item);
+    // Hide the sides section and title for "Small" A La Carte
+    if (size === 'Small') {
+        const sideSections = selectedPanel.querySelectorAll('.sides-section');
+        sideSections.forEach(section => (section.style.display = 'none')); // Hide sides
+
+        const sideHeaders = selectedPanel.querySelectorAll('.section-header');
+        sideHeaders.forEach(header => {
+            if (header.textContent === 'Sides') {
+                header.style.display = 'none'; // Hide side title
+            }
+        });
     } else {
-        addItemToOrder(item);
+        const sideSections = selectedPanel.querySelectorAll('.sides-section');
+        sideSections.forEach(section => (section.style.display = 'block')); // Show sides
+
+        const sideHeaders = selectedPanel.querySelectorAll('.section-header');
+        sideHeaders.forEach(header => {
+            if (header.textContent === 'Sides') {
+                header.style.display = 'block'; // Show side title
+            }
+        });
     }
 }
 
-// Add Item to Order
-function addItemToOrder(item) {
+document.addEventListener('DOMContentLoaded', () => {
+    loadMenuItems();
+    setSize('Medium'); // Default size to display
+});
+
+// Function to initialize a new composite item (bowl, plate, or bigger plate)
+function selectItemType(type, price, entreesRequired, sidesRequired, menuId) {
+    currentCompositeItem = {
+        type: type,
+        name: capitalize(type),
+        price: price,
+        menuId: menuId, // Store the menuId for the composite item
+        entreesRequired: entreesRequired,
+        sidesRequired: sidesRequired,
+        entrees: [],
+        sides: []
+    };
+    updateCurrentItemPreview();
+    openPanel('hiddenPanelMain');
+}
+
+function addItemToOrder(menuIds, name, price, type, components = []) {
     const orderItem = {
-        menuIds: [item.menuitemid],
-        name: camelCaseToNormal(item.menuitem),
-        price: item.price,
-        type: item.category,
+        menuIds: Array.isArray(menuIds) ? menuIds : [menuIds], // Composite and component IDs
+        name: name,
+        price: price,
+        type: type,
+        components: components // Store components (entrees and sides)
     };
+
     orderItems.push(orderItem);
-    updateOrderSummary();
+    updateOrderList();
+    calculateTotal();
 }
 
-// Add Component to Current Composite Order
-function addComponentToCurrentOrder(item) {
-    const category = item.category;
-    const currentList = currentCompositeItem[category];
-    const limit = currentCompositeItem[`${category}Limit`];
-
-    if (currentList.length < limit) {
-        currentList.push(item);
-        updateOrderSummary();
-    } else {
-        alert(`You can only add up to ${limit} ${category} items.`);
-    }
-
-    if (isCompositeComplete()) finalizeCompositeOrder();
-}
-
-// Check if Composite is Complete
-function isCompositeComplete() {
-    const { entrees, sides, entreeLimit, sideLimit } = currentCompositeItem;
-    return entrees.length === entreeLimit && sides.length === sideLimit;
-}
-
-// Finalize Composite Order
-function finalizeCompositeOrder() {
-    const { menuId, name, price, entrees, sides } = currentCompositeItem;
-
-    const compositeItem = {
-        menuIds: [menuId, ...entrees.map(e => e.menuitemid), ...sides.map(s => s.menuitemid)],
-        name,
-        price,
-        type: 'composite',
-        components: [...entrees, ...sides],
-    };
-
-    orderItems.push(compositeItem);
-    currentCompositeItem = null;
-    updateOrderSummary();
-}
-
-// Update Order Summary
-function updateOrderSummary() {
-    const orderList = document.getElementById('orderItems');
-    orderList.innerHTML = '';
+function updateOrderList() {
+    const orderList = document.getElementById("orderList");
+    orderList.innerHTML = ""; // Clear the current list
 
     orderItems.forEach((item, index) => {
-        const orderDiv = document.createElement('div');
-        orderDiv.classList.add('order-item');
-        orderDiv.innerHTML = `
-            <strong>${item.name}</strong> - $${item.price.toFixed(2)}
-            ${item.components
-                ? item.components.map(c => `<div class="sub-item">- ${camelCaseToNormal(c.menuitem)}</div>`).join('')
-                : ''}
+        const listItem = document.createElement("div");
+        listItem.classList.add("order-item");
+
+        // Display the main item (e.g., Bowl, Plate, Bigger Plate)
+        let listItemHTML = `
+            <div><strong>${camelCaseToNormal(item.name)} +$${item.price.toFixed(2)}</strong></div>
+        `;
+
+        // If the item has components (e.g., entrees and sides), display them
+        if (item.components && item.components.length > 0) {
+            listItemHTML += `
+                <div class="item-components">
+                    ${item.components.map(comp => `<div>- ${camelCaseToNormal(comp.itemName)}</div>`).join('')}
+                </div>
+            `;
+        }
+
+        listItemHTML += `
             <button onclick="removeItemFromOrder(${index})">Remove</button>
         `;
-        orderList.appendChild(orderDiv);
-    });
 
-    totalAmount = orderItems.reduce((sum, item) => sum + item.price, 0);
-    document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
+        listItem.innerHTML = listItemHTML;
+        orderList.appendChild(listItem);
+    });
 }
 
-// Remove Item from Order
-function removeItemFromOrder(index) {
-    if (index >= 0 && index < orderItems.length) {
-        orderItems.splice(index, 1);
-        updateOrderSummary();
+// Function to add a component (entree or side) to the current composite item
+function addComponentToCurrentOrder(category, menuId, itemName) {
+    if (!currentCompositeItem) return;
+
+    // Add entrees or sides to the current composite item
+    if (category === 'entree' && currentCompositeItem.entrees.length < currentCompositeItem.entreesRequired) {
+        currentCompositeItem.entrees.push({ menuId, itemName });
+    } else if (category === 'side' && currentCompositeItem.sides.length < currentCompositeItem.sidesRequired) {
+        currentCompositeItem.sides.push({ menuId, itemName });
+    }
+
+    updateCurrentItemPreview();
+
+    // Check if the current composite item is complete
+    const isComplete =
+        currentCompositeItem.entrees.length === currentCompositeItem.entreesRequired &&
+        currentCompositeItem.sides.length === currentCompositeItem.sidesRequired;
+
+    if (isComplete) {
+        const allMenuIds = [
+            currentCompositeItem.menuId, // Composite item menuId
+            ...currentCompositeItem.entrees.map(e => e.menuId),
+            ...currentCompositeItem.sides.map(s => s.menuId)
+        ];
+
+        const components = [
+            ...currentCompositeItem.entrees,
+            ...currentCompositeItem.sides
+        ];
+
+        addItemToOrder(allMenuIds, currentCompositeItem.name, currentCompositeItem.price, 'composite', components);
+        currentCompositeItem = null; // Reset the composite item
+        updateCurrentItemPreview(); // Clear preview
+        closePanel();
     }
 }
 
-// Checkout Order
-function checkoutOrder() {
-    if (!orderItems.length) {
-        alert('No items to checkout.');
+// Other supporting functions remain the same
+// Function to add a drink to the order
+function addDrinkToOrder(drinkName, price, size = null) {
+    const drinkItem = {
+        type: 'drink',
+        name: size ? `${size} ${drinkName}` : drinkName,
+        price: price,
+        components: []
+    };
+    orderItems.push(drinkItem);
+    updateOrderList();
+    calculateTotal();
+    closePanel();
+}
+
+// Function to add an appetizer to the order
+function addAppetizerToOrder(appetizerName, price) {
+    const appetizerItem = {
+        type: 'appetizer',
+        name: appetizerName,
+        price: price,
+        components: []
+    };
+    orderItems.push(appetizerItem);
+    updateOrderList();
+    calculateTotal();
+    closePanel();
+}
+
+function addAlaCarteItem(category, menuId, itemName, size, price) {
+    // Set the current A La Carte item for preview
+    currentAlaCarteItem = {
+        size: size,
+        category: category,
+        menuId: menuId,
+        itemName: camelCaseToNormal(itemName), // Format for readability
+        price: price
+    };
+
+    // Update the preview
+    updateAlaCartePreview();
+}
+
+function updateAlaCartePreview() {
+    const preview = document.getElementById("currentItemPreview");
+
+    if (!currentAlaCarteItem) {
+        preview.innerHTML = ""; // Clear preview if no item selected
         return;
     }
 
-    const payload = {
-        totalCost: totalAmount,
-        menuItemIDs: orderItems.flatMap(item => item.menuIds),
-    };
+    let previewHTML = `
+        <strong>${currentAlaCarteItem.size} A La Carte</strong><br>
+        <div class='item-components'>
+            <div>- ${currentAlaCarteItem.itemName}</div>
+        </div>
+        <button onclick="cancelCurrentAlaCarteItem()">Cancel</button>
+    `;
 
-    fetch('/api/updateorders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-    })
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to process order.');
-            return response.json();
-        })
-        .then(data => {
-            alert(`Order placed! Total: $${totalAmount.toFixed(2)}\n${data.message}`);
-            clearOrder();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Checkout failed. Try again.');
-        });
+    preview.innerHTML = previewHTML;
 }
 
-// Clear Order
+function finalizeAlaCarteItem() {
+    if (!currentAlaCarteItem) return;
+
+    // Convert size abbreviation to full name
+    const fullSizeName = getFullSizeName(currentAlaCarteItem.size);
+
+    // Add the finalized item to the order with its menuId
+    const orderItem = {
+        menuIds: [currentAlaCarteItem.menuId], // Store the menuId of the item
+        name: `${fullSizeName} A La Carte`,
+        price: currentAlaCarteItem.price,
+        type: 'a la carte',
+        components: [{ itemName: currentAlaCarteItem.itemName }] // Include the item name
+    };
+
+    // Add the order item to the orderItems array
+    orderItems.push(orderItem);
+
+    // Refresh the order list
+    updateOrderList();
+
+    // Update the total price
+    calculateTotal();
+
+    // Clear the preview
+    currentAlaCarteItem = null;
+    updateAlaCartePreview();
+
+    // Close the panel and return to the main buttons
+    closePanel();
+}
+
+// Update preview for the current composite item
+function updateCurrentItemPreview() {
+    const preview = document.getElementById("currentItemPreview");
+    if (!currentCompositeItem) {
+        preview.innerHTML = "";
+        return;
+    }
+
+    let previewHTML = `<strong>${camelCaseToNormal(currentCompositeItem.name)} +$${currentCompositeItem.price.toFixed(2)}</strong><br>`;
+    previewHTML += "<div class='item-components'>";
+    
+    // Display readable names for entrees
+    previewHTML += currentCompositeItem.entrees
+        .map(entree => `<div>- ${camelCaseToNormal(entree.itemName)}</div>`)
+        .join('');
+    
+    // Display readable names for sides
+    previewHTML += currentCompositeItem.sides
+        .map(side => `<div>- ${camelCaseToNormal(side.itemName)}</div>`)
+        .join('');
+    
+    previewHTML += "</div>";
+
+    preview.innerHTML = previewHTML;
+}
+
+function removeItemFromOrder(index) {
+    if (index >= 0 && index < orderItems.length) {
+        orderItems.splice(index, 1);
+        updateOrderList();
+        calculateTotal();
+    }
+}
+
+// Cancel the current composite item
+function cancelCurrentCompositeItem() {
+    currentCompositeItem = null;
+    updateCurrentItemPreview();
+    closePanel();
+}
+
+function calculateTotal() {
+    totalAmount = orderItems.reduce((sum, item) => sum + item.price, 0);
+    document.getElementById("totalAmount").innerText = totalAmount.toFixed(2);
+}
+
 function clearOrder() {
     orderItems = [];
-    currentCompositeItem = null;
     totalAmount = 0;
-    updateOrderSummary();
-    showPanel('mainPanel');
+    updateOrderList();
+    calculateTotal();
+    updateCurrentItemPreview();
 }
 
-// Composite Item Initialization
-function selectItemType(type, price, entreeLimit, sideLimit, menuId) {
-    currentCompositeItem = {
-        type,
-        name: capitalize(type),
-        price,
-        menuId,
-        entreeLimit,
-        sideLimit,
-        entrees: [],
-        sides: [],
+// Open a specific hidden panel and hide the main grid
+function openPanel(panelId) {
+    // Hide the main buttons grid
+    const mainButtons = document.getElementById('main-buttons');
+    mainButtons.style.display = 'none';
+
+    const middleContainer = document.querySelector('.grid-container');
+    if (middleContainer) {
+        middleContainer.style.display = 'none';
+    }
+
+    // Show the requested hidden panel
+    const panel = document.getElementById(panelId);
+    if (panel) {
+        panel.style.display = 'block';
+    }
+
+    // Optional: Add smooth scrolling to the top of the panel (optional)
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Close any open hidden panel and show the main grid and middle container
+function closePanel() {
+    // Hide all hidden panels
+    const panels = document.querySelectorAll('.hidden-panel');
+    panels.forEach((panel) => {
+        panel.style.display = 'none';
+    });
+
+    // Show the main buttons grid
+    const mainButtons = document.getElementById('main-buttons');
+    mainButtons.style.display = 'grid';
+
+    // Show the middle container
+    const middleContainer = document.querySelector('.grid-container');
+    if (middleContainer) {
+        middleContainer.style.display = 'block';
+    }
+}
+
+
+function capitalize(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function camelCaseToNormal(camelCaseString) {
+    return camelCaseString
+        .replace(/([a-z])([A-Z])/g, '$1 $2') // Add a space before each uppercase letter
+        .replace(/^./, str => str.toUpperCase()); // Capitalize the first letter
+}
+
+function getFullSizeName(abbreviation) {
+    const sizeMap = {
+        sm: "Small",
+        md: "Medium",
+        lg: "Large"
     };
-    showPanel(`${type}Panel`);
+    return sizeMap[abbreviation.toLowerCase()] || abbreviation; // Fallback to original if not found
 }
 
-// Panel Navigation
-function showPanel(panelId) {
-    document.querySelectorAll('.kiosk-panel').forEach(panel => panel.classList.add('hidden'));
-    document.getElementById(panelId).classList.remove('hidden');
+function checkoutOrder()
+{
+    // Check if there are no items in the order
+    if (orderItems.length === 0)
+    {
+        alert('Your order is empty. Please add items before checking out.');
+        return; // Exit the function if order is empty
+    }
+
+    // Flatten the array of menuIds from each order item
+    const menuItemIDs = orderItems.flatMap(item => item.menuIds); // Flatten array of menuIds
+
+    // Make the POST request to the server to update the order
+    fetch('/api/updateorders',
+    {
+        method: 'POST', // HTTP method for sending data
+        headers: { 'Content-Type': 'application/json' }, // Tell the server the data is in JSON format
+        body: JSON.stringify
+        ({
+            totalCost: totalAmount, // Send the total cost of the order (totalAmount is a global variable)
+            menuItemIDs: menuItemIDs, // Send the array of menu item IDs
+        })
+    })
+
+    .then(response =>
+    {
+        // If the response is not OK, throw an error to be caught in the catch block
+        if (!response.ok)
+        {
+            throw new Error('Failed to update order.');
+        }
+        return response.json(); // If the response is OK, parse the JSON response (which contains the server message from server.js)
+    })
+
+    .then(data =>
+    {
+        // Show a success message with the total cost and the server's response message
+        alert(`Order placed successfully!\nOrder total: $${totalAmount.toFixed(2)}\n${data.message}`);
+        clearOrder(); // Clear the order items after successful checkout
+
+        updateInventory(menuItemIDs); // inventory update should only happen if the order update succeeds
+    })
+
+    .catch(error =>
+    {
+        // Log and display an error message if something went wrong
+        console.error('Error:', error);
+        alert('An error occurred while placing your order. Please try again.');
+    });
 }
 
-// DOM Content Loaded
-document.addEventListener('DOMContentLoaded', () => {
-    loadMenuItems();
-    showPanel('mainPanel');
-});
+
+function updateInventory(menuItemIDs)
+{
+    // Make the POST request to update the inventory
+    fetch('/api/updateinventory',
+    {
+        method: 'POST', // HTTP method for sending data
+        headers: { 'Content-Type': 'application/json' }, // Tell the server the data is in JSON format
+        body: JSON.stringify
+        ({
+            menuItemIDs: menuItemIDs // Send the array of menu item IDs for inventory update
+        })
+    })
+
+    .then(response =>
+    {
+        // If the response is not OK, throw an error to be caught in the catch block
+        if (!response.ok)
+        {
+            throw new Error('Failed to update inventory.');
+        }
+        return response.json(); // If the response is OK, parse the JSON response
+    })
+
+    .then(data =>
+    {
+        // Show a success message for inventory update
+        alert(`Inventory updated successfully!\n${data.message}`);
+    })
+
+    .catch(error =>
+    {
+        // Log and display an error message if something went wrong
+        console.error('Error:', error);
+        alert('An error occurred while updating inventory. Please try again.');
+    });
+}
