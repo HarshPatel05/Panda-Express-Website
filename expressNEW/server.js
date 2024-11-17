@@ -8,7 +8,7 @@
 //#### \ | / ############################################################################################################################################## \ | / ####
 //####  \|/  ##############################################################################################################################################  \|/  ####
 
-
+const qs = require('qs');
 const express = require('express');
 const { Pool } = require('pg');
 const dotenv = require('dotenv').config();
@@ -80,6 +80,61 @@ app.get('/manager', (req, res) => {
 //#### \ | / ############################################################################################################################################## \ | / ####
 //####  \|/  ##############################################################################################################################################  \|/  ####
 
+// added steps for Google OAuth
+// need more steps after reward system is added in database 
+app.get('/api/sessions/oauth/google', async (req, res) => {
+  const code = req.query.code;
+
+  const url = 'https://oauth2.googleapis.com/token';
+  const values = {
+    code,
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
+    redirect_uri: process.env.REDIRECT_URL,
+    grant_type: 'authorization_code',
+  };
+
+  try {
+    const result = await axios.post(url, qs.stringify(values), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    const { id_token, access_token } = result.data;
+
+    const result2 = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`, {
+      headers: {
+        Authorization: `Bearer ${id_token}`,
+      },
+    });
+
+    const googleUser = result2.data;
+
+    if (!googleUser.verified_email) {
+      return res.status(403).send('Google account is not verified');
+    }
+
+    const user = {
+      email: googleUser.email,
+      name: googleUser.name,
+      picture: googleUser.picture,
+    };
+
+    return res.redirect(`/kiosk`);
+  } catch (err) {
+    console.error('Error fetching OAuthSession', err.stack);
+    res.status(500).send('Server Error');
+  }
+});
+
+//API Endpoint to get OAuth information
+app.get('/api/config', (req, res) => {
+  res.json({
+      googleClientId: process.env.GOOGLE_CLIENT_ID,
+      redirectUrl: process.env.REDIRECT_URL,
+  });
+});
 
 // API Endpoint to get all the employees
 app.get('/api/employees', async (req, res) => 
