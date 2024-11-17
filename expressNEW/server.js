@@ -424,11 +424,39 @@ app.get('/api/xReport', async (req, res) =>
 );
 
 
+/**
+ * Validates if an ingredient exists in the inventory table.
+ * This function queries the database asynchronously and returns a promise-based boolean.
+ * 
+ * Why use a promise? - We can't use simple booleans because database queries are asynchronous, and their results aren't available immediately.
+ * 
+ * @param {string} ingredient - Ingredient to validate.
+ * @returns {Promise<boolean>} - Resolves to true if valid, false otherwise.
+ */
+async function isIngredientValid(ingredient)
+{
+  const validationQuery = "SELECT COUNT(*) FROM inventory WHERE LOWER(ingredient) = LOWER($1)";
+  try
+  {
+    // Query the database with the ingredient (case-insensitive match)
+    const result = await pool.query(validationQuery, [ingredient]);
+    
+    // Return true if count > 0, else false
+    return result.rows[0].count > 0;
+  }
+  catch (error)
+  {
+    console.error('Error validating ingredient:', error);
+    throw error; // Rethrow error for higher-level handling
+  }
+}
+
+
 
 
 //####   |   ##############################################################################################################################################   |   ####
 //####   |   ##############################################################################################################################################   |   ####
-//####   |   ############################################################### UHH... Voodoo? ###############################################################   |   ####
+//####   |   ################################################################ File Download ###############################################################   |   ####
 //#### \ | / ############################################################################################################################################## \ | / ####
 //####  \|/  ##############################################################################################################################################  \|/  ####
 
