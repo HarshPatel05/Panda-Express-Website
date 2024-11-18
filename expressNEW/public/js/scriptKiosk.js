@@ -798,7 +798,40 @@ function checkoutOrder() {
     // Show an alert with the menu IDs and total price
     alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}`);
 
-    // Clear the order
-    clearOrder(); // Assuming clearOrder() resets the order and total
+    // Make the POST request to the server to update the pending order
+    fetch('/api/updatependingorders',
+    {
+        method: 'POST', // HTTP method for sending data
+        headers: { 'Content-Type': 'application/json' }, // Tell the server the data is in JSON format
+        body: JSON.stringify
+        ({
+            totalCost: totalAmount, // Send the total cost of the order (totalAmount is a global variable)
+            menuItemIDs: menuItemIDs, // Send the array of menu item IDs
+        })
+    })
+
+    .then(response =>
+    {
+        // If the response is not OK, throw an error to be caught in the catch block
+        if (!response.ok)
+        {
+            throw new Error('Failed to update pending order.');
+        }
+        return response.json(); // If the response is OK, parse the JSON response (which contains the server message from server.js)
+    })
+
+    .then(data =>
+    {
+        // Show a success message with the total cost and the server's response message
+        alert(`Pending order placed successfully!\nOrder total: $${totalAmount.toFixed(2)}\n${data.message}`);
+        clearOrder(); // Clear the order items after successful checkout
+    })
+
+    .catch(error =>
+    {
+        // Log and display an error message if something went wrong
+        console.error('Error:', error);
+        alert('An error occurred while placing your pending order. Please try again.');
+    });
 }
 
