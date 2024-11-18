@@ -40,14 +40,14 @@
 
         <div id="orderHistoryDiv" class="tabContent">
             <h3>Past Orders</h3>
-            <table id = "orderHistory" border = "2">
+            <table id="orderHistory" border="2">
                 <thead>
                     <th>Order Id</th>
                     <th>Total Cost</th>
                     <th>Date</th>
                 </thead>
                 <tbody>
-                    
+
                 </tbody>
             </table>
 
@@ -55,7 +55,7 @@
 
         <div id="employeesDiv" class="tabContent">
             <h3>Employees</h3>
-            <table id = "employees" border = "2">
+            <table id="employees" border="2">
                 <thead>
                     <th>Employee Name</th>
                     <th>ID Number</th>
@@ -63,14 +63,14 @@
                     <th>Position</th>
                 </thead>
                 <tbody>
-                    
+
                 </tbody>
             </table>
         </div>
 
         <div id="inventoryDiv" class="tabContent">
             <h3>Current Inventory</h3>
-            <table id = "inventory" border = "2">
+            <table id="inventory" border="2">
                 <thead>
                     <th>Item</th>
                     <th>Quantity</th>
@@ -79,7 +79,7 @@
                     <th>Last Shipment Date</th>
                 </thead>
                 <tbody>
-                    
+
                 </tbody>
             </table>
 
@@ -88,7 +88,7 @@
 
         <div id="menuitemsDiv" class="tabContent">
             <h3>Menu Items</h3>
-            <table id = "menuitems" border = "2">
+            <table id="menuitems" border="2">
                 <thead>
                     <th>Item ID</th>
                     <th>Item</th>
@@ -97,7 +97,7 @@
                 </thead>
             </table>
             <tbody>
-                    
+
             </tbody>
 
         </div>
@@ -105,36 +105,36 @@
         <div id="seasonalItems" class="tabContent">
             <h3>Seasonal Menu Items</h3>
             <tbody>
-                    
+
             </tbody>
 
         </div>
 
-        <div id="restock" class="tabContent" >
+        <div id="restock" class="tabContent">
             <h3>Items for Restock</h3>
             <div class="restockControls">
                 <label for="filterMinimum">Minimum Quantity:</label>
                 <input type="number" id="filterMinimum" name="filterMinimum" placeholder="Enter minimum quantity">
-        
+
                 <button id="restockButton" onclick="fetchRestockReport()">Get Restock Report</button>
 
             </div>
 
-            <table id = "restockReport" border = "2">
+            <table id="restockReport" border="2">
                 <thead>
                     <th>Ingredient</th>
                     <th>Quantity</th>
                 </thead>
             </table>
             <tbody>
-                    
+
             </tbody>
 
         </div>
 
         <div id="product-usageDiv" class="tabContent">
             <h3>Overall Product Usage</h3>
-            <table id = "product-usage" border = "2">
+            <table id="product-usage" border="2">
                 <thead>
                     <th>Ingredients</th>
                     <th>Item</th>
@@ -143,7 +143,7 @@
                 </thead>
 
                 <tbody>
-                    
+
                 </tbody>
             </table>
         </div>
@@ -153,13 +153,13 @@
             <div class="dateFilter">
                 <label for="startDate">Start Date:</label>
                 <input type="date" id="startDate" name="startDate">
-                
+
                 <label for="endDate">End Date:</label>
                 <input type="date" id="endDate" name="endDate">
-        
+
                 <button id="salesButton" onclick="filterSales()">Submit</button>
             </div>
-            <table id = "salesReport" border = "2">
+            <table id="salesReport" border="2">
                 <thead>
                     <th>Item ID</th>
                     <th>Item Name</th>
@@ -176,7 +176,7 @@
 
         <div id="xReportDiv" class="tabContent">
             <h3>X Report</h3>
-            <table id = "xReport" border = "2">
+            <table id="xReport" border="2">
                 <thead>
                     <th>Hour</th>
                     <th>Total Sold</th>
@@ -190,7 +190,7 @@
 
         <div id="zReportDiv" class="tabContent">
             <h3>Z Report</h3>
-            <table id = "zReport" border = "2">
+            <table id="zReport" border="2">
                 <thead>
                     <th>Hour</th>
                     <th>Total Sold</th>
