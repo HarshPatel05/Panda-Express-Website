@@ -487,6 +487,81 @@ app.post('/api/updateinventory', async (req, res) =>
 
 
 
+// API request to update an pending orders table
+/**
+ * fetch('/api/updatependingorders', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(
+    {
+      totalCost: 25.50,
+      menuItemIDs: [1, 2, 3]  // Example data
+    })
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error updating order:', error));
+
+ */
+  app.post('/api/updatependingorders', async (req, res) => 
+    {
+      const { totalCost, menuItemIDs } = req.body;
+  
+      // Create a map to count occurrences of each menuItemID
+      const itemCountMap = new Map();
+  
+      menuItemIDs.forEach( 
+        id =>
+          { 
+            itemCountMap.set(id, (itemCountMap.get(id) || 0) + 1); 
+          } 
+      );
+  
+      const client = await pool.connect();
+  
+      try 
+      {
+        // we use `BEGIN` like this, when we have to execute multiple queries in the same database connection
+        await client.query('BEGIN'); // Start transaction
+  
+        // Insert into pending orders table and get the new orderID
+        const pendingOrderResult = await client.query(
+          'INSERT INTO pendingorders (totalCost, date) VALUES ($1, $2) RETURNING orderid',
+          [totalCost, new Date()] // Insert current timestamp
+        );
+  
+        const newOrderID = pendingOrderResult.rows[0].orderid;
+  
+        // Prepare to insert into orderitems
+        const orderItemsQuery = 'INSERT INTO orderitems (orderid, menuitemid, quantity) VALUES ($1, $2, $3)';
+        const orderItemsPromises = Object.entries(itemCountMap).map(([menuItemID, quantity]) => {
+          return client.query(orderItemsQuery, [newOrderID, parseInt(menuItemID), quantity]);
+        });
+  
+        // Execute all insert queries in parallel
+        await Promise.all(orderItemsPromises);
+  
+        // Commit the transaction
+        await client.query('COMMIT');
+        
+        // Respond with a simple success message
+        res.status(200).json({ message: 'Order updated successfully!' });
+      }
+      catch (error)
+      {
+        console.error('Error updating order:', error);
+  
+        // Rollback transaction on error
+        await client.query('ROLLBACK');
+        res.status(500).json({ error: 'Failed to update order' });
+      }
+      finally
+      {
+        client.release();
+      }
+    }
+  );
+
 
 //######################################################################  FEATURES ENDPOINTS  ########################################################################
 
