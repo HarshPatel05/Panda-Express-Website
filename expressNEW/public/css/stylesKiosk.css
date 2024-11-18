@@ -157,12 +157,12 @@ body {
 /* Grid Buttons */
 .grid-buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 buttons per row */
-    gap: calc(20px + 1vw); /* Start slightly bigger and grow with screen size */
-    justify-items: center; /* Center buttons within each grid cell */
-    align-items: start; /* Align buttons to the top of each cell */
+    grid-template-columns: repeat(3, 1fr); /* Keep 3 buttons per row */
+    gap: 20px; /* Space between buttons */
+    justify-items: center;
+    align-items: start;
     width: 100%;
-    max-width: 1200px; /* Optional: Limit grid width */
+    max-width: 1000px; /* Restrict the grid width */
     box-sizing: border-box;
 }
 
@@ -172,50 +172,55 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for buttons */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 100%; /* Full width of grid column */
-    height: auto; /* Adjust height based on content */
+    width: calc(12vw + 150px); /* Increase button width */
+    max-width: 300px; /* Allow for a wider max width */
+    height: auto;
 }
 
 /* Dynamically Resize Images */
 .button img {
-    width: 100%; /* Full width */
-    height: calc(150px + 2vw); /* Images grow dynamically with screen */
-    object-fit: cover; /* Maintain aspect ratio */
-    border-bottom: 1px solid #ddd;
+    width: auto; /* Full width of the button */
+    height: auto; /* Maintain aspect ratio */
+    max-height: 150px; /* Restrict image height */
+    object-fit: contain; /* Ensure the entire image fits without cropping */
+    border-bottom: 1px solid #ddd; /* Keep the border for separation */
 }
+
 
 /* Button Content */
 .button .content {
-    padding: 10px;
+    padding: 10px; /* Slightly increased padding for a balanced look */
 }
 
 .button h3 {
-    font-size: clamp(16px, 1vw, 18px); /* Responsive font size */
+    font-size: clamp(16px, 1vw, 18px); /* Adjust font size to match wider buttons */
     font-weight: bold;
-    margin: 10px 0;
+    margin: 8px 0;
     color: #333;
 }
 
 .button p {
-    font-size: clamp(14px, 1vw, 16px); /* Responsive font size */
+    font-size: clamp(14px, 0.9vw, 16px); /* Adjust font size for readability */
     color: #666;
-    margin: 5px 0;
+    margin: 4px 0;
     line-height: 1.4;
 }
 
 .button .price {
-    font-size: clamp(16px, 1vw, 18px); /* Responsive font size */
+    font-size: clamp(16px, 1vw, 18px); /* Slightly larger price font */
     font-weight: bold;
     color: #DB372E;
-    margin-top: 10px;
+    margin-top: 8px;
 }
+
+
 
 /* Hover Effect */
 .button:hover {
@@ -307,7 +312,7 @@ body {
 
 .button-image {
     width: calc(10vw + 40px); /* Dynamically adjust size with viewport */
-    max-width: 120px; /* Prevent it from growing too large */
+    max-width: 110px; /* Prevent it from growing too large */
     height: auto;
     margin-bottom: 8px; /* Space between image and text */
 }
@@ -321,11 +326,11 @@ body {
 
 .entrees-grid, .sides-grid, .appetizer-columns, .drink-columns {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Create 4 columns */
+    grid-template-columns: repeat(5, 1fr); /* Create 4 columns */
     gap: calc(1vw + 10px); /* Dynamically adjust spacing between buttons */
     justify-items: center; /* Center the buttons horizontally */
     align-items: start; /* Align the buttons to the top of the grid cell */
-    padding: 20px; /* Add some padding around the grid */
+    padding: 10px; /* Add some padding around the grid */
 }
 
 
@@ -481,4 +486,11 @@ body {
     padding: 5px 10px;
     margin: 0 5px;
     cursor: pointer;
+}
+
+.section-header {
+    font-size: 1.8vw; /* Keep the font size the same */
+    font-weight: bold;
+    margin: 5px 0; /* Reduce top and bottom margin */
+    padding: 0; /* Remove any additional padding */
 }

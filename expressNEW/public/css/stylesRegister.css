@@ -180,44 +180,57 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
     padding: 2%;
 }
 
-/* Panel content container with side-by-side layout */
+/* Grid for Entrees and Sides */
 .panel-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Align Entrees and Sides horizontally */
+    gap: 20px; /* Add space between Entrees and Sides */
     width: 100%;
-    margin-top: 2%;
+    margin-top: 20px; /* Space above the grid */
 }
 
-/* Section styling for Entrees and Sides */
+.section-header {
+    text-align: center; /* Center text */
+    margin-bottom: 5px; /* Reduce space below the header */
+    font-size: 1.5vw; /* Responsive size */
+}
+
 .entrees-section, .sides-section {
-    width: 48%;
+    flex: 1; /* Equal width */
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-right: 5%;
 }
 
-/* Section header styling */
-.section-header {
-    font-size: 1.8vw;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 2%;
-}
-
-/* Grids for Entrees and Sides */
 .entrees-grid, .sides-grid {
     display: grid;
-    gap: 1vw;
+    gap: 8px; /* Reduce space between buttons inside the grid */
     width: 100%;
 }
 
 .entrees-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* Three columns */
 }
 
 .sides-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+}
+
+/* Entree and Side buttons */
+.entrees-grid button, .sides-grid button {
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    padding: 8px 10px; /* Adjust padding to make buttons smaller */
+    border-radius: 5px;
+    font-size: 0.9em;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.entrees-grid button:hover, .sides-grid button:hover {
+    background-color: #f0f0f0; /* Light gray on hover */
 }
 
 .hidden-panel .button {
@@ -237,25 +250,73 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
     margin-bottom: 5%;
 }
 
-.size-selection button, .cancel button, .add button {
+/* Align Cancel and Add to Order buttons horizontally */
+.panel-buttons {
+    display: flex;
+    justify-content: space-between; /* Space between Cancel and Add buttons */
+    gap: 10px; /* Space between buttons */
+    margin-bottom: 10px; /* Reduce vertical spacing below the buttons */
+}
+
+.cancel, .add-btn {
+    flex: 1; /* Buttons take equal space */
+    max-width: 150px; /* Restrict width */
+    height: 6vh; /* Set height */
+    font-size: 1.2vw; /* Adjust font size */
+    font-weight: bold;
+    color: white; /* White text */
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 10px; /* Add padding for larger click area */
+}
+
+.cancel {
+    background-color: red; /* Red background for Cancel */
+}
+
+.add-btn {
+    background-color: green; /* Green background for Add */
+}
+
+/* Center the section header */
+.section-header {
+    text-align: center; /* Center the text */
+    margin-bottom: 15px; /* Adjust space below the header */
+    font-weight: bold; /* Ensure bold styling */
+    font-size: 1.5vw; /* Responsive font size */
+}
+
+.size-selection {
+    display: flex;
+    justify-content: space-between; /* Space buttons evenly */
+    gap: 10px; /* Space between each size button */
+    margin-bottom: 15px; /* Reduce space below size buttons */
+}
+
+/* Size selection buttons */
+.size-selection button {
     width: 100%;
     max-width: 150px;
     height: 6vh;
+    font-size: 1vw;
+    font-weight: bold;
     color: white;
     background-color: grey;
+    border: none;
+    border-radius: 5px;
     text-align: center;
-    margin-bottom: 5%;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 1vw;
+    transition: background-color 0.3s ease;
 }
 
-.cancel button {
-    background-color: red;
+.size-selection button:hover {
+    background-color: darkgray; /* Hover effect for size buttons */
 }
 
-.add button {
-    background-color: green;
+.size-selection button.active {
+    background-color: green; /* Active size button */
 }
 
 /*********************************************************************************************************************************
