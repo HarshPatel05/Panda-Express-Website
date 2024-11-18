@@ -119,7 +119,7 @@
                 <button id="restockButton" onclick="fetchRestockReport()">Get Restock Report</button>
 
             </div>
-            
+
             <table id = "restockReport" border = "2">
                 <thead>
                     <th>Ingredient</th>
@@ -150,6 +150,15 @@
 
         <div id="sales" class="tabContent">
             <h3>Sales Performance</h3>
+            <div class="dateFilter">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate">
+                
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate">
+        
+                <button id="salesButton" onclick="filterSales()">Submit</button>
+            </div>
             <table id = "salesReport" border = "2">
                 <thead>
                     <th>Item ID</th>
