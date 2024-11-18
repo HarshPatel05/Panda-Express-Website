@@ -449,3 +449,36 @@ body {
     align-self: center; /* Ensure the image aligns with the center of the modal */
     transform: translateX(-10px); /* Move the image slightly to the left */
 }
+
+
+#appetizerModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.size-selection .size-button {
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.size-button.selected {
+    background-color: #f0a500;
+    color: white;
+    border-color: #f0a500;
+}
+
+.quantity-selector button {
+    font-size: 18px;
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+}

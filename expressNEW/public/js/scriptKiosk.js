@@ -15,6 +15,10 @@ let alaCarteQuantity = 1;
 let menuItems = []; // To store the fetched menu items
 let menuItemMap = {}; // To group menu items by `menuitem`
 
+let selectedAppetizer = null;
+let appetizerSize = 'sm'; // Default size
+let appetizerQuantity = 1; // Default quantity
+
 async function loadMenuItems() {
     try {
         const response = await fetch('/api/menuitems');
@@ -204,28 +208,46 @@ async function loadMenuItems() {
                     sideContainer.appendChild(button);
                 }
             }
+        });
 
-            
-            // Drinks and Appetizers with Labels
-            if (item.menuitemid >= 52 && item.menuitemid <= 60) {
-                const wrapper = document.createElement('div');
-                wrapper.classList.add('menu-item-wrapper');
-
-                const label = document.createElement('div');
-                label.classList.add('menu-item-label');
-                label.innerText = `${item.size} - $${item.price.toFixed(2)}`;
-
+        menuItems.forEach((item) => {
+            if (item.category && item.category.toLowerCase() === 'appetizer') {
+                // Ensure the menuItemMap exists for grouping
+                if (!menuItemMap[item.menuitem]) {
+                    menuItemMap[item.menuitem] = { sm: null, md: null, lg: null };
+                }
+        
+                // Map size data
+                menuItemMap[item.menuitem][item.size] = {
+                    menuitemid: item.menuitemid,
+                    price: item.price,
+                    displayname: item.displayname,
+                };
+        
+                // Create button for each appetizer
                 const button = document.createElement('button');
-                button.innerText = `${camelCaseToNormal(item.menuitem)}`;
                 button.classList.add('menu-item-button');
                 button.dataset.menuId = item.menuitemid;
-                button.onclick = () => addItemToOrder(item.menuitemid, item.menuitem, item.price, 'appetizer');
-
-                wrapper.appendChild(label);
-                wrapper.appendChild(button);
-                appetizerContainer.appendChild(wrapper);
+                button.onclick = () => openAppetizerModal(item);
+        
+                // Add image to button
+                const image = document.createElement('img');
+                image.src = `/Panda Express Photos/${camelCaseToNormal(item.menuitem)}.png`;
+                image.alt = camelCaseToNormal(item.menuitem);
+                image.classList.add('button-image');
+                button.appendChild(image);
+        
+                // Add text to button
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.displayname);
+                text.classList.add('button-text');
+                button.appendChild(text);
+        
+                // Append button to the appetizer container
+                appetizerContainer.appendChild(button);
             }
         });
+        
     } catch (error) {
         console.error('Error loading menu items:', error);
     }
@@ -273,7 +295,6 @@ function updateOrderList() {
         const listItem = document.createElement("div");
         listItem.classList.add("order-item");
 
-        // Use the item's base price directly
         const itemPrice = typeof item.price === 'number' ? item.price : 0;
         const itemQuantity = item.quantity || 1;
         const totalPrice = itemPrice * itemQuantity;
@@ -290,19 +311,25 @@ function updateOrderList() {
             </div>
         `;
 
-        // Add sub-item for À La Carte or composite components
+        // Add sub-item details for specific item types
         if (item.type === 'a la carte') {
             listItemHTML += `
                 <div class="item-components">
                     <div>- ${item.name}</div>
                 </div>
             `;
-        } else if (item.type === 'composite' && item.components.length > 0) {
+        } else if (item.type === 'composite' && item.components?.length > 0) {
             listItemHTML += `
                 <div class="item-components">
                     ${item.components
                         .map(component => `<div>- ${component.itemName}</div>`)
                         .join('')}
+                </div>
+            `;
+        } else if (item.type === 'appetizer') {
+            listItemHTML += `
+                <div class="item-components">
+                    <div>- ${item.name} (${capitalize(item.size)})</div>
                 </div>
             `;
         }
@@ -318,8 +345,6 @@ function updateOrderList() {
         orderList.appendChild(listItem);
     });
 }
-
-
 
 
 
@@ -385,6 +410,12 @@ function finalizeCompositeItem() {
         return;
     }
 
+    // Collect all menu IDs of the components
+    const componentMenuIds = [
+        ...currentCompositeItem.entrees.map(entree => entree.menuId),
+        ...currentCompositeItem.sides.map(side => side.menuId),
+    ];
+
     // Use the base price of the composite item only
     const totalPrice = currentCompositeItem.price;
 
@@ -400,7 +431,7 @@ function finalizeCompositeItem() {
 
     // Add the composite item to orderItems
     addItemToOrder(
-        [currentCompositeItem.menuId], // Only include the composite menu ID
+        [currentCompositeItem.menuId, ...componentMenuIds], // Include the composite menu ID and all component IDs
         currentCompositeItem.name,
         totalPrice,
         'composite', // Mark as composite
@@ -412,8 +443,6 @@ function finalizeCompositeItem() {
     updateCurrentItemPreview();
     closePanel();
 }
-
-
 
 
 function selectDrink(drinkName) {
@@ -691,6 +720,101 @@ function addAlaCarteToOrder() {
 
 
 
+function openAppetizerModal(appetizer) {
+    selectedAppetizer = appetizer;
+    appetizerSize = 'sm'; // Default size
+    appetizerQuantity = 1; // Default quantity
+
+    document.getElementById('appetizerImage').src = `/Panda Express Photos/${camelCaseToNormal(appetizer.menuitem)}.png`;
+    document.getElementById('appetizerItemName').innerText = camelCaseToNormal(appetizer.displayname);
+    document.getElementById('appetizerQuantity').innerText = appetizerQuantity;
+
+    // Dynamically populate available sizes
+    const sizeSelection = document.getElementById('appetizerSizeSelection');
+    sizeSelection.innerHTML = ''; // Clear previous size buttons
+    Object.entries(menuItemMap[appetizer.menuitem]).forEach(([size, data]) => {
+        if (data) {
+            const sizeButton = document.createElement('button');
+            sizeButton.id = `${size}AppetizerSize`;
+            sizeButton.classList.add('size-button');
+            sizeButton.innerHTML = `${capitalize(size)}<br>$${data.price.toFixed(2)}`;
+            sizeButton.onclick = () => selectAppetizerSize(size);
+            sizeSelection.appendChild(sizeButton);
+        }
+    });
+
+    document.getElementById('appetizerModal').style.display = 'block';
+}
+
+
+function closeAppetizerModal() {
+    document.getElementById('appetizerModal').style.display = 'none';
+    selectedAppetizer = null;
+}
+
+function selectAppetizerSize(size) {
+    appetizerSize = size;
+    const sizeButtons = document.querySelectorAll('#appetizerSizeSelection .size-button');
+    sizeButtons.forEach(button => button.classList.remove('selected'));
+    document.getElementById(`${size}AppetizerSize`).classList.add('selected');
+}
+
+function increaseAppetizerQuantity() {
+    appetizerQuantity++;
+    document.getElementById('appetizerQuantity').innerText = appetizerQuantity;
+}
+
+function decreaseAppetizerQuantity() {
+    if (appetizerQuantity > 1) {
+        appetizerQuantity--;
+        document.getElementById('appetizerQuantity').innerText = appetizerQuantity;
+    }
+}
+
+function addAppetizerToOrder() {
+    if (!selectedAppetizer) {
+        console.error("No appetizer selected.");
+        return;
+    }
+
+    const sizeData = menuItemMap[selectedAppetizer.menuitem][appetizerSize];
+    if (!sizeData) {
+        console.error(`Size data for ${appetizerSize} not found.`);
+        return;
+    }
+
+    const { menuitemid: menuId, price } = sizeData;
+
+    const appetizerOrder = {
+        type: 'appetizer',
+        name: `${camelCaseToNormal(selectedAppetizer.displayname)} (${capitalize(appetizerSize)})`,
+        size: appetizerSize,
+        price: price,
+        quantity: appetizerQuantity,
+        menuIds: Array(appetizerQuantity).fill(menuId),
+    };
+
+    orderItems.push(appetizerOrder);
+    updateOrderList();
+    calculateTotal();
+    closeAppetizerModal();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function removeItemFromOrder(index) {
     if (index >= 0 && index < orderItems.length) {
@@ -785,6 +909,7 @@ function getFullSizeName(abbreviation) {
     return sizeMap[abbreviation.toLowerCase()] || abbreviation; // Fallback to original if not found
 }
 
+
 function checkoutOrder() {
     // Check if there are no items in the order
     if (orderItems.length === 0) {
@@ -798,40 +923,58 @@ function checkoutOrder() {
     // Show an alert with the menu IDs and total price
     alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}`);
 
-    // Make the POST request to the server to update the pending order
-    fetch('/api/updatependingorders',
-    {
-        method: 'POST', // HTTP method for sending data
-        headers: { 'Content-Type': 'application/json' }, // Tell the server the data is in JSON format
-        body: JSON.stringify
-        ({
-            totalCost: totalAmount, // Send the total cost of the order (totalAmount is a global variable)
-            menuItemIDs: menuItemIDs, // Send the array of menu item IDs
-        })
-    })
-
-    .then(response =>
-    {
-        // If the response is not OK, throw an error to be caught in the catch block
-        if (!response.ok)
-        {
-            throw new Error('Failed to update pending order.');
-        }
-        return response.json(); // If the response is OK, parse the JSON response (which contains the server message from server.js)
-    })
-
-    .then(data =>
-    {
-        // Show a success message with the total cost and the server's response message
-        alert(`Pending order placed successfully!\nOrder total: $${totalAmount.toFixed(2)}\n${data.message}`);
-        clearOrder(); // Clear the order items after successful checkout
-    })
-
-    .catch(error =>
-    {
-        // Log and display an error message if something went wrong
-        console.error('Error:', error);
-        alert('An error occurred while placing your pending order. Please try again.');
-    });
+    // Clear the order
+    clearOrder(); // Assuming clearOrder() resets the order and total
 }
+
+
+// function checkoutOrder() {
+//     // Check if there are no items in the order
+//     if (orderItems.length === 0) {
+//         alert('Your order is empty. Please add items before checking out.');
+//         return; // Exit the function if order is empty
+//     }
+
+//     // Flatten the array of menuIds from each order item
+//     const menuItemIDs = orderItems.flatMap(item => item.menuIds); // Flatten array of menuIds
+
+//     // Show an alert with the menu IDs and total price
+//     alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}`);
+
+//     // Make the POST request to the server to update the pending order
+//     fetch('/api/updatependingorders',
+//     {
+//         method: 'POST', // HTTP method for sending data
+//         headers: { 'Content-Type': 'application/json' }, // Tell the server the data is in JSON format
+//         body: JSON.stringify
+//         ({
+//             totalCost: totalAmount, // Send the total cost of the order (totalAmount is a global variable)
+//             menuItemIDs: menuItemIDs, // Send the array of menu item IDs
+//         })
+//     })
+
+//     .then(response =>
+//     {
+//         // If the response is not OK, throw an error to be caught in the catch block
+//         if (!response.ok)
+//         {
+//             throw new Error('Failed to update pending order.');
+//         }
+//         return response.json(); // If the response is OK, parse the JSON response (which contains the server message from server.js)
+//     })
+
+//     .then(data =>
+//     {
+//         // Show a success message with the total cost and the server's response message
+//         alert(`Pending order placed successfully!\nOrder total: $${totalAmount.toFixed(2)}\n${data.message}`);
+//         clearOrder(); // Clear the order items after successful checkout
+//     })
+
+//     .catch(error =>
+//     {
+//         // Log and display an error message if something went wrong
+//         console.error('Error:', error);
+//         alert('An error occurred while placing your pending order. Please try again.');
+//     });
+// }
 

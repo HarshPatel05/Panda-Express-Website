@@ -204,6 +204,32 @@
             </div>
         </div>
         
+        <div id="appetizersPanel" class="hidden-panel">
+            <div class="cancel">
+                <button onclick="closePanel()">Cancel Item</button>
+            </div>
+            <h3>Appetizers</h3>
+            <div class="appetizer-columns" id="appetizer-buttons"></div>
+        </div>
+        
+        <div id="appetizerModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAppetizerModal()">&times;</span>
+                <img id="appetizerImage" src="" alt="Selected Appetizer" class="modal-image">
+                <h3 id="appetizerItemName">Item Name</h3>
+                <div id="appetizerSizeSelection" class="size-selection">
+                    <button id="smAppetizerSize" class="size-button" onclick="selectAppetizerSize('sm')">Small</button>
+                    <button id="mdAppetizerSize" class="size-button" onclick="selectAppetizerSize('md')">Medium</button>
+                    <button id="lgAppetizerSize" class="size-button" onclick="selectAppetizerSize('lg')">Large</button>
+                </div>
+                <div class="quantity-selector">
+                    <button onclick="decreaseAppetizerQuantity()">-</button>
+                    <span id="appetizerQuantity">1</span>
+                    <button onclick="increaseAppetizerQuantity()">+</button>
+                </div>
+                <button onclick="addAppetizerToOrder()">Add to Order</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>
