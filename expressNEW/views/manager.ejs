@@ -112,6 +112,14 @@
 
         <div id="restock" class="tabContent" >
             <h3>Items for Restock</h3>
+            <div class="restockControls">
+                <label for="filterMinimum">Minimum Quantity:</label>
+                <input type="number" id="filterMinimum" name="filterMinimum" placeholder="Enter minimum quantity">
+        
+                <button id="restockButton" onclick="fetchRestockReport()">Get Restock Report</button>
+
+            </div>
+            
             <table id = "restockReport" border = "2">
                 <thead>
                     <th>Ingredient</th>
