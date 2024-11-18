@@ -499,81 +499,47 @@ app.post('/api/updateinventory', async (req, res) =>
 );
 
 
+// Endpoint to update pending orders table
+app.post('/api/updatependingorders', async (req, res) =>
+{
+  const { totalCost, menuItemIDs } = req.body; // Extract total cost and menu item IDs from request body
 
-// API request to update an pending orders table
-/**
- * fetch('/api/updatependingorders', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(
-    {
-      totalCost: 25.50,
-      menuItemIDs: [1, 2, 3]  // Example data
-    })
-  })
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error updating order:', error));
+  const client = await pool.connect(); // Get a connection from the database pool
 
- */
-  app.post('/api/updatependingorders', async (req, res) => 
-    {
-      const { totalCost, menuItemIDs } = req.body;
-  
-      // Create a map to count occurrences of each menuItemID
-      const itemCountMap = new Map();
-  
-      menuItemIDs.forEach( 
-        id =>
-          { 
-            itemCountMap.set(id, (itemCountMap.get(id) || 0) + 1); 
-          } 
-      );
-  
-      const client = await pool.connect();
-  
-      try 
-      {
-        // we use `BEGIN` like this, when we have to execute multiple queries in the same database connection
-        await client.query('BEGIN'); // Start transaction
-  
-        // Insert into pending orders table and get the new orderID
-        const pendingOrderResult = await client.query(
-          'INSERT INTO pendingorders (totalCost, date) VALUES ($1, $2) RETURNING orderid',
-          [totalCost, new Date()] // Insert current timestamp
-        );
-  
-        const newOrderID = pendingOrderResult.rows[0].orderid;
-  
-        // Prepare to insert into orderitems
-        const orderItemsQuery = 'INSERT INTO orderitems (orderid, menuitemid, quantity) VALUES ($1, $2, $3)';
-        const orderItemsPromises = Object.entries(itemCountMap).map(([menuItemID, quantity]) => {
-          return client.query(orderItemsQuery, [newOrderID, parseInt(menuItemID), quantity]);
-        });
-  
-        // Execute all insert queries in parallel
-        await Promise.all(orderItemsPromises);
-  
-        // Commit the transaction
-        await client.query('COMMIT');
-        
-        // Respond with a simple success message
-        res.status(200).json({ message: 'Order updated successfully!' });
-      }
-      catch (error)
-      {
-        console.error('Error updating order:', error);
-  
-        // Rollback transaction on error
-        await client.query('ROLLBACK');
-        res.status(500).json({ error: 'Failed to update order' });
-      }
-      finally
-      {
-        client.release();
-      }
-    }
-  );
+  try
+  {
+    await client.query('BEGIN'); // Start a database transaction
+
+    // Insert the pending order into the table
+    // Convert the menuItemIDs array to a JSON string using JSON.stringify
+    const pendingOrderResult = await client.query(
+      'INSERT INTO pendingorders (totalCost, date, menuitemids) VALUES ($1, $2, $3) RETURNING orderid',
+      [totalCost, new Date(), JSON.stringify(menuItemIDs)] // Insert total cost, current timestamp, and menu item IDs
+    );
+
+    // Retrieve the newly created order ID from the result
+    const newOrderID = pendingOrderResult.rows[0].orderid;
+
+    await client.query('COMMIT'); // Commit the transaction to save changes
+    res.status(200).json
+    ({
+      message: 'Pending order updated successfully!', // Send success message to client
+      orderID: newOrderID, // Include the new order ID in the response
+    });
+  }
+  catch (error)
+  {
+    console.error('Error updating pending order:', error); // Log any errors for debugging
+
+    await client.query('ROLLBACK'); // Rollback the transaction if an error occurs
+    res.status(500).json({ error: 'Failed to update pending order' }); // Send error response to client
+  }
+  finally
+  {
+    client.release(); // Release the database connection back to the pool
+  }
+});
+
 
 
 //######################################################################  FEATURES ENDPOINTS  ########################################################################
