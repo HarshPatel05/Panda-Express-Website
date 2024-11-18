@@ -143,3 +143,13 @@ tbody tr:nth-child(even) {
 tbody tr:nth-child(odd) {
     background-color: #ffffff; 
 }
+
+
+.dateFilter,
+.restockControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1vw; 
+    margin-bottom: 2vh; 
+}
