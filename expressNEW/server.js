@@ -208,7 +208,7 @@ app.get('/api/orderHistory', async (req, res) =>
   {
     try
     {
-      const result = await pool.query('SELECT * FROM orderhistory ORDER BY orderid DESC;');  
+      const result = await pool.query('SELECT * FROM orderhistory ORDER BY orderid DESC LIMIT 1000;');  
       res.json(result.rows); 
     }
     catch (err)
