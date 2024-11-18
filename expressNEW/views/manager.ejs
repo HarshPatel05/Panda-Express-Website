@@ -17,8 +17,9 @@
         </div>
 
         <div class="viewContols">
-            <button class="viewButtons">Switch View</button>
-            <button class="viewButtons">Sign Out</button>
+            <button class="viewButtons" onclick="window.location.href='/register'">Switch View</button>
+            <button class="viewButtons" onclick="window.location.href='/index'">Sign Out</button>
+
         </div>
     </div>
 
@@ -156,13 +157,31 @@
 
         </div>
 
-        <div id="xReport" class="tabContent">
+        <div id="xReportDiv" class="tabContent">
             <h3>X Report</h3>
+            <table id = "xReport" border = "2">
+                <thead>
+                    <th>Hour</th>
+                    <th>Total Sold</th>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
 
         </div>
 
-        <div id="zReport" class="tabContent">
+        <div id="zReportDiv" class="tabContent">
             <h3>Z Report</h3>
+            <table id = "zReport" border = "2">
+                <thead>
+                    <th>Hour</th>
+                    <th>Total Sold</th>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
 
         </div>
 
