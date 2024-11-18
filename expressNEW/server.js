@@ -152,6 +152,23 @@ app.get('/api/employees', async (req, res) =>
   }
 );
 
+// API Endpoint to get the weather for College Station
+app.get('/api/weather', async (req, res) => {
+  const apiKey = process.env.WEATHER_KEY;  
+  const lat = 30.6280;
+  const lon = -96.3344;
+  const apiUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,daily,alerts&appid=${apiKey}`;
+
+  try {
+      const result = await fetch(apiUrl);
+      const data = await result.json();
+      res.json(data);
+
+  } catch (err) {
+      console.error('Error fetching weather:', err.stack);
+      res.status(500).send('Server Error');
+  }
+});
 
 // API Endpoint to get the inventory
 app.get('/api/inventory', async (req, res) => 
