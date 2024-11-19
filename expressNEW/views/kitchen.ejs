@@ -4,24 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kitchen Order Board</title>
-    <link rel="stylesheet" href="\css\stylesKitchen.css">
+    <link rel="stylesheet" href="/css/stylesKitchen.css">
+    <script src="/js/scriptKitchen.js"></script>
 </head>
 <body>
     <header>
-        <h1>Kitchen Order Board</h1>
+        <h1>Orders</h1>
     </header>
     <main>
-        <div id="orderContainer">
-            <!-- Example Order -->
-            <div class="orderCard">
-                <h2>Order #1</h2>
-                <ul>
-                    <li>1x Orange Chicken Bowl</li>
-                    <li>2x Egg Rolls</li>
-                    <li>1x Large Drink</li>
-                </ul>
-                <button class="completeBtn">Mark as Complete</button>
-            </div>
+        <div class="board">
+            <section id="inProgress">
+                <h2>In Progress</h2>
+                <div class="orderContainer">
+                    <!-- Example Orders -->
+                    <div class="orderCard" data-status="in-progress">
+                        <h3>Example #1</h3>
+                        <ul>
+                            <li>1x Orange Chicken Bowl</li>
+                            <li>2x Egg Rolls</li>
+                            <li>1x Large Drink</li>
+                        </ul>
+                    </div>
+                    <div class="orderCard" data-status="in-progress">
+                        <h3>Example #2</h3>
+                        <ul>
+                            <li>1x Fried Rice</li>
+                            <li>1x Spring Roll</li>
+                            <li>1x Medium Drink</li>
+                        </ul>
+                    </div>
+                    <div class="orderCard" data-status="in-progress">
+                        <h3>Example #3</h3>
+                        <ul>
+                            <li>1x Chow Mein</li>
+                            <li>2x Chicken Wings</li>
+                            <li>1x Small Drink</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <div class="divider"></div>
+            <section id="completed">
+                <h2>Completed</h2>
+                <div class="orderContainer">
+                    <!-- Completed orders will appear here -->
+                </div>
+            </section>
         </div>
     </main>
 </body>

@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    background-color: #DB372E;
     color: #333;
     display: flex;
     flex-direction: column;
@@ -22,64 +22,75 @@ header {
 
 header h1 {
     font-size: 2em;
-    color: #555;
+    color: #fff;
     text-transform: uppercase;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 main {
     width: 100%;
     max-width: 1200px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
 }
 
-#orderContainer {
+.board {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: flex-start;
     width: 100%;
+    gap: 20px;
+}
+
+section {
+    flex: 1;
+    text-align: center;
+    background-color: #DB372E;
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+}
+
+section h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.orderContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 items per row */
+    gap: 20px;
+    width: 100%;
+    justify-items: center; /* Center items horizontally */
 }
 
 .orderCard {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    padding: 20px;
-    text-align: left;
-}
-
-.orderCard h2 {
-    font-size: 1.5em;
-    color: #444;
-    margin-bottom: 10px;
-}
-
-.orderCard ul {
-    list-style-type: none;
-    margin-bottom: 20px;
-}
-
-.orderCard ul li {
-    font-size: 1em;
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.completeBtn {
-    background-color: #28a745;
-    color: #fff;
+    color: black;
+    background-color: white;
     border: none;
-    padding: 10px;
     border-radius: 5px;
-    cursor: pointer;
+    padding: 20px;
     font-size: 1em;
-    width: 100%;
+    width: 90%; /* Adjust width as needed */
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, background-color 0.2s;
+    box-sizing: border-box;
 }
 
-.completeBtn:hover {
-    background-color: #218838;
+.orderCard:hover {
+    background-color: #a62921;
+    transform: scale(1.03);
+}
+
+/* Divider Style */
+.divider {
+    width: 5px;
+    background-color: #fff;
+    height: 100%;
 }
