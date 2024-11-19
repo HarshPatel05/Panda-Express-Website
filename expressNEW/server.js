@@ -72,6 +72,10 @@ app.get('/manager', (req, res) => {
   res.render('manager'); // Render the views/manager.ejs file
 });
 
+app.get('/kitchen', (req, res) => {
+  res.render('kitchen'); // Render the views/kitchen.ejs file
+});
+
 
 
 //####   |   ##############################################################################################################################################   |   ####
