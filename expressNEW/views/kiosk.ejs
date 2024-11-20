@@ -107,67 +107,48 @@
             <h3>Drinks</h3>
             <div class="drink-columns" id="drink-buttons">
                 <!-- Hardcoded drink buttons -->
-                <button class="menu-item-button" onclick="selectDrink('Dr Pepper')">
+                <button class="menu-item-button" onclick="selectDrink('Dr Pepper', 'fountainDrink')">
                     <img src="/Panda Express Photos/Dr Pepper.png" class="button-image" alt="Dr Pepper">
                     <div class="button-text">Dr Pepper</div>
                 </button>
-                <button class="menu-item-button" onclick="selectDrink('Sweet Tea')">
+                <button class="menu-item-button" onclick="selectDrink('Sweet Tea', 'fountainDrink')">
                     <img src="/Panda Express Photos/Sweet Tea.png" class="button-image" alt="Sweet Tea">
                     <div class="button-text">Sweet Tea</div>
                 </button>
-                <button class="menu-item-button" onclick="selectDrink('Pepsi')">
+                <button class="menu-item-button" onclick="selectDrink('Pepsi', 'fountainDrink')">
                     <img src="/Panda Express Photos/Pepsi.png" class="button-image" alt="Pepsi">
                     <div class="button-text">Pepsi</div>
                 </button>
-                <button class="menu-item-button" onclick="selectDrink('Diet Pepsi')">
+                <button class="menu-item-button" onclick="selectDrink('Diet Pepsi', 'fountainDrink')">
                     <img src="/Panda Express Photos/Diet Pepsi.png" class="button-image" alt="Diet Pepsi">
                     <div class="button-text">Diet Pepsi</div>
                 </button>
-                <button class="menu-item-button" onclick="selectDrink('Mountain Dew')">
+                <button class="menu-item-button" onclick="selectDrink('Mountain Dew', 'fountainDrink')">
                     <img src="/Panda Express Photos/Mountain Dew.png" class="button-image" alt="Mountain Dew">
                     <div class="button-text">Mountain Dew</div>
                 </button>
-                <button class="menu-item-button" onclick="selectDrink('Brisk Raspberry Tea')">
+                <button class="menu-item-button" onclick="selectDrink('Brisk Raspberry Tea', 'fountainDrink')">
                     <img src="/Panda Express Photos/Brisk Raspberry Tea.png" class="button-image" alt="Brisk Raspberry Tea">
                     <div class="button-text">Brisk Raspberry Tea</div>
                 </button>
-                <button class="menu-item-button" onclick="selectDrink('Sierra Mist')">
+                <button class="menu-item-button" onclick="selectDrink('Sierra Mist', 'fountainDrink')">
                     <img src="/Panda Express Photos/Sierra Mist.png" class="button-image" alt="Sierra Mist">
                     <div class="button-text">Sierra Mist</div>
                 </button>
-                <button class="menu-item-button" onclick="selectDrink('Tropicana Lemonade')">
+                <button class="menu-item-button" onclick="selectDrink('Tropicana Lemonade', 'fountainDrink')">
                     <img src="/Panda Express Photos/Tropicana Lemonade.png" class="button-image" alt="Tropicana Lemonade">
                     <div class="button-text">Tropicana Lemonade</div>
                 </button>
-                <button class="menu-item-button" onclick="selectDrink('Aquafina')">
+                <button class="menu-item-button" onclick="selectDrink('Aquafina', 'water')">
                     <img src="/Panda Express Photos/Aquafina.png" class="button-image" alt="Aquafina">
                     <div class="button-text">Aquafina</div>
                 </button>
-                <button class="menu-item-button" onclick="selectDrink('Gatorade Lemon Lime')">
+                <button class="menu-item-button" onclick="selectDrink('Gatorade Lemon Lime', 'gatorade')">
                     <img src="/Panda Express Photos/Gatorade Lemon Lime.png" class="button-image" alt="Gatorade Lemon Lime">
                     <div class="button-text">Gatorade Lemon Lime</div>
                 </button>
             </div>
-        </div>
-
-        <div id="drinkModal" class="modal">
-            <div class="modal-content">
-                <button class="close-modal" onclick="closeDrinkModal()">✖</button>
-                <img id="drinkImage" src="" alt="Drink" class="modal-drink-image">
-                <h3 id="drinkName"></h3>
-                <div id="sizeSelection" class="size-selection">
-                    <button id="smallSize" class="drink-size-button" onclick="selectDrinkSize('sm')">Small<br>$2.10</button>
-                    <button id="mediumSize" class="drink-size-button" onclick="selectDrinkSize('md')">Medium<br>$2.30</button>
-                    <button id="largeSize" class="drink-size-button" onclick="selectDrinkSize('lg')">Large<br>$2.50</button>
-                </div>                
-                <div class="quantity-selection">
-                    <button onclick="decreaseQuantity()">-</button>
-                    <span id="quantity">1</span>
-                    <button onclick="increaseQuantity()">+</button>
-                </div>
-                <button class="add-to-order" onclick="addDrinkToOrderFromModal()">ADD TO ORDER</button>
-            </div>
-        </div>        
+        </div>      
         
         <div id="alacartePanel" class="hidden-panel">
             <div class="cancel">
@@ -184,12 +165,20 @@
                 </div>
             </div>
         </div>
-
+        
+        <div id="appetizersPanel" class="hidden-panel">
+            <div class="cancel">
+                <button onclick="closePanel()">Cancel Item</button>
+            </div>
+            <h3>Appetizers</h3>
+            <div class="appetizer-columns panel-content"></div>
+        </div>
+        
         <div id="alaCarteModal" class="modal">
             <div class="modal-content">
-                <span class="close" onclick="closeAlaCarteModal()">&times;</span>
+                <button class="close" onclick="closeAlaCarteModal()">✖</button>
                 <img id="alaCarteImage" src="" alt="Selected Item" class="modal-image">
-                <h3 id="alaCarteItemName">Item Name</h3>
+                <h3 id="alaCarteItemName"></h3>
                 <div id="sizeSelection">
                     <button id="smSize" class="size-button" onclick="selectAlaCarteSize('sm')">Small</button>
                     <button id="mdSize" class="size-button" onclick="selectAlaCarteSize('md')">Medium</button>
@@ -200,23 +189,35 @@
                     <span id="alaCarteQuantity">1</span>
                     <button onclick="increaseAlaCarteQuantity()">+</button>
                 </div>
-                <button onclick="addAlaCarteToOrder()">Add to Order</button>
+                <button class="add-to-order" onclick="addAlaCarteToOrder()">ADD TO ORDER</button>
+            </div>
+        </div>
+
+        <div id="drinkModal" class="modal">
+            <div class="modal-content">
+                <button class="close" onclick="closeDrinkModal()">✖</button>
+                <img id="drinkImage" src="" alt="Selected Drink" class="modal-image">
+                <h3 id="drinkItemName"></h3>
+                <div id="sizeSelection" class="size-selection">
+                    <button id="smDrinkSize" class="size-button" onclick="selectDrinkSize('sm')">Small</button>
+                    <button id="mdDrinkSize" class="size-button" onclick="selectDrinkSize('md')">Medium</button>
+                    <button id="lgDrinkSize" class="size-button" onclick="selectDrinkSize('lg')">Large</button>
+                </div>                
+                <div class="quantity-selector">
+                    <button onclick="decreaseDrinkQuantity()">-</button>
+                    <span id="drinkQuantity">1</span>
+                    <button onclick="increaseDrinkQuantity()">+</button>
+                </div>
+                <button class="add-to-order" onclick="addDrinkToOrder()">ADD TO ORDER</button>
             </div>
         </div>
         
-        <div id="appetizersPanel" class="hidden-panel">
-            <div class="cancel">
-                <button onclick="closePanel()">Cancel Item</button>
-            </div>
-            <h3>Appetizers</h3>
-            <div class="appetizer-columns" id="appetizer-buttons"></div>
-        </div>
-        
+
         <div id="appetizerModal" class="modal">
             <div class="modal-content">
-                <span class="close" onclick="closeAppetizerModal()">&times;</span>
+                <button class="close" onclick="closeAppetizerModal()">✖</button>
                 <img id="appetizerImage" src="" alt="Selected Appetizer" class="modal-image">
-                <h3 id="appetizerItemName">Item Name</h3>
+                <h3 id="appetizerItemName"></h3>
                 <div id="appetizerSizeSelection" class="size-selection">
                     <button id="smAppetizerSize" class="size-button" onclick="selectAppetizerSize('sm')">Small</button>
                     <button id="mdAppetizerSize" class="size-button" onclick="selectAppetizerSize('md')">Medium</button>
@@ -227,7 +228,7 @@
                     <span id="appetizerQuantity">1</span>
                     <button onclick="increaseAppetizerQuantity()">+</button>
                 </div>
-                <button onclick="addAppetizerToOrder()">Add to Order</button>
+                <button class="add-to-order" onclick="addAppetizerToOrder()">ADD TO ORDER</button>
             </div>
         </div>
     </div>
