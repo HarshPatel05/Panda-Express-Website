@@ -5,8 +5,9 @@ let selectedSize = 'Medium'; // Default size for A La Carte
 let currentAlaCarteItem = null;
 
 let selectedDrink = null;
-let selectedDrinkSize = 'sm';
-let selectedQuantity = 1;
+let selectedDrinkType = null;
+let drinkSize = 'sm';
+let drinkQuantity = 1;
 
 let selectedAlaCarteItem = null; // Tracks the current selected item
 let alaCarteSize = 'md'; // Default size
@@ -18,6 +19,7 @@ let menuItemMap = {}; // To group menu items by `menuitem`
 let selectedAppetizer = null;
 let appetizerSize = 'sm'; // Default size
 let appetizerQuantity = 1; // Default quantity
+let appetizerMap = {};
 
 async function loadMenuItems() {
     try {
@@ -32,8 +34,6 @@ async function loadMenuItems() {
 
         const entreeContainer = document.getElementById('entree-buttons');
         const sideContainer = document.getElementById('side-buttons');
-        const appetizerContainer = document.getElementById('appetizer-buttons');
-        const drinkContainer = document.getElementById('drink-buttons');
 
         // Debug containers
         if (!entreeContainer) console.error("Entree container not found");
@@ -79,6 +79,9 @@ async function loadMenuItems() {
             return;
         }        
 
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
     menuItems.forEach((item) => {
         // Add entrees to the À La Carte panel
         if (item.size === 'sm' && item.menuitemid >= 1 && item.menuitemid <= 39) {
@@ -135,6 +138,10 @@ async function loadMenuItems() {
         }
     });
 
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+
         menuItems.forEach((item) => {
             // Group items by `menuitem`
             if (!menuItemMap[item.menuitem]) {
@@ -154,7 +161,11 @@ async function loadMenuItems() {
 
         console.log('Menu Item Map:', menuItemMap); // Debug to ensure the map is correctly created
 
-        // Populate standard entrees, sides, and appetizers
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+
+        // Populate standard entrees and sides
         menuItems.forEach((item) => {
 
             if (item.size === 'sm') {
@@ -210,48 +221,64 @@ async function loadMenuItems() {
             }
         });
 
-        menuItems.forEach((item) => {
-            if (item.category && item.category.toLowerCase() === 'appetizer') {
-                // Ensure the menuItemMap exists for grouping
-                if (!menuItemMap[item.menuitem]) {
-                    menuItemMap[item.menuitem] = { sm: null, md: null, lg: null };
-                }
-        
-                // Map size data
-                menuItemMap[item.menuitem][item.size] = {
-                    menuitemid: item.menuitemid,
-                    price: item.price,
-                    displayname: item.displayname,
-                };
-        
-                // Create button for each appetizer
-                const button = document.createElement('button');
-                button.classList.add('menu-item-button');
-                button.dataset.menuId = item.menuitemid;
-                button.onclick = () => openAppetizerModal(item);
-        
-                // Add image to button
-                const image = document.createElement('img');
-                image.src = `/Panda Express Photos/${camelCaseToNormal(item.menuitem)}.png`;
-                image.alt = camelCaseToNormal(item.menuitem);
-                image.classList.add('button-image');
-                button.appendChild(image);
-        
-                // Add text to button
-                const text = document.createElement('div');
-                text.innerText = camelCaseToNormal(item.displayname);
-                text.classList.add('button-text');
-                button.appendChild(text);
-        
-                // Append button to the appetizer container
-                appetizerContainer.appendChild(button);
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+
+        const appetizers = menuItems.filter(item => item.menuitemid >= 52 && item.menuitemid <= 60);
+
+        appetizers.forEach((item) => {
+            if (!appetizerMap[item.menuitem]) {
+                appetizerMap[item.menuitem] = {}; // Initialize an object for sizes
             }
+            appetizerMap[item.menuitem][item.size] = {
+                menuitemid: item.menuitemid,
+                price: item.price,
+            };
         });
+
+        console.log('Appetizer Map:', appetizerMap); // Debug to ensure it's grouped correctly
+
         
-    } catch (error) {
-        console.error('Error loading menu items:', error);
-    }
-}
+        // Add one button per unique appetizer
+        // Add buttons for appetizers with images and names
+        Object.keys(appetizerMap).forEach((menuitem) => {
+            const appetizersPanelContent = document.querySelector('#appetizersPanel .appetizer-columns');
+            if (!appetizersPanelContent) {
+                console.error('Appetizers panel-content not found');
+                return;
+            }
+
+            // Create a button for the appetizer
+            const button = document.createElement('button');
+            button.classList.add('menu-item-button');
+            button.dataset.menuitem = menuitem;
+
+            // Add the image
+            const image = document.createElement('img');
+            const normalizedMenuItem = camelCaseToNormal(menuitem).replace(/ /g, '%20'); // Ensure correct file path
+            image.src = `/Panda Express Photos/${normalizedMenuItem}.png`;
+            image.alt = camelCaseToNormal(menuitem);
+            image.classList.add('button-image'); // Add a CSS class for styling the image
+            button.appendChild(image);
+
+            // Add the text (name of the appetizer)
+            const text = document.createElement('div');
+            text.innerText = camelCaseToNormal(menuitem);
+            text.classList.add('button-text'); // Add a CSS class for styling the text
+            button.appendChild(text);
+
+            // Attach click handler to open the modal
+            button.onclick = () => showAppetizerModal(menuitem);
+
+            // Append the button to the appetizersPanelContent
+            appetizersPanelContent.appendChild(button);
+            console.log('Appetizer Button Added:', button);
+        });
+            } catch (error) {
+                console.error('Error loading menu items:', error);
+            }
+        }
 
 document.addEventListener('DOMContentLoaded', () => {
     loadMenuItems();
@@ -444,175 +471,197 @@ function finalizeCompositeItem() {
     closePanel();
 }
 
-
-function selectDrink(drinkName) {
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+// Function to handle drink selection
+async function selectDrink(drinkName, menuIdName) {
+    // Reset selection variables
     selectedDrink = drinkName;
-    selectedDrinkSize = 'sm'; // Reset size to small
-    selectedQuantity = 1;
+    selectedDrinkType = menuIdName;
+    drinkQuantity = 1;
+
+    // Handle Gatorade specifically
+    if (menuIdName === 'gatorade') {
+        try {
+            // Fetch Gatorade information directly from the API
+            const response = await fetch('/api/menuitems');
+            if (!response.ok) {
+                console.error('Failed to fetch menu items:', response.statusText);
+                return;
+            }
+            const menuItems = await response.json();
+
+            // Find the Gatorade item using its ID
+            const gatoradeData = menuItems.find(item => item.menuitemid === 68);
+            if (!gatoradeData) {
+                console.error('No data found for gatorade with ID: 68');
+                return;
+            }
+
+            const { menuitemid, price } = gatoradeData;
+
+            // Add Gatorade directly to the order
+            addItemToOrder([menuitemid], drinkName, price, 'drink'); // Using existing addItemToOrder
+            return;
+        } catch (error) {
+            console.error('Error fetching menu items for Gatorade:', error);
+            return;
+        }
+    }
+
+    // For other drinks, open the modal
+    const modal = document.getElementById('drinkModal');
+    if (!modal) {
+        console.error('Drink modal not found.');
+        return;
+    }
 
     // Update modal content
-    document.getElementById('drinkName').innerText = drinkName;
-    document.getElementById('drinkImage').src = `/Panda Express Photos/${drinkName}.png`;
-    document.getElementById('quantity').innerText = selectedQuantity;
+    const button = Array.from(document.querySelectorAll('#drink-buttons .menu-item-button'))
+        .find(btn => btn.querySelector('.button-text').innerText === drinkName);
 
-    // Check if it's Gatorade and handle size display
-    if (drinkName === 'Gatorade Lemon Lime') {
-        document.getElementById('smallSize').style.display = 'none';
-        document.getElementById('mediumSize').style.display = 'none';
-        document.getElementById('largeSize').style.display = 'none';
-    } else if (drinkName === 'Aquafina') {
-        // If it's Aquafina, adjust pricing and sizes dynamically
-        document.getElementById('smallSize').innerHTML = `Small<br>$2.30`;
-        document.getElementById('mediumSize').innerHTML = `Medium<br>$2.70`;
-        document.getElementById('largeSize').innerHTML = `Large<br>$3.00`;
-
-        document.getElementById('smallSize').style.display = 'inline-block';
-        document.getElementById('mediumSize').style.display = 'inline-block';
-        document.getElementById('largeSize').style.display = 'inline-block';
-    } else {
-        // Reset to default for fountain drinks
-        document.getElementById('smallSize').innerHTML = `Small<br>$2.10`;
-        document.getElementById('mediumSize').innerHTML = `Medium<br>$2.30`;
-        document.getElementById('largeSize').innerHTML = `Large<br>$2.50`;
-
-        document.getElementById('smallSize').style.display = 'inline-block';
-        document.getElementById('mediumSize').style.display = 'inline-block';
-        document.getElementById('largeSize').style.display = 'inline-block';
+    if (!button) {
+        console.error(`Button for drink "${drinkName}" not found.`);
+        return;
     }
 
-    // Show the modal
-    document.getElementById('drinkModal').style.display = 'block';
+    const drinkImage = button.querySelector('img').src;
+    document.getElementById('drinkImage').src = drinkImage;
+    document.getElementById('drinkImage').alt = drinkName;
+    document.getElementById('drinkItemName').innerText = drinkName;
+
+    // Dynamically update size buttons
+    const sizeSelection = document.getElementById('sizeSelection');
+    sizeSelection.innerHTML = ''; // Clear existing buttons
+
+    const drinkData = menuItemMap[menuIdName];
+    if (drinkData) {
+        Object.keys(drinkData).forEach(size => {
+            const sizeData = drinkData[size];
+            if (sizeData) {
+                const sizeButton = document.createElement('button');
+                sizeButton.classList.add('size-button');
+                sizeButton.id = `${size}DrinkSize`;
+                sizeButton.innerHTML = `${capitalize(size.replace('_', ' '))}<br>$${sizeData.price.toFixed(2)}`;
+                sizeButton.onclick = () => selectDrinkSize(size);
+
+                sizeSelection.appendChild(sizeButton);
+            } else {
+                console.warn(`No data found for size: ${size} in drink: ${menuIdName}`);
+            }
+        });
+    } else {
+        console.error(`No size data found for drink type: ${menuIdName}`);
+    }
+
+    document.getElementById('drinkQuantity').innerText = drinkQuantity;
+    modal.style.display = 'block'; // Show modal
 }
 
 
-function closeDrinkModal() {
-    document.getElementById('drinkModal').style.display = 'none';
-    selectedDrink = null; // Reset selected drink
-    selectedDrinkSize = 'sm'; // Reset size
-    selectedQuantity = 1; // Reset quantity
-}
-
+// Function to select a size
 function selectDrinkSize(size) {
-    selectedDrinkSize = size;
-    console.log("Selected size:", size);
-
-    const sizeButtons = document.querySelectorAll('#sizeSelection .drink-size-button');
-    sizeButtons.forEach((button) => {
-        console.log("Checking button:", button.id);
-        if (button.id === `${size}Size`) {
-            button.classList.add('selected');
-            console.log("Button turned green:", button.id);
-        } else {
-            button.classList.remove('selected');
-        }
-    });
+    drinkSize = size;
 }
 
 
-
-
-function increaseQuantity() {
-    selectedQuantity++;
-    document.getElementById('quantity').innerText = selectedQuantity;
+// Function to increase drink quantity
+function increaseDrinkQuantity() {
+    drinkQuantity++;
+    document.getElementById('drinkQuantity').innerText = drinkQuantity;
 }
 
-function decreaseQuantity() {
-    if (selectedQuantity > 1) {
-        selectedQuantity--;
-        document.getElementById('quantity').innerText = selectedQuantity;
+// Function to decrease drink quantity
+function decreaseDrinkQuantity() {
+    if (drinkQuantity > 1) {
+        drinkQuantity--;
+        document.getElementById('drinkQuantity').innerText = drinkQuantity;
     }
 }
 
-function addDrinkToOrderFromModal() {
-    let menuId;
-
-    // Assign menu IDs based on the drink type and size
-    if (selectedDrink === 'Gatorade Lemon Lime') {
-        menuId = 68; // Gatorade always has a single menu ID
-    } else if (selectedDrink === 'Aquafina') {
-        // Fetch menu ID for water bottle based on selected size
-        if (selectedDrinkSize === 'sm') {
-            menuId = 64;
-        } else if (selectedDrinkSize === 'md') {
-            menuId = 65;
-        } else if (selectedDrinkSize === 'lg') {
-            menuId = 66;
-        }
-    } else {
-        // Default to fountain drinks
-        if (selectedDrinkSize === 'sm') {
-            menuId = 61;
-        } else if (selectedDrinkSize === 'md') {
-            menuId = 62;
-        } else if (selectedDrinkSize === 'lg') {
-            menuId = 63;
-        }
+// Function to add the selected drink to the order
+function addDrinkToOrder() {
+    if (!selectedDrinkType || !menuItemMap[selectedDrinkType][drinkSize]) {
+        console.error('Invalid drink or size selection.');
+        return;
     }
 
-    // Create the drink order item
-    const drinkItem = {
+    const { menuitemid, price } = menuItemMap[selectedDrinkType][drinkSize];
+    const drinkOrder = {
         type: 'drink',
         name: selectedDrink,
-        size: selectedDrink === 'Gatorade Lemon Lime' ? null : selectedDrinkSize, // No size for Gatorade
-        price:
-            selectedDrink === 'Gatorade Lemon Lime'
-                ? 2.7
-                : selectedDrink === 'Aquafina'
-                ? selectedDrinkSize === 'sm'
-                    ? 2.3
-                    : selectedDrinkSize === 'md'
-                    ? 2.7
-                    : 3.0
-                : selectedDrinkSize === 'sm'
-                ? 2.1
-                : selectedDrinkSize === 'md'
-                ? 2.3
-                : 2.5,
-        quantity: selectedQuantity,
-        menuIds: Array(selectedQuantity).fill(menuId), // Add menu ID multiple times based on quantity
+        size: drinkSize,
+        price: price,
+        quantity: drinkQuantity,
+        menuIds: Array(drinkQuantity).fill(menuitemid),
     };
 
-    // Add the drink item to the order
-    orderItems.push(drinkItem);
-
-    // Update the order list and total
+    // Add to order and update UI
+    orderItems.push(drinkOrder);
     updateOrderList();
     calculateTotal();
 
-    // Close the modal
+    // Close modal
     closeDrinkModal();
 }
 
+// Function to close the modal
+function closeDrinkModal() {
+    const modal = document.getElementById('drinkModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    selectedDrink = null;
+    selectedDrinkType = null;
+    drinkSize = 'sm';
+    drinkQuantity = 1;
+}
+
+// Helper function to capitalize size names
+function capitalize(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+
+
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
 
 // Opens the modal for A La Carte item
-function openAlaCarteModal(menuItem) {
-    selectedAlaCarteItem = menuItem; // Store the selected item details
-    alaCarteSize = 'md'; // Default to medium size
-    alaCarteQuantity = 1; // Reset quantity
 
-    // Normalize the `menuitem` for the image file name
-    const normalizedMenuItem = camelCaseToNormal(menuItem.menuitem)
+function openAlaCarteModal(menuItem) {
+    selectedAlaCarteItem = menuItem;
+    alaCarteSize = 'md'; // Default size
+    alaCarteQuantity = 1;
+
+    const normalizedMenuItem = camelCaseToNormal(menuItem.menuitem);
 
     // Update modal content
     document.getElementById('alaCarteImage').src = `/Panda Express Photos/${normalizedMenuItem}.png`;
-    document.getElementById('alaCarteImage').alt = camelCaseToNormal(menuItem.menuitem);
-    document.getElementById('alaCarteItemName').innerText = camelCaseToNormal(menuItem.menuitem);
+    document.getElementById('alaCarteImage').alt = normalizedMenuItem;
+    document.getElementById('alaCarteItemName').innerText = normalizedMenuItem;
+
+    // Update size selection buttons
+    const sizeSelection = document.getElementById('sizeSelection');
+    sizeSelection.innerHTML = ''; // Clear existing buttons
+
+    Object.keys(menuItemMap[menuItem.menuitem]).forEach((size) => {
+        const sizeData = menuItemMap[menuItem.menuitem][size];
+
+        const sizeButton = document.createElement('button');
+        sizeButton.classList.add('size-button');
+        sizeButton.id = `${size}Size`;
+        sizeButton.innerHTML = `${capitalize(size)}<br>$${sizeData.price.toFixed(2)}`;
+        sizeButton.onclick = () => selectAlaCarteSize(size);
+
+        sizeSelection.appendChild(sizeButton);
+    });
+
+    // Reset quantity and show the modal
     document.getElementById('alaCarteQuantity').innerText = alaCarteQuantity;
-
-    // Show all size buttons for entrees
-    if (menuItem.category === 'entree') {
-        document.getElementById('smSize').style.display = 'inline-block'; // Show small size for entrees
-        document.getElementById('mdSize').style.display = 'inline-block';
-        document.getElementById('lgSize').style.display = 'inline-block';
-    } 
-    // Hide small size button for sides
-    else if (menuItem.category === 'side') {
-        document.getElementById('smSize').style.display = 'none'; // Hide small size for sides
-        document.getElementById('mdSize').style.display = 'inline-block';
-        document.getElementById('lgSize').style.display = 'inline-block';
-    }
-
-    document.getElementById('alaCarteModal').style.display = 'block'; // Show modal
+    document.getElementById('alaCarteModal').style.display = 'block';
 }
 
 
@@ -649,9 +698,6 @@ function selectAlaCarteSize(size) {
 
     console.log(`Price for selected size: $${selectedMenuItem.price}`);
 }
-
-
-
 
 // Adjust quantity
 function increaseAlaCarteQuantity() {
@@ -714,42 +760,47 @@ function addAlaCarteToOrder() {
     closeAlaCarteModal();
 }
 
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
 
-
-
-
-
-
-function openAppetizerModal(appetizer) {
-    selectedAppetizer = appetizer;
+function showAppetizerModal(menuitem) {
+    selectedAppetizer = menuitem;
     appetizerSize = 'sm'; // Default size
-    appetizerQuantity = 1; // Default quantity
+    appetizerQuantity = 1; // Reset quantity
 
-    document.getElementById('appetizerImage').src = `/Panda Express Photos/${camelCaseToNormal(appetizer.menuitem)}.png`;
-    document.getElementById('appetizerItemName').innerText = camelCaseToNormal(appetizer.displayname);
-    document.getElementById('appetizerQuantity').innerText = appetizerQuantity;
+    const modal = document.getElementById('appetizerModal');
 
-    // Dynamically populate available sizes
+    // Update modal content
+    document.getElementById('appetizerImage').src = `/Panda Express Photos/${camelCaseToNormal(menuitem)}.png`;
+    document.getElementById('appetizerImage').alt = camelCaseToNormal(menuitem);
+    document.getElementById('appetizerItemName').innerText = camelCaseToNormal(menuitem);
+
+    // Dynamically populate size buttons
     const sizeSelection = document.getElementById('appetizerSizeSelection');
-    sizeSelection.innerHTML = ''; // Clear previous size buttons
-    Object.entries(menuItemMap[appetizer.menuitem]).forEach(([size, data]) => {
-        if (data) {
-            const sizeButton = document.createElement('button');
-            sizeButton.id = `${size}AppetizerSize`;
-            sizeButton.classList.add('size-button');
-            sizeButton.innerHTML = `${capitalize(size)}<br>$${data.price.toFixed(2)}`;
-            sizeButton.onclick = () => selectAppetizerSize(size);
-            sizeSelection.appendChild(sizeButton);
-        }
+    sizeSelection.innerHTML = ''; // Clear existing buttons
+
+    Object.keys(appetizerMap[menuitem]).forEach((size) => {
+        const sizeData = appetizerMap[menuitem][size];
+
+        const sizeButton = document.createElement('button');
+        sizeButton.classList.add('size-button');
+        sizeButton.id = `${size}AppetizerSize`;
+        sizeButton.innerHTML = `${capitalize(size)}<br>$${sizeData.price.toFixed(2)}`;
+        sizeButton.onclick = () => selectAppetizerSize(size);
+
+        sizeSelection.appendChild(sizeButton);
     });
 
-    document.getElementById('appetizerModal').style.display = 'block';
+    modal.style.display = 'block'; // Show modal
 }
 
 
 function closeAppetizerModal() {
     document.getElementById('appetizerModal').style.display = 'none';
-    selectedAppetizer = null;
+    selectedAppetizer = null; // Reset selection
+    appetizerSize = 'sm'; // Reset size
+    appetizerQuantity = 1; // Reset quantity
 }
 
 function selectAppetizerSize(size) {
@@ -771,13 +822,14 @@ function decreaseAppetizerQuantity() {
     }
 }
 
+
 function addAppetizerToOrder() {
     if (!selectedAppetizer) {
         console.error("No appetizer selected.");
         return;
     }
 
-    const sizeData = menuItemMap[selectedAppetizer.menuitem][appetizerSize];
+    const sizeData = appetizerMap[selectedAppetizer][appetizerSize];
     if (!sizeData) {
         console.error(`Size data for ${appetizerSize} not found.`);
         return;
@@ -787,7 +839,7 @@ function addAppetizerToOrder() {
 
     const appetizerOrder = {
         type: 'appetizer',
-        name: `${camelCaseToNormal(selectedAppetizer.displayname)} (${capitalize(appetizerSize)})`,
+        name: `${camelCaseToNormal(selectedAppetizer)} (${capitalize(appetizerSize)})`,
         size: appetizerSize,
         price: price,
         quantity: appetizerQuantity,
@@ -800,20 +852,9 @@ function addAppetizerToOrder() {
     closeAppetizerModal();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
+//**************************************************************************************************************************//
 
 
 function removeItemFromOrder(index) {
