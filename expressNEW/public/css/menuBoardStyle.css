@@ -42,13 +42,8 @@ h1 {
     display: inline-block; /* Ensure it behaves like an inline element */
 }
 
-
-
-
-
-
 /* ------------------------------
-Section 1 Content Formatting
+Section 1 General Content Formatting
 ------------------------------ */
 
 .meal-options {
@@ -56,39 +51,30 @@ Section 1 Content Formatting
     flex-direction: column;
     width: auto;
     margin-left: 5%; /* Adjust the margin of the bowl, plate, bigger plate, and a al carte symbols and the left side */
-    
 }
 
 .meal-option {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin-bottom: 9%; /* Adjust the gap between each meal option */
-    padding-right: 5%; /* Adjust the margin of the procing and text and the right side */
 }
 
 .image-container {
-    margin-right: 20%; /* Adjust the gap between the symbol and the descriptive text */
+    margin-right: 22%; /* Adjust the gap between the symbol and the descriptive text */
     width: 17%; /* Does something similar but tbh I am not sure of  */
 }
 
-.image-container img {
-    height: 100px; /* Change the size of the logo images */
-    width: auto;
-}
 
 .text-container {
     flex-grow: 1; /* Effects the a la carte image only? */
 }
 
 .text-container h3 {
-    font-size: 2.5em;
     color: #333;
     margin: 0;
 }
 
 .text-container p {
-    font-size: 1.3em;
     color: #666;
 }
 
@@ -96,45 +82,17 @@ Section 1 Content Formatting
 .price-group {
     display: flex;
     justify-content: space-between;
-    margin-top: 2%; /* Spacing between each price group */
-}
-
-/* Price label styling */
-.price-label {
-    font-size: 1.1em;
-    color: #333;
-}
-
-/* Price styling (already defined) */
-.price {
-    font-size: 1.5em;
-    color: #ff6347;
 }
 
 
 /* ------------------------------
-   Section 2 Content Formatting
+   Section 2 General Content Formatting
    ------------------------------ */
-.top-half-sec2 {
-    flex: 0.025;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.bottom-half-sec2 {
-    flex: 1;
-}
-
-/* ------------------------------
-   Grid Container Styles Section 2
-   ------------------------------ */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, auto);
-    gap: 1.5%;
-    width: 100%;
 }
 
 /* ------------------------------
@@ -161,8 +119,6 @@ Section 1 Content Formatting
     grid-column: span 3;
     grid-row: span 1;
     background-color: #e0e0e0;
-    height: 100%;
-    font-size: 3em;
 }
 
 .legend-item {
@@ -173,53 +129,31 @@ Section 1 Content Formatting
 
 .legend-item img {
     height: auto;
-    margin-right: 3%; /* Space between Legend Logo and the text */
 }
 
-/* Individual margins for each image */
-.premium-logo {
-    max-width: 10%; /* Size for the premium logo */    
-}
-
-.favorite-logo {
-    max-width: 10%; /* Size for the favorite logo */
-}
-
-.legend-item h3 {
-    margin: 0;
-    font-size: 1em;
-}
 
 /* Main image class */
 .box img.main-img {
     position: absolute; 
-    top: 40%; /* Move the entree images up and down */
     left: 50%; 
     transform: translate(-50%, -50%);
-    width: 140%; /* Change the size of the entree images */
     object-fit: contain;
 }
 
 /* Corner logo class */
 .box .corner-logo-1 {
     position: absolute;
-    top: 2%; /* Adjust to move the logo down from the top */
-    left: 2%; /* Adjust to move the logo in from the right */
-    width: 15%; /* Set an initial size for the corner logo */
     height: auto;
 }
 
 /* Box text styling */
 .box-text {
     text-align: center;
-    padding: 1%; /* Change the amount of padding around the entree names */
     background-color: rgba(255, 255, 255, 0.7);
     width: 100%;
     box-sizing: border-box;
     font-weight: bold;
-    font-size: 1.5em;
 }
-
 
 /* ------------------------------
    Section 3 Content Formatting
@@ -235,14 +169,6 @@ Section 1 Content Formatting
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 10%; /* Space between the image and text */
-    margin-left: -5%; /* Shift the images to the left*/
-    margin-bottom: 25%;
-}
-
-/* Update text container to adjust left margin */
-.text-container-sec3 {
-    flex-grow: 1; /* Shift the price to the left and right */
 }
 
 /* If you still want to maintain the size of the image container, you can keep this as is */
@@ -250,51 +176,16 @@ Section 1 Content Formatting
     width: 30%;
 }
 
-/* Update image styling for sides and appetizers */
-.image-container-sec3 img {
-    height: 150px; /* Image height remains the same */
-    width: auto; /* Maintain aspect ratio */
-}
-
-/* Increase the height for only the drink images and shift them left by 100px */
-.image-container-sec3 img.drinks-img {
-    height: 200px; /* Increase the height for drink images */
-    width: auto; /* Maintain aspect ratio */
-    margin-left: -20%; /* Move only the drink image left by 100px */
-    
-}
-
-/* Adjust the h3 font size and line-height */
-.text-container-sec3 h3 {
-    font-size: 2em; 
-    line-height: 1.2; 
-    margin-bottom: 5%; /* Adjust distance between header and the items below it */
-}
-
-/* Maintain alignment */
-.flex-container-sec3 {
-    display: flex;
-    align-items: center; /* Keep items vertically centered */
-}
 
 /* Price group for each item */
 .price-group-sec3 {
     display: flex;
     justify-content: space-between; /* Align label and price to opposite sides */
-    margin-top: 1%; /* Spacing between each price group */
-}
-
-/* Price label styling */
-.price-label-sec3 {
-    font-size: 1.1em;
-    color: #333; /* Darker color for the label */
 }
 
 /* Price styling (already defined) */
 .price-sec3 {
-    font-size: 1.5em;
     color: #ff6347; /* Optional: Change color for price emphasis */
-    margin-right: 5%;
 }
 
 .main-img-sec3 {
@@ -305,21 +196,69 @@ Section 1 Content Formatting
 }
 
 
+/* ------------------------------
+Main Content Styles
+------------------------------ */
+main {
+    display: flex; /* Use flexbox for vertical sections */
+    flex: 1; /* Take remaining space */
+}
+
+/* ------------------------------
+Section Styles
+------------------------------ */
+.section {
+    flex: 1; /* Each section takes equal space */
+    border: 1px solid #ccc; /* Optional: for visual separation */
+    padding: 20px; /* Optional: for spacing within sections */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+#section1 {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+}
+
+#section1 h2 {
+    margin: 0; /* Remove default margin */
+    padding-bottom: 20px; /* Space below the heading */
+    color: #333; /* Change color if desired */
+    margin-top: 20px; /* Adjust spacing from the top */
+    text-align: center; /* Center the text horizontally */
+}
+
+#section2 h2 {
+    margin: 0; /* Remove default margin */
+    padding-bottom: 20px; /* Space below the heading */
+    color: #333; /* Change color if desired */
+    text-align: center;
+}
+
+#section3 h2 {
+    margin: 0; /* Remove default margin */
+    padding-bottom: 20px; /* Space below the heading */
+    color: #333; /* Change color if desired */
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 /* ------------------------------
    Media Queries for Responsive Design
    ------------------------------ */
 
-   @media (min-aspect-ratio: 2/1) {
-    #section2 {
-        flex: 1.655;
-    }
-}
-
-/* Styles for 4:3 Aspect Ratio */
-@media (max-aspect-ratio: 3/2) {
-
+   @media (min-aspect-ratio: 16/9) {
     /* ------------------------------
            Header Formatting
     ------------------------------ */
@@ -337,7 +276,7 @@ Section 1 Content Formatting
     }
 
     #section2 {
-        flex: 1.45; /* Flex value for 4:3 */
+        flex: 1.45;
     }
 
     /* ------------------------------
@@ -356,16 +295,17 @@ Section 1 Content Formatting
     /* Made it this far 😎 */
 
     .meal-option {
-        margin-bottom: 15%; /* Adjust the gap between each meal option */
+        margin-bottom: 12%; /* Adjust the gap between each meal option */
+        padding-right: 5%; /* Adjust the margin of the procing and text and the right side */
     }
 
     
     .text-container h3 {
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
     
     .text-container p {
-        font-size: 1em;
+        font-size: .9em;
     }
     
     /* Price group for each item */
@@ -375,12 +315,14 @@ Section 1 Content Formatting
     
     /* Price label styling */
     .price-label {
-        font-size: 1em;
+        font-size: .9em;
+        color: #333;
     }
     
     /* Price styling (already defined) */
     .price {
-        font-size: 1.25em;
+        font-size: 1.15em;
+        color: #ff6347;
     }
 
     /* ------------------------------
@@ -401,9 +343,6 @@ Section 1 Content Formatting
     Grid Container Styles Section 2
     ------------------------------ */
     .grid-container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        grid-template-rows: repeat(4, auto);
         gap: 1.5%;
         width: 100%;
     }
@@ -411,39 +350,14 @@ Section 1 Content Formatting
     /* ------------------------------
     Box Styles Section 2
     ------------------------------ */
-    .box {
-        background-color: #e0e0e0;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        border: 1px solid #ccc;
-        height: 0;
-        padding-top: 125%;
-        position: relative;
-        overflow: hidden;
-    }
 
     /* Logo-Legend Styles */
     .Logo-Legend {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        grid-column: span 3;
-        grid-row: span 1;
-        background-color: #e0e0e0;
         height: 100%;
-        font-size: 3em;
-    }
-
-    .legend-item {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        font-size: 2.5em;
     }
 
     .legend-item img {
-        height: auto;
         margin-right: 3%; /* Space between Legend Logo and the text */
     }
 
@@ -463,31 +377,20 @@ Section 1 Content Formatting
 
     /* Main image class */
     .box img.main-img {
-        position: absolute; 
-        top: 40%; /* Move the entree images up and down */
-        left: 50%; 
-        transform: translate(-50%, -50%);
-        width: 140%; /* Change the size of the entree images */
-        object-fit: contain;
+        top: 35%; /* Move the entree images up and down */
+        width: 125%; /* Change the size of the entree images */
     }
 
     /* Corner logo class */
     .box .corner-logo-1 {
-        position: absolute;
         top: 2%; /* Adjust to move the logo down from the top */
         left: 2%; /* Adjust to move the logo in from the right */
         width: 15%; /* Set an initial size for the corner logo */
-        height: auto;
     }
 
     /* Box text styling */
     .box-text {
-        text-align: center;
         padding: 1%; /* Change the amount of padding around the entree names */
-        background-color: rgba(255, 255, 255, 0.7);
-        width: 100%;
-        box-sizing: border-box;
-        font-weight: bold;
         font-size: 1.25em;
     }
 
@@ -495,16 +398,215 @@ Section 1 Content Formatting
    Section 3 Content Formatting
    ------------------------------ */
 
-   .grid-container-section3 {
-        display: flex;
-        flex-direction: column;
+    /* Update the flex container properties */
+    .flex-container-sec3 {
+        gap: 10%; /* Space between the image and text */
+        margin-left: -5%; /* Shift the images to the left*/
+        margin-bottom: 15%; /* Gap between elements vertically */
     }
+
+    /* Update text container to adjust left margin */
+    .text-container-sec3 {
+        flex-grow: 1; /* Shift the price to the left and right */
+    }
+
+    /* If you still want to maintain the size of the image container, you can keep this as is */
+    .image-container-sec3 {
+        width: 30%;
+    }
+
+    /* Update image styling for sides and appetizers */
+    .image-container-sec3 img {
+        height: 100px; /* Image height remains the same */
+        width: auto; /* Maintain aspect ratio */
+    }
+
+    /* Increase the height for only the drink images and shift them left by 100px */
+    .image-container-sec3 img.drinks-img {
+        height: 150px; /* Increase the height for drink images */
+        width: auto; /* Maintain aspect ratio */
+        margin-left: -20%; /* Move only the drink image left by 100px */
+        
+    }
+
+    /* Adjust the h3 font size and line-height */
+    .text-container-sec3 h3 {
+        font-size: 1.5em; 
+        line-height: 1.2; 
+        margin-bottom: 5%; /* Adjust distance between header and the items below it */
+    }
+
+
+    /* Price group for each item */
+    .price-group-sec3 {
+        margin-top: 1%; /* Spacing between each price group */
+    }
+
+    /* Price label styling */
+    .price-label-sec3 {
+        font-size: 1em;
+        color: #333; /* Darker color for the label */
+    }
+
+    /* Price styling (already defined) */
+    .price-sec3 {
+        font-size: 1.25em;
+        margin-right: 5%;
+    }
+}
+
+
+
+
+
+
+
+
+
+/* Styles for 3:2 Aspect Ratio */
+@media (max-aspect-ratio: 3/2) {
+
+    /* ------------------------------
+           Header Formatting
+    ------------------------------ */
+    
+    #section1 h2 {
+        font-size: 3em; /* Adjust font size as needed */
+    }
+    
+    #section2 h2 {
+        font-size: 3em; /* Adjust font size as needed */
+    }
+    
+    #section3 h2 {
+        font-size: 3em; /* Adjust font size as needed */
+    }
+
+    #section2 {
+        flex: 2; /* Flex value for 3:2 */
+    }
+
+    /* ------------------------------
+    Section 1 Content Formatting
+    ------------------------------ */
+
+    .image-container img {
+        height: 75px; /* Change the size of the logo images */
+        width: auto;
+    }
+
+    .ALaCarte-logo {
+        margin-left: 15%;
+    }
+
+    /* Made it this far 😎 */
+
+    .meal-option {
+        margin-bottom: 15%; /* Adjust the gap between each meal option */
+        padding-right: 5%; /* Adjust the margin of the pricing and text and the right side */
+    }
+
+    
+    .text-container h3 {
+        font-size: 1.5em;
+    }
+    
+    .text-container p {
+        font-size: 1em;
+    }
+    
+    /* Price group for each item */
+    .price-group {
+        margin-top: 2%; /* Spacing between each price group */
+    }
+    
+    /* Price label styling */
+    .price-label {
+        font-size: 1em;
+        color: #333;
+    }
+    
+    /* Price styling (already defined) */
+    .price {
+        font-size: 1.25em;
+        color: #ff6347;
+    }
+
+    /* ------------------------------
+      Section 2 Content Formatting
+   ------------------------------ */
+    .top-half-sec2 {
+        flex: 0.025;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bottom-half-sec2 {
+        flex: 1;
+    }
+
+    /* ------------------------------
+    Grid Container Styles Section 2
+    ------------------------------ */
+    .grid-container {
+        gap: 1.5%;
+        width: 100%;
+    }
+
+    /* ------------------------------
+    Box Styles Section 2
+    ------------------------------ */
+
+    /* Logo-Legend Styles */
+    .Logo-Legend {
+        height: 100%;
+        font-size: 2.5em;
+    }
+
+    .legend-item img {
+        margin-right: 3%; /* Space between Legend Logo and the text */
+    }
+
+    /* Individual margins for each image */
+    .premium-logo {
+        max-width: 10%; /* Size for the premium logo */    
+    }
+
+    .favorite-logo {
+        max-width: 10%; /* Size for the favorite logo */
+    }
+
+    .legend-item h3 {
+        margin: 0;
+        font-size: 1em;
+    }
+
+    /* Main image class */
+    .box img.main-img {
+        top: 40%; /* Move the entree images up and down */
+        width: 140%; /* Change the size of the entree images */
+    }
+
+    /* Corner logo class */
+    .box .corner-logo-1 {
+        top: 2%; /* Adjust to move the logo down from the top */
+        left: 2%; /* Adjust to move the logo in from the right */
+        width: 15%; /* Set an initial size for the corner logo */
+    }
+
+    /* Box text styling */
+    .box-text {
+        padding: 1%; /* Change the amount of padding around the entree names */
+        font-size: 1.25em;
+    }
+
+    /* ------------------------------
+   Section 3 Content Formatting
+   ------------------------------ */
 
     /* Update the flex container properties */
     .flex-container-sec3 {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
         gap: 10%; /* Space between the image and text */
         margin-left: -5%; /* Shift the images to the left*/
         margin-bottom: 20%; /* Gap between elements vertically */
@@ -541,16 +643,9 @@ Section 1 Content Formatting
         margin-bottom: 5%; /* Adjust distance between header and the items below it */
     }
 
-    /* Maintain alignment */
-    .flex-container-sec3 {
-        display: flex;
-        align-items: center; /* Keep items vertically centered */
-    }
 
     /* Price group for each item */
     .price-group-sec3 {
-        display: flex;
-        justify-content: space-between; /* Align label and price to opposite sides */
         margin-top: 1%; /* Spacing between each price group */
     }
 
@@ -563,62 +658,6 @@ Section 1 Content Formatting
     /* Price styling (already defined) */
     .price-sec3 {
         font-size: 1.25em;
-        color: #ff6347; /* Optional: Change color for price emphasis */
         margin-right: 5%;
     }
-
-    .main-img-sec3 {
-        opacity: 1;
-        transition: opacity 0.5s ease-in-out; /* Smooth fade transition */
-        width: 100%; /* Optional: Adjust to your layout needs */
-        height: auto; /* Keep the image's aspect ratio intact */
-    }
-}
-
-/* ------------------------------
-Main Content Styles
------------------------------- */
-main {
-    display: flex; /* Use flexbox for vertical sections */
-    flex: 1; /* Take remaining space */
-}
-
-/* ------------------------------
-Section Styles
------------------------------- */
-.section {
-    flex: 1; /* Each section takes equal space */
-    border: 1px solid #ccc; /* Optional: for visual separation */
-    padding: 20px; /* Optional: for spacing within sections */
-    box-sizing: border-box; /* Include padding in width calculation */
-}
-
-#section1 {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    margin: 0;
-}
-
-#section1 h2 {
-    margin: 0; /* Remove default margin */
-    padding-bottom: 20px; /* Space below the heading */
-    font-size: 40px; /* Adjust font size as needed */
-    color: #333; /* Change color if desired */
-    margin-top: 20px; /* Adjust spacing from the top */
-    text-align: center; /* Center the text horizontally */
-}
-
-#section2 h2 {
-    margin: 0; /* Remove default margin */
-    padding-bottom: 20px; /* Space below the heading */
-    font-size: 40px; /* Adjust font size as needed */
-    color: #333; /* Change color if desired */
-}
-
-#section3 h2 {
-    margin: 0; /* Remove default margin */
-    padding-bottom: 20px; /* Space below the heading */
-    font-size: 40px; /* Adjust font size as needed */
-    color: #333; /* Change color if desired */
 }
