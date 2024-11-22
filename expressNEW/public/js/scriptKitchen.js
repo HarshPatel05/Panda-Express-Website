@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Set up and play the speech
             const speechSynthesis = window.speechSynthesis;
-            const text = "Your bluetooth device, is connected succesfully";
+            const text = "The bluetooth device, is connected succesfully";
             const speech = new SpeechSynthesisUtterance(text);
 
             // Select a voice (e.g., Google US English or first available)

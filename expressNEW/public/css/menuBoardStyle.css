@@ -258,7 +258,7 @@ Section Styles
    Media Queries for Responsive Design
    ------------------------------ */
 
-   @media (min-aspect-ratio: 16/9) {
+   @media (min-aspect-ratio: 18/11) {
     /* ------------------------------
            Header Formatting
     ------------------------------ */
