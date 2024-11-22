@@ -16,6 +16,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
+const PlayHT = require('playht');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -173,6 +174,41 @@ app.get('/api/weather', async (req, res) => {
       res.status(500).send('Server Error');
   }
 });
+
+
+
+
+
+// Initialize PlayHT client
+PlayHT.init({
+  userId: process.env.TTS_USER_ID,
+  apiKey: process.env.TTS_KEY,
+});
+
+const CUSTOM_VOICE_ID = 's3://voice-cloning-zero-shot/2e1ff2b9-48cf-4fd9-b48a-45a61cbc3b18/original/manifest.json'; // Replace with your custom voice ID
+
+// API Endpoint to generate audio
+app.get('/api/generate-audio', async (req, res) => {
+    const text = req.query.text;
+    if (!text) {
+        return res.status(400).send('Text parameter is required');
+    }
+
+    try {
+        // Use the custom voice ID for text-to-speech
+        const stream = await PlayHT.stream(text, { voiceId: CUSTOM_VOICE_ID });
+
+        // Stream the audio back to the client
+        res.setHeader('Content-Type', 'audio/mpeg');
+        stream.pipe(res);
+    } catch (error) {
+        console.error('Error generating audio:', error);
+        res.status(500).send('Error generating audio');
+    }
+});
+
+
+
 
 // API Endpoint to get the inventory
 app.get('/api/inventory', async (req, res) => 
