@@ -581,6 +581,22 @@ app.post('/api/updatependingorders', async (req, res) =>
 });
 
 
+// API enpoint to get pending orders to display it on the screen
+app.get('/api/getpendingorders', async (req, res) =>
+{
+  try
+  {
+    const result =  await pool.query('SELECT * FROM pendingorders;');
+    res.json(result.rows);
+  }
+  catch(err)
+  {
+    console.error('Error fetching Pending Orders:', err.stack);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+
 
 //######################################################################  FEATURES ENDPOINTS  ########################################################################
 
