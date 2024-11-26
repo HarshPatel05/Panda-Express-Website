@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panda Express Register</title>
-    <link rel="stylesheet" href="/css/stylesKiosk.css">
-    <script src="/js/scriptKiosk.js"></script>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Panda Express Register</title>
+        <!-- Link to Material Icons -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- Your custom styles -->
+        <link rel="stylesheet" href="/css/stylesKiosk.css">
+        <!-- Your custom script -->
+        <script src="/js/scriptKiosk.js"></script>
+    </head>
+    
 <body>
 
     <div class="top-bar">
@@ -173,6 +178,21 @@
             <h3>Appetizers</h3>
             <div class="appetizer-columns panel-content"></div>
         </div>
+
+
+        <!-- NEW STUFF COBY ADDED!!!!!!! -->
+         <!-- CONSTRUCTION ZONE -->
+        <div id="checkoutPanel" class="hidden-panel">
+            <div class="popup-container">
+                <div class="popup-box">
+                    <label for="popupInput">Enter your name</label> <!-- Added label for accessibility -->
+                    <textarea class="use-keyboard-input" id="popupInput" maxlength="25"></textarea> <!-- Limit input to 25 characters -->
+                    <button id="popupDoneBtn">Done</button>
+                </div>
+            </div>
+        </div>
+        <!-- CONSTRUCTION ZONE -->
+        <!-- END OF STUFF COBY ADDED!!!!!!!!!! -->
         
         <div id="alaCarteModal" class="modal">
             <div class="modal-content">

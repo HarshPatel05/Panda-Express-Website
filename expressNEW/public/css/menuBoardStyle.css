@@ -18,7 +18,7 @@ Header Styles
 header {
     display: flex; /* Use Flexbox layout */
     align-items: center; /* Center items vertically */
-    background-color: #f8f8f8; /* Adjust as needed */
+    background-color: #e60000; /* Adjust as needed */
     padding: 10px 20px; /* Adjust padding */
     width: 100%; /* Make header full width */
     box-sizing: border-box; /* Include padding in width */
@@ -31,7 +31,8 @@ nav {
 h1 {
     margin: 0; /* Remove default margin */
     flex-grow: 1; /* Allow the title to take remaining space */
-    font-size: 70px; /* Change this value to adjust the size */
+    font-size: 80px; /* Change this value to adjust the size */
+    color: #e0e0e0;
 }
 
 .Panda-Logo {
@@ -185,7 +186,7 @@ Section 1 General Content Formatting
 
 /* Price styling (already defined) */
 .price-sec3 {
-    color: #ff6347; /* Optional: Change color for price emphasis */
+    color: #e60000; /* Optional: Change color for price emphasis */
 }
 
 .main-img-sec3 {
@@ -242,10 +243,6 @@ Section Styles
     color: #333; /* Change color if desired */
     text-align: center;
 }
-
-
-
-
 
 
 
@@ -322,7 +319,7 @@ Section Styles
     /* Price styling (already defined) */
     .price {
         font-size: 1.15em;
-        color: #ff6347;
+        color: #e60000;
     }
 
     /* ------------------------------
@@ -529,7 +526,7 @@ Section Styles
     /* Price styling (already defined) */
     .price {
         font-size: 1.25em;
-        color: #ff6347;
+        color: #e60000;
     }
 
     /* ------------------------------
