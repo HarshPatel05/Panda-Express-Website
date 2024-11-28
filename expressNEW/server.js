@@ -85,6 +85,7 @@ app.get('/kitchen', (req, res) => {
 //#### \ | / ############################################################################################################################################## \ | / ####
 //####  \|/  ##############################################################################################################################################  \|/  ####
 
+
 // added steps for Google OAuth
 // need more steps after reward system is added in database 
 app.get('/api/sessions/oauth/google', async (req, res) => {
@@ -133,6 +134,7 @@ app.get('/api/sessions/oauth/google', async (req, res) => {
   }
 });
 
+
 //API Endpoint to get OAuth information
 app.get('/api/config', (req, res) => {
   res.json({
@@ -140,6 +142,7 @@ app.get('/api/config', (req, res) => {
       redirectUrl: process.env.REDIRECT_URL,
   });
 });
+
 
 // API Endpoint to get all the employees
 app.get('/api/employees', async (req, res) => 
@@ -156,6 +159,7 @@ app.get('/api/employees', async (req, res) =>
     }
   }
 );
+
 
 // API Endpoint to get the weather for College Station
 app.get('/api/weather', async (req, res) => {
@@ -176,9 +180,6 @@ app.get('/api/weather', async (req, res) => {
 });
 
 
-
-
-
 // Initialize PlayHT client
 PlayHT.init({
   userId: process.env.TTS_USER_ID,
@@ -186,6 +187,7 @@ PlayHT.init({
 });
 
 const CUSTOM_VOICE_ID = 's3://voice-cloning-zero-shot/2e1ff2b9-48cf-4fd9-b48a-45a61cbc3b18/original/manifest.json'; // Replace with your custom voice ID
+
 
 // API Endpoint to generate audio
 app.get('/api/generate-audio', async (req, res) => {
@@ -208,8 +210,6 @@ app.get('/api/generate-audio', async (req, res) => {
 });
 
 
-
-
 // API Endpoint to get the inventory
 app.get('/api/inventory', async (req, res) => 
   {
@@ -225,6 +225,7 @@ app.get('/api/inventory', async (req, res) =>
     }
   }
 );
+
 
 // API Endpoint to get all the menu items
 app.get('/api/menuitems', async (req, res) => 
@@ -259,6 +260,7 @@ app.get('/api/orderHistory', async (req, res) =>
   }
 );
 
+
 // API Endpoint to get restock report 
 app.get('/api/restockReport', async (req, res) => {
   try {
@@ -273,6 +275,7 @@ app.get('/api/restockReport', async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
 
 // API Endpoint for login
 app.post('/api/login', async (req, res) =>
@@ -297,6 +300,7 @@ app.post('/api/login', async (req, res) =>
     }
   }
 );
+
 
 // API Endpoint to get sales report
 app.get('/api/salesReport', async (req, res) => {
@@ -362,6 +366,7 @@ app.get('/api/salesReport', async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
 
 // API request to update an order
 /**

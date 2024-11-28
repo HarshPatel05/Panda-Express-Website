@@ -79,3 +79,48 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+async function loadPendingOrders()
+{
+    try
+    {
+        const response = await fetch('/api/getpendingorders');
+        if (!response.ok)
+        {
+            throw new Error(`Failed to fetch Pending Orders: ${response.statusText}`);
+        }
+
+        const pendingOrders = await response.json();
+        console.log('Fetched Pending Orders (Kitchen):', pendingOrders);
+
+        // Clear the existing orders in progress before rendering
+        inProgressContainer.innerHTML = '';
+
+        // Render each pending order
+        pendingOrders.forEach(order =>
+        {
+            const orderCard = document.createElement("div");
+            orderCard.classList.add("orderCard");
+            orderCard.dataset.status = "in-progress";
+
+            const orderTitle = document.createElement("h3");
+            orderTitle.textContent = `Order #${order.orderId}`;
+
+            const orderList = document.createElement("ul");
+            order.items.forEach(item => 
+            {
+                const listItem = document.createElement("li");
+                listItem.textContent = item;
+                orderList.appendChild(listItem);
+            });
+
+            orderCard.appendChild(orderTitle);
+            orderCard.appendChild(orderList);
+            inProgressContainer.appendChild(orderCard);
+        });
+    }
+    catch (err)
+    {
+        console.error('Error loading pending orders:', err);
+    }
+}
