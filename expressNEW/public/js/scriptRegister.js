@@ -484,24 +484,6 @@ function openAlaCarteModal(menuItem) {
     }
 
     // Set default price for the default size
-    const defaultSizeData = menuItemMap[menuItem.menuitem]?.[alaCarteSize];
-    if (defaultSizeData) {
-        const priceElement = document.getElementById('alaCartePrice');
-        if (priceElement) {
-            priceElement.innerText = `$${defaultSizeData.price.toFixed(2)}`;
-        } else {
-            console.error('Element with ID alaCartePrice not found.');
-        }
-    }
-
-    // Reset quantity and show the modal
-    const quantityElement = document.getElementById('alaCarteQuantity');
-    if (quantityElement) {
-        quantityElement.innerText = alaCarteQuantity;
-    } else {
-        console.error('Element with ID alaCarteQuantity not found.');
-    }
-
     const modal = document.getElementById('alaCarteModal');
     if (modal) {
         modal.style.display = 'block';
