@@ -284,6 +284,25 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMenuItems();
 });
 
+
+// Michael
+// Function to get the weather information for the kiosk
+async function getWeather() {
+    try {
+        const response = await fetch('/api/weather');
+        const data = await response.json();
+        const city = "College Station";
+        const temp = data.current.temp;
+        const description = data.current.weather[0].description;
+        const weatherText = document.getElementById('weatherInfo');
+        weatherText.textContent = city  + ": " + temp + "°F " + description;
+    }
+    catch (error) {
+        console.log("Error getting weather", error);
+    }
+}
+
+
 // Function to initialize a new composite item (bowl, plate, or bigger plate)
 function selectItemType(type, price, entreesRequired, sidesRequired, menuId) {
     currentCompositeItem = {
@@ -1195,8 +1214,8 @@ const Keyboard = {
 
 window.addEventListener("DOMContentLoaded", function () {
     Keyboard.init();
+    getWeather();
 });
-
 
 
 
