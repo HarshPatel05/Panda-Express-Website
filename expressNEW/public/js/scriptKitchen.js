@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+
 async function loadPendingOrders()
 {
     try
@@ -97,30 +98,104 @@ async function loadPendingOrders()
         inProgressContainer.innerHTML = '';
 
         // Render each pending order
-        pendingOrders.forEach(order =>
+        for (const order of pendingOrders)
         {
             const orderCard = document.createElement("div");
             orderCard.classList.add("orderCard");
             orderCard.dataset.status = "in-progress";
 
             const orderTitle = document.createElement("h3");
-            orderTitle.textContent = `Order #${order.orderId}`;
+            orderTitle.textContent = `Order #${order.pendingorderid}`;  // Use pendingorderid from the database
 
             const orderList = document.createElement("ul");
-            order.items.forEach(item => 
+
+            // Convert the menuitemids string to an array and fetch item names
+            const items = order.menuitemids.slice(1, -1).split(',');  // Strip the curly braces and split by comma
+
+            for (const itemId of items)
             {
+                const itemIdTrimmed = itemId.trim();  // Trim spaces
+                const itemName = await getItemNameById(itemIdTrimmed);  // Fetch the display name of the item
+                
                 const listItem = document.createElement("li");
-                listItem.textContent = item;
+                listItem.textContent  = itemName || `Item ID: ${itemIdTrimmed}`; // if itemName is not null then that or else the Item ID
                 orderList.appendChild(listItem);
-            });
+            }
 
             orderCard.appendChild(orderTitle);
             orderCard.appendChild(orderList);
             inProgressContainer.appendChild(orderCard);
-        });
+        }
     }
     catch (err)
     {
         console.error('Error loading pending orders:', err);
+    }
+}
+
+
+// Function to get the display name of a menu item by its ID
+async function getItemNameById(itemId)
+{
+    try
+    {
+        const response = await fetch(`/api/getdisplayname?menuitemID=${itemId}`); // Call the backend API with the menu item ID
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch display name for ID ${itemId}: ${response.statusText}`);
+        }
+
+        const itemName = await response.text(); // Assuming the API returns only the display name as plain text
+        return itemName; // Return the fetched display name
+    }
+    catch(err)
+    {
+        console.error(`Error fetching menu item name for ID ${itemId}:`, err);
+        return null;  // Return null if there was an error fetching the name
+    }
+}
+
+// Function to update order
+async function updateOrder(totalCost, menuItemIDs)
+{
+    try
+    {
+        const response = await fetch('/api/updateorders',
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify
+            ({
+                totalCost: totalCost,
+                menuItemIDs: menuItemIDs
+            })
+        });
+        const data = await response.json();
+        console.log('Order updated:', data);
+    }
+    catch (error)
+    {
+        console.error('Error updating order:', error);
+    }
+}
+
+// Function to update inventory
+async function updateInventory(menuItemIDs)
+{
+    try
+    {
+        const response = await fetch('/api/updateinventory',
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ menuItemIDs: menuItemIDs })
+        });
+
+        const data = await response.json();
+        console.log('Inventory updated:', data);
+    }
+    catch (error)
+    {
+        console.error('Error updating inventory:', error);
     }
 }

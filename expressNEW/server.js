@@ -602,6 +602,38 @@ app.get('/api/getpendingorders', async (req, res) =>
 });
 
 
+app.get('/api/getdisplayname', async (req, res) =>
+{
+  const menuitemID = req.query.menuitemID; // Extract menuitemID from the query string
+
+  if (!menuitemID)
+  {
+    return res.status(400).send({ error: 'menuitemID is required' }); // Validate input
+  }
+
+  try
+  {
+    // Query the database for the display name
+    const result = await pool.query('SELECT displayname FROM menuitems WHERE menuitemid = $1', [menuitemID]);
+
+    // Check if a result was found
+    if (result.rows.length > 0)
+    {
+      return res.send(result.rows[0].displayname);
+    }
+    else
+    {
+      return res.status(404).send('Menu item not found');
+    }
+  }
+  catch(err)
+  {
+    console.error('Error fetching display name:', err.stack);
+    return res.status(500).send('Server Error');
+  };
+});
+
+
 
 //######################################################################  FEATURES ENDPOINTS  ########################################################################
 
