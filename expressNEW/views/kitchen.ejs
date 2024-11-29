@@ -16,7 +16,34 @@
             <section id="inProgress">
                 <h2>In Progress</h2>
                 <div class="orderContainer">
-                    <!-- Example Orders -->
+                    <!-- The orders will be dynamically inserted here -->
+
+                    <!-- `<% %>` Used for executing JavaScript code without outputting anything to the HTML, typically for loops or conditionals. -->
+                    <!-- `<%= %>` Used for executing JavaScript code and injecting the result directly into the HTML to display dynamic content like variables or expressions. -->
+                    
+                    <% if (pendingOrders && pendingOrders.length > 0) { %> <!-- Check if there are any pending orders -->
+
+                        <% pendingOrders.forEach(order => { %> <!-- Loop through each pending order -->
+
+                            <div class="orderCard" data-status="in-progress"> <!-- Create a div for each order -->
+
+                                <h3>Order #<%= order.orderId %></h3> <!-- Display the order ID dynamically -->
+
+                                <ul> <!-- Start an unordered list for the items in the order -->
+                                    <% order.items.forEach(item => { %> <!-- Loop through each item in the order -->
+                                        <li><%= item %></li> <!-- Display each item in the order as a list item -->
+                                    <% }) %> <!-- End the loop for items -->
+                                </ul>
+
+                            </div>
+
+                        <% }) %> <!-- End the loop for orders -->
+
+                    <% } else { %> <!-- If no pending orders -->
+                        <p>No pending orders.</p> <!-- Display a message indicating no orders -->
+                    <% } %> <!-- End the if statement -->
+
+                    <!-- Example Orders
                     <div class="orderCard" data-status="in-progress">
                         <h3>Example #1</h3>
                         <ul>
@@ -40,7 +67,7 @@
                             <li>2x Chicken Wings</li>
                             <li>1x Small Drink</li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
             </section>
             <div class="divider"></div>
@@ -48,6 +75,7 @@
                 <h2>Completed</h2>
                 <div class="orderContainer">
                     <!-- Completed orders will appear here -->
+                    
                 </div>
             </section>
         </div>
