@@ -21,19 +21,6 @@
     </div>
 
     <div class="main-content">
-        <div class="top-buttons">
-            <div class="dropdown">
-                <button class="dropbtn">=</button>
-                <div class="dropdown-content">
-                    <a href="/manager">Manager View</a>
-                    <a href="/menuBoard">Menu Board</a>
-                    <a href="/kiosk">Kiosk</a>
-                    <a href="/kitchen">Kitchen</a>
-                    <a href="/index">Log Out</a>
-                </div>
-            </div>
-        </div>
-
         <div id="main-buttons" class="grid-buttons">
             <div class="button" onclick="selectItemType('bowl', 8.30, 1, 2)">Bowl</div>
             <div class="button" onclick="selectItemType('plate', 9.80, 2, 2)">Plate</div>
@@ -63,7 +50,7 @@
 
         <div id="drinksPanel" class="hidden-panel">
             <div class="panel-buttons">
-                <button class="cancel" onclick="cancelCurrentCompositeItem()">Cancel Item</button>
+                <button class="cancel" onclick="closePanel()">Finished</button>
             </div>
             <h3>Drinks</h3>
             <div class="panel-content" id="drink-buttons"></div>
@@ -71,7 +58,7 @@
         
         <div id="appetizersPanel" class="hidden-panel">
             <div class="panel-buttons">
-                <button class="cancel" onclick="closePanel()">Cancel</button>
+                <button class="cancel" onclick="closePanel()">Finished</button>
             </div>
             <h3>Appetizers</h3>
             <div class="panel-content" id="appetizer-buttons"></div>
@@ -84,9 +71,6 @@
                 <button class="cancel" onclick="cancelCurrentCompositeItem()">Cancel Item</button>
                 <button class="add-btn" onclick="finalizeAlaCarteItem()">Add to Order</button>
             </div>
-        
-            <!-- A La Carte Item Preview -->
-            <div id="currentAlaCartePreview" class="current-item-preview"></div>
         
             <!-- Size Selection Buttons -->
             <div class="size-selection">

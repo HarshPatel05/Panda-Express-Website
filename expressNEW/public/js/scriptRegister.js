@@ -192,42 +192,50 @@ async function loadMenuItems() {
 
 // Handle size selection and panel toggling
 function setSize(size) {
+    // Hide all size-specific panels
     const panels = document.querySelectorAll('#sizePanels > .hidden-panel');
     panels.forEach((panel) => (panel.style.display = 'none')); // Hide all panels
 
+    // Show the selected size panel
     const selectedPanel = document.getElementById(`size-${size}-panel`);
     if (selectedPanel) {
         selectedPanel.style.display = 'block'; // Show the selected size panel
     }
 
+    // Update the active button style
     const sizeButtons = document.querySelectorAll('.size-button');
     sizeButtons.forEach((button) => {
         button.style.backgroundColor = button.id === `size-${size}` ? 'green' : '';
     });
 
-    // Hide the sides section and title for "Small" A La Carte
+    // Display the appropriate entree and side content for the selected size
     if (size === 'Small') {
-        const sideSections = selectedPanel.querySelectorAll('.sides-section');
-        sideSections.forEach(section => (section.style.display = 'none')); // Hide sides
+        document.getElementById('small-entree-buttons').style.display = 'block';
+        document.getElementById('small-side-buttons').style.display = 'none';
 
-        const sideHeaders = selectedPanel.querySelectorAll('.section-header');
-        sideHeaders.forEach(header => {
-            if (header.textContent === 'Sides') {
-                header.style.display = 'none'; // Hide side title
-            }
-        });
-    } else {
-        const sideSections = selectedPanel.querySelectorAll('.sides-section');
-        sideSections.forEach(section => (section.style.display = 'block')); // Show sides
+        document.getElementById('medium-entree-buttons').style.display = 'none';
+        document.getElementById('medium-side-buttons').style.display = 'none';
+        document.getElementById('large-entree-buttons').style.display = 'none';
+        document.getElementById('large-side-buttons').style.display = 'none';
+    } else if (size === 'Medium') {
+        document.getElementById('small-entree-buttons').style.display = 'none';
+        document.getElementById('small-side-buttons').style.display = 'none';
 
-        const sideHeaders = selectedPanel.querySelectorAll('.section-header');
-        sideHeaders.forEach(header => {
-            if (header.textContent === 'Sides') {
-                header.style.display = 'block'; // Show side title
-            }
-        });
+        document.getElementById('medium-entree-buttons').style.display = 'block';
+        document.getElementById('medium-side-buttons').style.display = 'block';
+        document.getElementById('large-entree-buttons').style.display = 'none';
+        document.getElementById('large-side-buttons').style.display = 'none';
+    } else if (size === 'Large') {
+        document.getElementById('small-entree-buttons').style.display = 'none';
+        document.getElementById('small-side-buttons').style.display = 'none';
+        document.getElementById('medium-entree-buttons').style.display = 'none';
+        document.getElementById('medium-side-buttons').style.display = 'none';
+
+        document.getElementById('large-entree-buttons').style.display = 'block';
+        document.getElementById('large-side-buttons').style.display = 'block';
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadMenuItems();

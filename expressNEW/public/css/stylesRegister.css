@@ -52,6 +52,15 @@ Left Panel / Order Calculator
     margin-bottom: 5%;
 }
 
+.order-list button{
+    background-color: red;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1vw;
+}
+
 .order-item {
     display: flex;
     justify-content: space-between;
@@ -82,71 +91,11 @@ Main Content / Dropdown Buttons
 *********************************************************************************************************************************/
 .main-content {
     flex: 1;
-    padding: 2%;
+    padding: 0.5%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-
-/* Style for the top buttons container */
-.top-buttons {
-    position: absolute;
-    top: 1%;
-    right: 2%;
-    display: flex;
-    gap: 1.5vw;
-}
-
-/* Dropdown container */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-/* Style for the main dropdown button */
-.dropbtn {
-    background-color: #333;
-    color: white;
-    padding: 0.8vw 1.5vw;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2vw;
-}
-
-/* Dropdown content (hidden by default) */
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 10vw;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    right: 0;
-}
-
-/* Dropdown links */
-.dropdown-content a {
-    color: black;
-    padding: 1vw 1.5vw;
-    text-decoration: none;
-    display: block;
-}
-
-/* Change color on hover */
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
-}
-
-/* Show dropdown content on hover */
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-/* Style for the dropdown button on hover */
-.dropdown:hover .dropbtn {
-    background-color: #555;
-}
-
 /*********************************************************************************************************************************
 Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
 *********************************************************************************************************************************/
@@ -177,7 +126,6 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
 /* Hidden panels (JPanel-like) */
 .hidden-panel {
     display: none;
-    padding: 2%;
 }
 
 /* Grid for Entrees and Sides */
@@ -186,51 +134,77 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
     justify-content: space-between; /* Align Entrees and Sides horizontally */
     gap: 20px; /* Add space between Entrees and Sides */
     width: 100%;
-    margin-top: 20px; /* Space above the grid */
+    margin-top: 0px; /* Space above the grid */
 }
 
-.section-header {
-    text-align: center; /* Center text */
-    margin-bottom: 5px; /* Reduce space below the header */
-    font-size: 1.5vw; /* Responsive size */
-}
-
+/* Entree and Side Sections */
 .entrees-section, .sides-section {
-    flex: 1; /* Equal width */
+    flex: 1; /* Make sections flexible */
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: column; /* Stack header and grid */
+    align-items: center; /* Center items horizontally */
+    justify-content: flex-start; /* Align items at the top */
+    gap: 15px; /* Space between header and grid */
+    padding: 10px; /* Add padding for spacing */
 }
 
+/* Style for the entree and side buttons */
+.entrees-grid .button, .sides-grid .button {
+    background-color: gray;
+    width: 100%;
+    max-width: 250px; /* Same max width as bowl, plate, and bigger plate */
+    height: 15vh; /* Same height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.5vw; /* Same font size */
+    padding: 1%;
+    border-radius: 8px; /* Same rounding */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.entrees-grid .button:hover, .sides-grid .button:hover {
+    background-color: #555; /* Slightly darker gray on hover */
+}
+
+/* Style for the grid buttons (for consistency) */
 .entrees-grid, .sides-grid {
     display: grid;
-    gap: 8px; /* Reduce space between buttons inside the grid */
-    width: 100%;
+    gap: 20px; /* Space between buttons */
+    justify-content: center; /* Center buttons horizontally */
+    grid-template-columns: repeat(3, 1fr); /* Three columns for consistency */
 }
 
-.entrees-grid {
-    grid-template-columns: repeat(3, 1fr); /* Three columns */
-}
-
+/* Adjust sides-grid for 2 columns if needed */
 .sides-grid {
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    grid-template-columns: repeat(2, 1fr); /* Two columns for sides */
 }
 
-/* Entree and Side buttons */
-.entrees-grid button, .sides-grid button, .menu-item-button {
+/* Buttons in Entree and Side Grids */
+.menu-item-button {
     background-color: white;
     color: black;
     border: 1px solid #ccc;
-    padding: 8px 10px; /* Adjust padding to make buttons smaller */
-    border-radius: 5px;
-    font-size: 0.9em;
+    padding: 10px 15px; /* Adjust padding for button size */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1rem; /* Responsive font size */
     text-align: center;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.entrees-grid button:hover, .sides-grid button:hover, .menu-item-button:hover {
-    background-color: #f0f0f0; /* Light gray on hover */
+.menu-item-button:hover {
+    background-color: #eaeaea; /* Light hover effect */
+}
+
+/* Headers for Entree and Side Sections */
+.section-header {
+    text-align: center; /* Center text */
+    font-weight: bold; /* Ensure bold styling */
+    font-size: 1.2vw; /* Responsive font size */
+    margin-bottom: 10px; /* Space below the header */
 }
 
 .hidden-panel .button {
@@ -254,8 +228,7 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
 .panel-buttons {
     display: flex;
     justify-content: space-between; /* Space between Cancel and Add buttons */
-    gap: 10px; /* Space between buttons */
-    margin-bottom: 10px; /* Reduce vertical spacing below the buttons */
+    gap: 5px; /* Space between buttons */
 }
 
 .cancel, .add-btn {
@@ -291,10 +264,8 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
 .size-selection {
     display: flex;
     justify-content: center; /* Center the buttons horizontally */
-    gap: 20px; /* Add space between buttons */
-    position: sticky; /* Keeps it in place if there's scrolling */
+    gap: 5px; /* Add space between buttons */
     top: 0; /* Position it at the top of the container */
-    padding: 10px; /* Add padding for spacing */
     z-index: 10; /* Ensure it stays on top of other content */
 }
 
