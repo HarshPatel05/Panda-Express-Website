@@ -666,16 +666,25 @@ function openAlaCarteModal(menuItem) {
     const sizeSelection = document.getElementById('sizeSelection');
     sizeSelection.innerHTML = ''; // Clear existing buttons
 
+    // Loop through available sizes, but skip the "Small" size for sides
     Object.keys(menuItemMap[menuItem.menuitem]).forEach((size) => {
         const sizeData = menuItemMap[menuItem.menuitem][size];
 
-        const sizeButton = document.createElement('button');
-        sizeButton.classList.add('size-button');
-        sizeButton.id = `${size}Size`;
-        sizeButton.innerHTML = `${capitalize(size)}<br>$${sizeData.price.toFixed(2)}`;
-        sizeButton.onclick = () => selectAlaCarteSize(size);
+        // Exclude the "Small" size if the item is a side
+        if (menuItem.category === 'side' && size === 'sm') {
+            return;
+        }
 
-        sizeSelection.appendChild(sizeButton);
+        // Create a size button
+        if (sizeData) {
+            const sizeButton = document.createElement('button');
+            sizeButton.classList.add('size-button');
+            sizeButton.id = `${size}Size`;
+            sizeButton.innerHTML = `${capitalize(size)}<br>$${sizeData.price.toFixed(2)}`;
+            sizeButton.onclick = () => selectAlaCarteSize(size);
+
+            sizeSelection.appendChild(sizeButton);
+        }
     });
 
     // Reset quantity and show the modal
