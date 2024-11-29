@@ -59,13 +59,15 @@ body {
     display: flex;
     flex-direction: row;
     flex: 1;
-    gap: 20px; /* Space between left panel and grid or other panels */
+    gap: 20px;
     box-sizing: border-box;
     padding: 20px;
-    align-items: stretch; /* Ensure all items match the same height */
-    height: calc(100vh - 70px); /* Set consistent height based on viewport */
-    overflow: hidden; /* Prevent extra scrollbars or white space */
+    align-items: stretch;
+    height: calc(100vh - 120px); /* Adjust height for top and bottom bars */
+    overflow: hidden; /* Prevent extra scrollbars */
+    margin-bottom: 70px; /* Add space equal to the bottom bar's height */
 }
+
 
 /* Left Panel with Fixed Height */
 .left-panel {
@@ -152,7 +154,10 @@ body {
     border-radius: 8px; /* Add rounded corners */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Clear separation shadow */
     box-sizing: border-box;
+    height: 100%; /* Ensure it fills the parent's height */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
+
 
 /* Grid Buttons */
 .grid-buttons {
@@ -232,17 +237,21 @@ body {
 
 /* Hidden Panel Styles */
 .hidden-panel {
-    display: none;
+    display: none; /* Keep it hidden by default */
     flex: 1; /* Take up the remaining space */
     flex-direction: column;
-    align-items: center; /* Center the grid horizontally */
-    justify-content: flex-start; /* Align the grid to the top */
+    align-items: center;
+    justify-content: flex-start;
     padding: 20px;
     background-color: white;
-    border-radius: 8px; /* Add rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Clear separation shadow */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+    height: 100%; /* Ensure it takes the full height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
+
 
 .hidden-panel .cancel button {
     margin-top: 20px;
@@ -332,41 +341,6 @@ body {
     align-items: start; /* Align the buttons to the top of the grid cell */
     padding: 10px; /* Add some padding around the grid */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .modal {
     display: none;
@@ -668,4 +642,21 @@ body {
 
 .keyboard__key--dark {
     background: rgba(0, 0, 0, 0.25);
+}
+
+
+
+.bottom-bar {
+    background-color: #DB372E; /* Same red color as the top bar */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: clamp(14px, 1vw, 16px); /* Responsive font size */
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Add shadow on the top */
+    height: 50px; /* Set a fixed height for the bar */
 }
