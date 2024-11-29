@@ -217,7 +217,7 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
 }
 
 /* Entree and Side buttons */
-.entrees-grid button, .sides-grid button {
+.entrees-grid button, .sides-grid button, .menu-item-button {
     background-color: white;
     color: black;
     border: 1px solid #ccc;
@@ -229,7 +229,7 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
     transition: background-color 0.3s ease;
 }
 
-.entrees-grid button:hover, .sides-grid button:hover {
+.entrees-grid button:hover, .sides-grid button:hover, .menu-item-button:hover {
     background-color: #f0f0f0; /* Light gray on hover */
 }
 
@@ -290,46 +290,20 @@ Hidden Panels / Order Screens for Bowls, Plates, Bigger Plates
 
 .size-selection {
     display: flex;
-    justify-content: space-between; /* Space buttons evenly */
-    gap: 10px; /* Space between each size button */
-    margin-bottom: 15px; /* Reduce space below size buttons */
+    justify-content: center; /* Center the buttons horizontally */
+    gap: 20px; /* Add space between buttons */
+    position: sticky; /* Keeps it in place if there's scrolling */
+    top: 0; /* Position it at the top of the container */
+    padding: 10px; /* Add padding for spacing */
+    z-index: 10; /* Ensure it stays on top of other content */
 }
 
-/* Size selection buttons */
-.size-selection button {
-    width: 100%;
-    max-width: 150px;
-    height: 6vh;
-    font-size: 1vw;
-    font-weight: bold;
-    color: white;
-    background-color: grey;
-    border: none;
-    border-radius: 5px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
 
-.size-selection button:hover {
-    background-color: darkgray; /* Hover effect for size buttons */
-}
-
-.size-selection button.active {
-    background-color: green; /* Active size button */
-}
 
 /*********************************************************************************************************************************
 Drink / Appetizer Columns
 *********************************************************************************************************************************/
-.drink-columns {
-    display: flex;
-    gap: 2%;
-    justify-content: center;
-    flex-wrap: wrap;  /* Wraps on smaller screens */
-}
-
-.column {
+.column, .drink-columns {
     display: flex;
     flex-direction: column;
     align-items: center;

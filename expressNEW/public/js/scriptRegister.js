@@ -107,7 +107,7 @@ async function loadMenuItems() {
                 button.dataset.price = item.price;
         
                 // Attach click handler to open the modal or perform the action
-                button.onclick = () => showAppetizerModal(item);
+                button.onclick = () => addAppetizerToOrder(item.menuitem, item.price);
         
                 // Append the button to the appetizersPanelContent
                 appetizersPanelContent.appendChild(button);
@@ -348,48 +348,18 @@ function addDrinkToOrder(drinkName, price, size = null) {
 }
 
 // Function to add an appetizer to the order
-function addAppetizerToOrder(appetizerName, price, size) {
+function addAppetizerToOrder(appetizerName, price) {
     const appetizerItem = {
         type: 'appetizer',
-        name: `${size} ${appetizerName}`,
+        name: appetizerName,
         price: price,
         components: []
     };
-
-    orderItems.push(appetizerItem); // Add to order list
-    updateOrderList(); // Refresh UI
-    calculateTotal(); // Recalculate total
-    closePanel(); // Close the panel after adding
+    orderItems.push(appetizerItem);
+    updateOrderList();
+    calculateTotal();
+    closePanel();
 }
-
-
-function showAppetizerModal(appetizer) {
-    const modal = document.getElementById('appetizersPanel');
-    const modalContent = modal.querySelector('.panel-content');
-
-    // Clear previous content
-    modalContent.innerHTML = '';
-
-    // Add title and size options
-    const title = document.createElement('h3');
-    title.innerText = `Select Size for ${camelCaseToNormal(appetizer.menuitem)}`;
-    modalContent.appendChild(title);
-
-    const sizeOptions = ['Small', 'Medium', 'Large']; // Define possible sizes
-    sizeOptions.forEach((size) => {
-        if (appetizer.size.toLowerCase().includes(size.toLowerCase())) {
-            const button = document.createElement('button');
-            button.innerText = `${size} - $${appetizer.price.toFixed(2)}`;
-            button.classList.add('size-button');
-            button.onclick = () => addAppetizerToOrder(appetizer.menuitem, appetizer.price, size);
-            modalContent.appendChild(button);
-        }
-    });
-
-    // Show the modal
-    modal.style.display = 'block';
-}
-
 
 
 function addAlaCarteItem(category, menuId, itemName, size, price) {
