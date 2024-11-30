@@ -704,113 +704,140 @@ async function isIngredientValid(ingredient)
 }
 
 
-app.get('/api/product-usage', async (req, res) =>
-  {
-    const { ingredient, timeframe, month, day } = req.query;
+// API endpoint to get product usage
+// This endpoint retrieves the product usage data for a specific ingredient based on the given timeframe (hourly, daily, or monthly).
 
-    // Validate ingredient presence
-    if (!ingredient)
+
+/** API endpoint to get product usage
+ *  This endpoint retrieves the product usage data for a specific ingredient based on the given timeframe (hourly, daily, or monthly).
+ * 
+ * The timeframe can be:
+
+    1. 'hourly' - For hourly data on a specific day (requires 'day' parameter in the format YYYY-MM-DD).
+      Example: /api/product-usage?ingredient=chicken&timeframe=hourly&day=2024-03-19
+      This will fetch the ingredient usage for 'chicken' on August 15, 2024, broken down by hour.
+
+    2. 'daily' - For daily data in a specific month (requires 'month' parameter in the format YYYY-MM).
+      Example: /api/product-usage?ingredient=chicken&timeframe=daily&month=2024-03
+      This will fetch the ingredient usage for 'chicken' for the entire month of August 2024, broken down by day.
+
+    3. 'monthly' - For monthly data in a specific year (requires 'year' parameter in the format YYYY).
+      Example: /api/product-usage?ingredient=chicken&timeframe=monthly&year=2024
+      This will fetch the ingredient usage for 'chicken' for the year 2024, broken down by month.
+
+ */
+app.get('/api/product-usage', async (req, res) =>
+{
+  const { ingredient, timeframe, year, month, day } = req.query;
+
+  // Validate ingredient presence
+  if (!ingredient)
+  {
+    return res.status(400).json({ message: 'Ingredient is required.' });
+  }
+
+  try
+  {
+    // Validate if the ingredient exists in the inventory table
+    const isValidIngredient = await isIngredientValid(ingredient);
+    if (!isValidIngredient)
     {
-      return res.status(400).json({ message: 'Ingredient is required.' });
+      return res.status(404).json({ message: `Ingredient '${ingredient}' does not exist in inventory.` });
     }
 
-    try
+    // Define variables for query construction
+    let dateTrunc, dateFilter = '', dateFormat, params = [ingredient.toLowerCase()];
+
+    // Handle timeframe validation and SQL setup
+    if (timeframe === 'hourly')
     {
-      // Validate if the ingredient exists in the inventory table
-      const isValidIngredient = await isIngredientValid(ingredient);
-      if (!isValidIngredient)
+      if (!day)
       {
-        return res.status(404).json({ message: `Ingredient '${ingredient}' does not exist in inventory.` });
+        return res.status(400).json({ message: 'Day is required for hourly data (format: YYYY-MM-DD).' });
       }
 
-      let dateTrunc, dateFormat, buildDate, year = '2023';
+      dateTrunc = 'hour';
+      dateFormat = 'YYYY-MM-DD HH24'; // Year, Month, Day, and Hour format
+      dateFilter = "AND TO_CHAR(oh.date, 'YYYY-MM-DD') = $2";
+      params.push(day);
 
-      // Timeframe validation and setup
-      if (timeframe === 'hourly')
-      {
-        if (!day)
-        {
-          return res.status(400).json({ message: 'Day is required for hourly data.' });
-        }
+    }
 
-        dateTrunc = 'hour';
-        dateFormat = "YYYY-MM-DD HH24";  // Year, Month, Day, and Hour format
-        buildDate = "AND TO_CHAR(oh.date, 'YYYY-MM-DD') = $1"; // Placeholder for prepared statement
-      }
-      else if (timeframe === 'daily')
+    else if (timeframe === 'daily')
+    {
+      if (!month)
       {
-        if (!month)
-        {
-          return res.status(400).json({ message: 'Month is required for daily data.' });
-        }
-
-        dateTrunc = 'day';
-        dateFormat = "YYYY-MM-DD";  // Year, Month, and Day format
-        buildDate = "AND TO_CHAR(oh.date, 'YYYY-MM') = $1"; // Placeholder for prepared statement
-      }
-      else
-      {
-        // Default to monthly
-        dateTrunc = 'month';
-        dateFormat = "YYYY-MM";  // Year and Month format
-        buildDate = "AND EXTRACT(YEAR FROM oh.date) = $1 AND EXTRACT(MONTH FROM oh.date) = $2";  // Fixed year 2023
+        return res.status(400).json({ message: 'Month is required for daily data (format: YYYY-MM).' });
       }
 
-      // SQL Query construction
-      const query = `
+      dateTrunc = 'day';
+      dateFormat = 'YYYY-MM-DD'; // Year, Month, and Day format
+      dateFilter = "AND TO_CHAR(oh.date, 'YYYY-MM') = $2";
+      params.push(month);
+    }
+
+    else if (timeframe === 'monthly')
+    {
+      if (!year)
+      {
+        return res.status(400).json({ message: 'Year is required for monthly data (format: YYYY).' });
+      }
+
+      dateTrunc = 'month';
+      dateFormat = 'YYYY-MM'; // Year and Month format
+      dateFilter = "AND EXTRACT(YEAR FROM oh.date) = $2";
+      params.push(year);
+    }
+
+    else
+    {
+      return res.status(400).json({ message: 'Invalid timeframe. Valid options are: hourly, daily, monthly.' });
+    }
+
+    // SQL Query construction
+    const query = `
       SELECT inv.ingredient AS ingredient_name,
-      ROUND(SUM(order_items.quantity * menu_ing.quantity)::numeric, 2) AS total_usage,
-      TO_CHAR(DATE_TRUNC($1, oh.date), $2) AS time_period
+             ROUND(SUM(order_items.quantity * menu_ing.quantity)::numeric, 2) AS total_usage,
+             TO_CHAR(DATE_TRUNC($1, oh.date), $2) AS time_period
       FROM orderhistory oh
       JOIN orderitems order_items ON oh.orderid = order_items.orderid
       JOIN menuitemingredients menu_ing ON order_items.menuitemid = menu_ing.menuitemid
       JOIN inventory inv ON menu_ing.ingredient = inv.ingredient
       WHERE LOWER(inv.ingredient) = $3
-      ${buildDate}
+      ${dateFilter}
       GROUP BY inv.ingredient, time_period
       ORDER BY time_period;
-      `;
+    `;
 
-      // Execute the query with dynamic parameters
-      const params = [dateTrunc, dateFormat, ingredient.toLowerCase()];
+    console.log('Executing query:', query); // For debugging
 
-      if (timeframe === 'hourly')
-      {
-        params.push(day); // For hourly, use day
-      }
-      else if (timeframe === 'daily')
-      {
-        params.push(month); // For daily, use month
-      }
-      else if (timeframe === 'monthly')
-      {
-        params.push(year, month); // For monthly, use year (fixed to 2023) and month
-      }
+    // Execute the query
+    const result = await client.query(query, [dateTrunc, dateFormat, ...params]);
 
-      const result = await client.query(query, params);
+    // Format the result into a response
+    const productUsageList = result.rows.map(row =>
+    ({
+      ingredient_name: row.ingredient_name,
+      total_usage: row.total_usage,
+      time_period: row.time_period,
+    }));
 
-      // Format the result into a response
-      const productUsageList = result.rows.map(row => 
-      ({
-        ingredient_name: row.ingredient_name,
-        total_usage: row.total_usage,
-        time_period: row.time_period,
-      }));
-
-      if (productUsageList.length === 0)
-      {
-        return res.status(404).json({ message: `No usage data found for ingredient: ${ingredient}` });
-      }
-
-      return res.json(productUsageList);
-    }
-    catch (error)
+    if (productUsageList.length === 0)
     {
-      console.error('Error fetching product usage data:', error);
-      return res.status(500).json({ message: 'An error occurred while fetching product usage data.' });
+      return res.status(404).json({ message: `No usage data found for ingredient: ${ingredient}` });
     }
+
+    return res.json(productUsageList);
   }
-);
+  catch (error)
+  {
+    console.error('Error fetching product usage data:', error);
+    return res.status(500).json({ message: 'An error occurred while fetching product usage data.' });
+  }
+});
+
+
+
 
 
 
