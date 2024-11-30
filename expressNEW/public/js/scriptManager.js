@@ -12,7 +12,7 @@ async function populateTable(APIEndpoint, tableID) {
     query = '#' + tableID; 
     const tableBody = document.querySelector(query);
 
-    tableBody.innerHTML = "";
+    tableBody.innerHTML = '';
 
     data.forEach(row => {
         const tableRow = document.createElement('tr');
@@ -25,6 +25,40 @@ async function populateTable(APIEndpoint, tableID) {
     });
 }
 
+async function populateSales() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    if (!startDate || !endDate) {
+        alert('Please select both start and end dates.');
+        return;
+    }   
+
+    try {
+        const response = await fetch(`/api/salesReport?startDate=${startDate}&endDate=${endDate}`);
+        const data = await response.json();
+
+        query = "#salesReport"; 
+        const tableBody = document.querySelector(query);
+
+        tableBody.innerHTML = '';
+
+        data.forEach(row => {
+            const tableRow = document.createElement('tr');
+            Object.values(row).forEach(value => {
+                const cell = document.createElement('td');
+                cell.textContent = value;
+                tableRow.appendChild(cell);
+            });
+            tableBody.appendChild(tableRow);
+        });
+        
+    }
+    catch (error) {
+        console.error('Error fetching sales report:', error);
+    }
+}
+
 async function populateReports(APIEndpoint, tableID) {
     let currDate = new Date().toISOString().split('T')[0];
     if (reportDate != currDate) {
@@ -35,6 +69,9 @@ async function populateReports(APIEndpoint, tableID) {
     const data = await response.json();
     query = '#' + tableID; 
     const tableBody = document.querySelector(query);
+
+    tableBody.innerHTML = '';
+
     data.forEach(row => {
         const tableRow = document.createElement('tr');
         Object.values(row).forEach(value => {
@@ -73,6 +110,9 @@ function setupTabs() {
 
             if (APIEndpoint == "/api/xReport" || APIEndpoint == "/api/zReport") {
                 populateReports(APIEndpoint, tableID);
+            }
+            else if (APIEndpoint == '/api/salesReport'){
+                return;
             }
             else {
                 populateTable(APIEndpoint, tableID);

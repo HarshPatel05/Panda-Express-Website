@@ -113,10 +113,10 @@
         <div id="restock" class="tabContent">
             <h3>Items for Restock</h3>
             <div class="restockControls">
-                <label for="filterMinimum">Minimum Quantity:</label>
-                <input type="number" id="filterMinimum" name="filterMinimum" placeholder="Enter minimum quantity">
+                <label for="restockIngredient">Restock Ingredient:</label>
+                <input type="text" id="restockIngredient" name="restockIngredient" placeholder="Enter ingredient name">
 
-                <button id="restockButton" onclick="fetchRestockReport()">Get Restock Report</button>
+                <button id="restockButton" onclick="fetchRestockReport()">Restock Ingredient</button>
 
             </div>
 
@@ -157,7 +157,7 @@
                 <label for="endDate">End Date:</label>
                 <input type="date" id="endDate" name="endDate">
 
-                <button id="salesButton" onclick="filterSales()">Submit</button>
+                <button id="salesButton" onclick="populateSales()">Submit</button>
             </div>
             <table id="salesReport" border="2">
                 <thead>
