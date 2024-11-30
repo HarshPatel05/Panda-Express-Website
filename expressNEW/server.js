@@ -16,6 +16,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
+const { DateTime } = require('luxon');
 const PlayHT = require('playht');
 
 const app = express();
@@ -276,6 +277,46 @@ app.get('/api/restockReport', async (req, res) => {
   }
 });
 
+app.get('/api/restockInventory', async (req, res) => {
+  const { ingredientName } = req.query;
+
+  if (!ingredientName) {
+    return res.status(400).json({ error: 'Ingredient name is required.' });
+  }
+
+  const queryGetValues = 'SELECT quantity, minimumquantity FROM inventory WHERE ingredient = $1';
+
+  try {
+    // Fetch current quantity and minimum quantity
+    const result = await pool.query(queryGetValues, [ingredientName]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: `No inventory item found with the name: ${ingredientName}` });
+    }
+
+    const { quantity, minimumquantity } = result.rows[0];
+    const targetQuantity = minimumquantity * 1.25;
+
+    // If current quantity is less than the target quantity, restock it
+    if (quantity < targetQuantity) {
+      const queryUpdate = `
+        UPDATE inventory
+        SET lastShipment = CURRENT_DATE, quantity = minimumquantity * 1.25
+        WHERE ingredient = $1
+      `;
+      await pool.query(queryUpdate, [ingredientName]);
+
+      console.log(`Successfully restocked inventory for: ${ingredientName}`);
+      return res.status(200).json({ message: `Restocked ${ingredientName} to the minimum amount.` });
+    } else {
+      console.log(`No need to restock for: ${ingredientName}`);
+      return res.status(200).json({ message: `No need to restock ${ingredientName}. Current quantity is sufficient.` });
+    }
+  } catch (err) {
+    console.error('Error restocking inventory:', err);
+    return res.status(500).json({ error: 'Server Error' });
+  }
+});
 
 // API Endpoint for login
 app.post('/api/login', async (req, res) =>
@@ -306,40 +347,63 @@ app.post('/api/login', async (req, res) =>
 app.get('/api/salesReport', async (req, res) => {
   const { startDate, endDate } = req.query;
 
+  // Ensure both start and end dates are provided
   if (!startDate || !endDate) {
     return res.status(400).json({ error: 'Start date and end date are required.' });
   }
 
   try {
-    const startOrderQuery = `SELECT * FROM orderhistory WHERE date::date = $1::date ORDER BY date ASC LIMIT 1`;
-    const startResult = await pool.query(startOrderQuery, [startDate]);
+    // Parse and format dates using Luxon
+    const formattedStartDate = DateTime.fromISO(startDate).toFormat('yyyy-MM-dd');
+    const formattedEndDate = DateTime.fromISO(endDate).toFormat('yyyy-MM-dd');
 
-    const endOrderQuery = `SELECT * FROM orderhistory WHERE date::date = $1::date ORDER BY date DESC LIMIT 1`;
-    const endResult = await pool.query(endOrderQuery, [endDate]);
+    // Query to get the first order within the date range
+    const startOrderQuery = `
+      SELECT * 
+      FROM orderhistory 
+      WHERE date::date >= $1::date AND date::date <= $2::date
+      ORDER BY date ASC LIMIT 1
+    `;
+    const startResult = await pool.query(startOrderQuery, [formattedStartDate, formattedEndDate]);
 
+    // Query to get the last order within the date range
+    const endOrderQuery = `
+      SELECT * 
+      FROM orderhistory 
+      WHERE date::date >= $1::date AND date::date <= $2::date
+      ORDER BY date DESC LIMIT 1
+    `;
+    const endResult = await pool.query(endOrderQuery, [formattedStartDate, formattedEndDate]);
+
+    // If no orders found in the specified date range
     if (startResult.rowCount === 0 || endResult.rowCount === 0) {
       return res.status(404).json({ error: 'No results found for the given dates.' });
     }
 
+    // Extract order IDs
     const startOrderId = startResult.rows[0].orderid;
     const endOrderId = endResult.rows[0].orderid;
 
+    // Query to count the total number of menu items
     const countQuery = 'SELECT COUNT(*) FROM menuitems';
     const countResult = await pool.query(countQuery);
     const numberOfMenuItems = countResult.rows[0].count;
 
+    // Initialize the report data
     const reportData = [];
 
+    // Loop through each menu item to calculate the sales report
     for (let i = 1; i <= numberOfMenuItems; i++) {
       const menuQuery = 'SELECT * FROM menuitems WHERE menuitemid = $1';
       const menuResult = await pool.query(menuQuery, [i]);
 
       if (menuResult.rowCount === 0) {
-        continue; 
+        continue;  // Skip if no menu item found for the given id
       }
 
       const { menuitem: item, price, size } = menuResult.rows[0];
 
+      // Query to get the total units sold for each menu item within the order range
       const orderQuery = `
         SELECT SUM(quantity) 
         FROM orderitems 
@@ -347,9 +411,10 @@ app.get('/api/salesReport', async (req, res) => {
       `;
       const orderResult = await pool.query(orderQuery, [i, startOrderId, endOrderId]);
 
-      const unitsSold = orderResult.rows[0].sum || 0; 
-      const totalSales = price * unitsSold;
+      const unitsSold = orderResult.rows[0].sum || 0;  // Default to 0 if no units sold
+      const totalSales = price * unitsSold;  // Calculate total sales
 
+      // Push data into the report array
       reportData.push({
         menuitemid: i,
         item,
@@ -359,6 +424,7 @@ app.get('/api/salesReport', async (req, res) => {
       });
     }
 
+    // Return the sales report data as JSON
     res.json(reportData);
 
   } catch (err) {
