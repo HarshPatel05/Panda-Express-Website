@@ -277,6 +277,46 @@ app.get('/api/restockReport', async (req, res) => {
   }
 });
 
+app.get('/api/restockInventory', async (req, res) => {
+  const { ingredientName } = req.query;
+
+  if (!ingredientName) {
+    return res.status(400).json({ error: 'Ingredient name is required.' });
+  }
+
+  const queryGetValues = 'SELECT quantity, minimumquantity FROM inventory WHERE ingredient = $1';
+
+  try {
+    // Fetch current quantity and minimum quantity
+    const result = await pool.query(queryGetValues, [ingredientName]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: `No inventory item found with the name: ${ingredientName}` });
+    }
+
+    const { quantity, minimumquantity } = result.rows[0];
+    const targetQuantity = minimumquantity * 1.25;
+
+    // If current quantity is less than the target quantity, restock it
+    if (quantity < targetQuantity) {
+      const queryUpdate = `
+        UPDATE inventory
+        SET lastShipment = CURRENT_DATE, quantity = minimumquantity * 1.25
+        WHERE ingredient = $1
+      `;
+      await pool.query(queryUpdate, [ingredientName]);
+
+      console.log(`Successfully restocked inventory for: ${ingredientName}`);
+      return res.status(200).json({ message: `Restocked ${ingredientName} to the minimum amount.` });
+    } else {
+      console.log(`No need to restock for: ${ingredientName}`);
+      return res.status(200).json({ message: `No need to restock ${ingredientName}. Current quantity is sufficient.` });
+    }
+  } catch (err) {
+    console.error('Error restocking inventory:', err);
+    return res.status(500).json({ error: 'Server Error' });
+  }
+});
 
 // API Endpoint for login
 app.post('/api/login', async (req, res) =>

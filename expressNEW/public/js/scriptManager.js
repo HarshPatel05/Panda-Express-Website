@@ -6,13 +6,41 @@ function googleTranslateElementInit() {
     )
 }
 
+async function restockIngredient() {
+    // Get the ingredient name from a user input or specify it directly
+    const ingredientName = document.getElementById('restockIngredient').value;
+
+    if (!ingredientName) {
+        alert("Please provide an ingredient name.");
+        return;
+    }
+
+    try {
+        // Make the API request to restock the ingredient
+        const response = await fetch(`/api/restockInventory?ingredientName=${ingredientName}`);
+
+        // Parse the response
+        const data = await response.json();
+
+        if (response.ok) {
+            // Success message
+            alert(`Success: ${data.message}`);
+        } else {
+            // Error message
+            alert(`Error: ${data.error}`);
+        }
+    } catch (error) {
+        console.error('Error restocking ingredient:', error);
+        alert('An error occurred while trying to restock the ingredient.');
+    }
+}
+
 async function populateTable(APIEndpoint, tableID) {
     const response = await fetch(APIEndpoint);
     const data = await response.json();
     query = '#' + tableID; 
     const tableBody = document.querySelector(query);
 
-    tableBody.innerHTML = '';
 
     data.forEach(row => {
         const tableRow = document.createElement('tr');
@@ -41,7 +69,6 @@ async function populateSales() {
         query = "#salesReport"; 
         const tableBody = document.querySelector(query);
 
-        tableBody.innerHTML = '';
 
         data.forEach(row => {
             const tableRow = document.createElement('tr');
@@ -70,7 +97,6 @@ async function populateReports(APIEndpoint, tableID) {
     query = '#' + tableID; 
     const tableBody = document.querySelector(query);
 
-    tableBody.innerHTML = '';
 
     data.forEach(row => {
         const tableRow = document.createElement('tr');
