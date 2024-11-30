@@ -21,19 +21,6 @@
     </div>
 
     <div class="main-content">
-        <div class="top-buttons">
-            <div class="dropdown">
-                <button class="dropbtn">=</button>
-                <div class="dropdown-content">
-                    <a href="/manager">Manager View</a>
-                    <a href="/menuBoard">Menu Board</a>
-                    <a href="/kiosk">Kiosk</a>
-                    <a href="/kitchen">Kitchen</a>
-                    <a href="/index">Log Out</a>
-                </div>
-            </div>
-        </div>
-
         <div id="main-buttons" class="grid-buttons">
             <div class="button" onclick="selectItemType('bowl', 8.30, 1, 2)">Bowl</div>
             <div class="button" onclick="selectItemType('plate', 9.80, 2, 2)">Plate</div>
@@ -63,77 +50,50 @@
 
         <div id="drinksPanel" class="hidden-panel">
             <div class="panel-buttons">
-                <button class="cancel" onclick="cancelCurrentCompositeItem()">Cancel Item</button>
+                <button class="cancel" onclick="closePanel()">Finished</button>
             </div>
             <h3>Drinks</h3>
-            <div class="drink-columns" id="drink-buttons"></div>
+            <div class="panel-content" id="drink-buttons"></div>
         </div>
         
         <div id="appetizersPanel" class="hidden-panel">
             <div class="panel-buttons">
-                <button class="cancel" onclick="closePanel()">Cancel</button>
+                <button class="cancel" onclick="closePanel()">Finished</button>
             </div>
+            <h3>Appetizers</h3>
             <div class="panel-content" id="appetizer-buttons"></div>
         </div>        
         
 
         <div id="alacartePanel" class="hidden-panel">
-            <!-- Cancel and Add buttons horizontally aligned -->
             <div class="panel-buttons">
-                <button class="cancel" onclick="cancelCurrentCompositeItem()">Cancel Item</button>
-                <button class="add-btn" onclick="finalizeAlaCarteItem()">Add to Order</button>
+                <button class="cancel" onclick="closePanel()">Cancel</button>
             </div>
-        
-            <!-- A La Carte Item Preview -->
-            <div id="currentAlaCartePreview" class="current-item-preview"></div>
-        
-            <!-- Size Selection Buttons -->
-            <div class="size-selection">
-                <button id="size-Small" class="size-button" onclick="setSize('Small')">Small</button>
-                <button id="size-Medium" class="size-button" onclick="setSize('Medium')">Medium</button>
-                <button id="size-Large" class="size-button" onclick="setSize('Large')">Large</button>
-            </div>
-        
-            <!-- Panel for Entrees and Sides -->
-            <div id="sizePanels">
-                <div id="size-Small-panel" class="hidden-panel" aria-hidden="true">
-                    <div class="panel-content">
-                        <div class="entrees-section">
-                            <h3 class="section-header">Entrees</h3>
-                            <div id="small-entree-buttons" class="entrees-grid"></div>
-                        </div>
-                        <div class="sides-section">
-                            <h3 class="section-header">Sides</h3>
-                            <div id="small-side-buttons" class="sides-grid"></div>
-                        </div>
-                    </div>
+            <div class="panel-content">
+                <div class="entrees-section">
+                    <h3 class="section-header">Entrees</h3>
+                    <div id="ALaCarte-entrees" class="entrees-grid"></div>
                 </div>
-                <div id="size-Medium-panel" class="hidden-panel" aria-hidden="true">
-                    <div class="panel-content">
-                        <div class="entrees-section">
-                            <h3 class="section-header">Entrees</h3>
-                            <div id="medium-entree-buttons" class="entrees-grid"></div>
-                        </div>
-                        <div class="sides-section">
-                            <h3 class="section-header">Sides</h3>
-                            <div id="medium-side-buttons" class="sides-grid"></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="size-Large-panel" class="hidden-panel" aria-hidden="true">
-                    <div class="panel-content">
-                        <div class="entrees-section">
-                            <h3 class="section-header">Entrees</h3>
-                            <div id="large-entree-buttons" class="entrees-grid"></div>
-                        </div>
-                        <div class="sides-section">
-                            <h3 class="section-header">Sides</h3>
-                            <div id="large-side-buttons" class="sides-grid"></div>
-                        </div>
-                    </div>
+                <div class="sides-section">
+                    <h3 class="section-header">Sides</h3>
+                    <div id="ALaCarte-sides" class="sides-grid"></div>
                 </div>
             </div>
-        </div>        
+        </div>
+        
+        <div id="alaCarteModal" class="modal">
+            <div class="modal-content">
+                <button class="close" onclick="closeAlaCarteModal()">✖</button>
+                <h3 id="alaCarteItemName"></h3>
+                <div id="sizeSelection">
+                    <button id="smSize" class="size-button" onclick="selectAlaCarteSize('sm')">Small</button>
+                    <button id="mdSize" class="size-button" onclick="selectAlaCarteSize('md')">Medium</button>
+                    <button id="lgSize" class="size-button" onclick="selectAlaCarteSize('lg')">Large</button>
+                </div>
+                <div id="alaCartePrice">$0.00</div>
+                <button class="add-to-order" onclick="addAlaCarteToOrder()">ADD TO ORDER</button>
+            </div>
+        </div>
         
     </div>
 </body>

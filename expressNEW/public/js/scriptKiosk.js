@@ -284,6 +284,25 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMenuItems();
 });
 
+
+// Michael
+// Function to get the weather information for the kiosk
+async function getWeather() {
+    try {
+        const response = await fetch('/api/weather');
+        const data = await response.json();
+        const city = "College Station";
+        const temp = data.current.temp;
+        const description = data.current.weather[0].description;
+        const weatherText = document.getElementById('weatherInfo');
+        weatherText.textContent = city  + ": " + temp + "°F " + description;
+    }
+    catch (error) {
+        console.log("Error getting weather", error);
+    }
+}
+
+
 // Function to initialize a new composite item (bowl, plate, or bigger plate)
 function selectItemType(type, price, entreesRequired, sidesRequired, menuId) {
     currentCompositeItem = {
@@ -647,16 +666,25 @@ function openAlaCarteModal(menuItem) {
     const sizeSelection = document.getElementById('sizeSelection');
     sizeSelection.innerHTML = ''; // Clear existing buttons
 
+    // Loop through available sizes, but skip the "Small" size for sides
     Object.keys(menuItemMap[menuItem.menuitem]).forEach((size) => {
         const sizeData = menuItemMap[menuItem.menuitem][size];
 
-        const sizeButton = document.createElement('button');
-        sizeButton.classList.add('size-button');
-        sizeButton.id = `${size}Size`;
-        sizeButton.innerHTML = `${capitalize(size)}<br>$${sizeData.price.toFixed(2)}`;
-        sizeButton.onclick = () => selectAlaCarteSize(size);
+        // Exclude the "Small" size if the item is a side
+        if (menuItem.category === 'side' && size === 'sm') {
+            return;
+        }
 
-        sizeSelection.appendChild(sizeButton);
+        // Create a size button
+        if (sizeData) {
+            const sizeButton = document.createElement('button');
+            sizeButton.classList.add('size-button');
+            sizeButton.id = `${size}Size`;
+            sizeButton.innerHTML = `${capitalize(size)}<br>$${sizeData.price.toFixed(2)}`;
+            sizeButton.onclick = () => selectAlaCarteSize(size);
+
+            sizeSelection.appendChild(sizeButton);
+        }
     });
 
     // Reset quantity and show the modal
@@ -1195,8 +1223,8 @@ const Keyboard = {
 
 window.addEventListener("DOMContentLoaded", function () {
     Keyboard.init();
+    getWeather();
 });
-
 
 
 
