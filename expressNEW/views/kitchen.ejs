@@ -25,7 +25,7 @@
 
                         <% pendingOrders.forEach(order => { %> <!-- Loop through each pending order -->
 
-                            <div class="orderCard" data-status="in-progress"> <!-- Create a div for each order -->
+                            <div class="orderCard" data-status="in-progress" data-total-cost="<%= order.totalCost %>"> <!-- Create a div for each order -->
 
                                 <h3>Order #<%= order.orderId %></h3> <!-- Display the order ID dynamically -->
 

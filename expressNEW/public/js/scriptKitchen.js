@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Handle click events for orders in "In Progress"
-    inProgressContainer.addEventListener("click", (e) => {
+    inProgressContainer.addEventListener("click", async(e) => {
         const order = e.target.closest(".orderCard");
         if (order && order.dataset.status === "in-progress") {
             // Move to completed section
@@ -56,7 +56,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             speechSynthesis.speak(speech);
 
+            // Retrieve `menuItemIDs` and `totalCost` from the dataset
+            const menuItemIDs = order.dataset.menuItemIDs.split(','); // Convert to array
+            const totalCost = parseFloat(order.dataset.totalCost); // Convert to number
 
+            console.log('Menu Item IDs:', menuItemIDs);
+            console.log('Total Cost:', totalCost);
+
+            // Call APIs to update the order and inventory
+            await updateOrder(totalCost, menuItemIDs);
+            await updateInventory(menuItemIDs);
 
             // Test TTS by sending "Hello, world!" to the PlayHT API
             // playAudioFromAPI('My fellow Americans');
@@ -103,6 +112,9 @@ async function loadPendingOrders()
             const orderCard = document.createElement("div");
             orderCard.classList.add("orderCard");
             orderCard.dataset.status = "in-progress";
+
+            orderCard.dataset.menuItemIDs = order.menuitemids; // Store the menu item IDs
+            orderCard.dataset.totalCost = order.totalcost; // Store the total cost, but not displayed
 
             const orderTitle = document.createElement("h3");
             orderTitle.textContent = `Order #${order.pendingorderid}`;  // Use pendingorderid from the database
