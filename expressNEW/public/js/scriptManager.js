@@ -137,7 +137,7 @@ function setupTabs() {
             if (APIEndpoint == "/api/xReport" || APIEndpoint == "/api/zReport") {
                 populateReports(APIEndpoint, tableID);
             }
-            else if (APIEndpoint == '/api/salesReport'){
+            else if (APIEndpoint == '/api/salesReport' | APIEndpoint == '/api/product-usage'){
                 return;
             }
             else {
@@ -154,6 +154,68 @@ function setupTabs() {
     const tableID = firstTable.id;
     const APIEndpoint = "/api/" + tableID;
     populateTable(APIEndpoint, tableID);
+}
+
+async function getProductUsage() {
+    const ingredient = document.getElementById('ingredient').value;
+    const timeframe = document.getElementById('timeframe').value;
+    const day = document.getElementById('day').value;
+    const month = document.getElementById('month').value;
+
+    if (!ingredient) {
+        alert("Please enter an ingredient.");
+        return;
+    }
+
+    if (timeframe === 'hourly' && !day) {
+        alert("Please enter a day for hourly data.");
+        return;
+    }
+
+    if ((timeframe === 'daily' || timeframe === 'monthly') && !month) {
+        alert("Please enter a month.");
+        return;
+    }
+
+    try {
+        let url = `/api/product-usage?ingredient=${ingredient}&timeframe=${timeframe}&month=${month}`;
+
+        if (timeframe === 'hourly' && day) {
+            url += `&day=${day}`;
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (response.ok) {
+            populateProductUsageTable(data);
+        } else {
+            alert(data.message || "No data found.");
+        }
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        alert("An error occurred while fetching product usage data.");
+    }
+}
+
+function populateProductUsageTable(data) {
+    const tableBody = document.querySelector('#product-usage');
+
+    if (data && data.length > 0) {
+        data.forEach(row => {
+            const tableRow = document.createElement('tr');
+            tableRow.innerHTML = `
+                <td>${row.ingredient_name}</td>
+                <td>${row.total_usage}</td>
+                <td>${row.time_period}</td>
+            `;
+            tableBody.appendChild(tableRow);
+        });
+    } else {
+        const noDataRow = document.createElement('tr');
+        noDataRow.innerHTML = '<td colspan="3">No usage data found for the given ingredient.</td>';
+        tableBody.appendChild(noDataRow);
+    }
 }
 
 let reportDate = new Date().toISOString().split('T')[0];

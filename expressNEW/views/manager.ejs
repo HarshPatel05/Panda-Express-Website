@@ -59,7 +59,9 @@
                 <thead>
                     <th>Employee Name</th>
                     <th>ID Number</th>
+                    <th>Password</th>
                     <th>Status</th>
+                    <th>Phone Number</th>
                     <th>Position</th>
                 </thead>
                 <tbody>
@@ -73,10 +75,12 @@
             <table id="inventory" border="2">
                 <thead>
                     <th>Item</th>
+                    <th>Unit</th>
+                    <th>Quantity Avaiable</th>
                     <th>Quantity</th>
-                    <th>Quantity Unit</th>
                     <th>Vendor</th>
                     <th>Last Shipment Date</th>
+                    <th>Minimum Quantity</th>
                 </thead>
                 <tbody>
 
@@ -94,6 +98,7 @@
                     <th>Item</th>
                     <th>Price</th>
                     <th>Size</th>
+                    <th>Display Name</th>
                 </thead>
             </table>
             <tbody>
@@ -124,6 +129,7 @@
                 <thead>
                     <th>Ingredient</th>
                     <th>Quantity</th>
+                    <th>Minimum Quantity</th>
                 </thead>
             </table>
             <tbody>
@@ -134,14 +140,32 @@
 
         <div id="product-usageDiv" class="tabContent">
             <h3>Overall Product Usage</h3>
+            <div class="usageControls">
+                <label for="ingredient">Ingredient Name:</label>
+                <input type="text" id="ingredient" name="ingredient" placeholder="Enter ingredient name">
+        
+                <label for="timeframe">Timeframe:</label>
+                <select id="timeframe" name="timeframe">
+                    <option value="hourly">Hourly</option>
+                    <option value="daily">Daily</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+        
+                <label for="month">Month:</label>
+                <input type="number" id="month" name="month" min="1" max="12">
+        
+                <label for="day">Day:</label>
+                <input type="number" id="day" name="day" min="1" max="31">
+        
+                <button id="productUsageButton" onclick="getProductUsage()">Get Product Usage</button>
+            </div>
+        
             <table id="product-usage" border="2">
                 <thead>
-                    <th>Ingredients</th>
-                    <th>Item</th>
-                    <th>Price</th>
-                    <th>Size</th>
+                    <th>Ingredient</th>
+                    <th>Total Usage</th>
+                    <th>Time Period</th>
                 </thead>
-
                 <tbody>
 
                 </tbody>
