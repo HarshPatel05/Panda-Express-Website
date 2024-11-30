@@ -770,9 +770,6 @@ async function isIngredientValid(ingredient)
 }
 
 
-// API endpoint to get product usage
-// This endpoint retrieves the product usage data for a specific ingredient based on the given timeframe (hourly, daily, or monthly).
-
 
 /** API endpoint to get product usage
  *  This endpoint retrieves the product usage data for a specific ingredient based on the given timeframe (hourly, daily, or monthly).
