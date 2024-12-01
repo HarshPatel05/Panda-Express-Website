@@ -87,11 +87,16 @@ document.addEventListener("DOMContentLoaded", () => {
             order.remove();
         }
     });
+
+    // Load pending orders on page load
+    loadPendingOrders();
 });
 
 
 async function loadPendingOrders()
 {
+    const inProgressContainer = document.querySelector("#inProgress .orderContainer");
+
     try
     {
         const response = await fetch('/api/getpendingorders');
@@ -113,7 +118,7 @@ async function loadPendingOrders()
             orderCard.classList.add("orderCard");
             orderCard.dataset.status = "in-progress";
 
-            orderCard.dataset.menuItemIDs = order.menuitemids; // Store the menu item IDs
+            orderCard.dataset.menuItemIDs = JSON.stringify(order.menuitemids); // Store as JSON string
             orderCard.dataset.totalCost = order.totalcost; // Store the total cost, but not displayed
 
             const orderTitle = document.createElement("h3");
@@ -158,6 +163,7 @@ async function getItemNameById(itemId)
         }
 
         const itemName = await response.text(); // Assuming the API returns only the display name as plain text
+        console.log(`Fetched itemName for ID ${itemId}:`, itemName);
         return itemName; // Return the fetched display name
     }
     catch(err)
@@ -178,8 +184,8 @@ async function updateOrder(totalCost, menuItemIDs)
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify
             ({
-                totalCost: totalCost,
-                menuItemIDs: menuItemIDs
+                totalCost,
+                menuItemIDs
             })
         });
         const data = await response.json();
@@ -200,7 +206,7 @@ async function updateInventory(menuItemIDs)
         {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ menuItemIDs: menuItemIDs })
+            body: JSON.stringify({ menuItemIDs })
         });
 
         const data = await response.json();

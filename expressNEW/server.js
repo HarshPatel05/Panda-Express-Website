@@ -74,8 +74,25 @@ app.get('/manager', (req, res) => {
   res.render('manager'); // Render the views/manager.ejs file
 });
 
-app.get('/kitchen', (req, res) => {
-  res.render('kitchen'); // Render the views/kitchen.ejs file
+// app.get('/kitchen', (req, res) => {
+//   res.render('kitchen'); // Render the views/kitchen.ejs file
+// });
+
+// Route to render the kitchen page
+app.get('/kitchen', async (req, res) =>
+{
+  try
+  {
+    // Fetch pending orders using the API endpoint
+    const pendingOrders = await fetchPendingOrdersFromAPI();
+    
+    res.render('kitchen', { pendingOrders });
+  }
+  catch (error)
+  {
+    console.error('Error loading the kitchen page:', error);
+    res.status(500).send('Error loading the kitchen page');
+  }
 });
 
 
@@ -668,6 +685,22 @@ app.get('/api/getpendingorders', async (req, res) =>
 });
 
 
+const fetchPendingOrdersFromAPI = async () =>
+{
+  try
+  {
+    const response = await fetch('http://localhost:5000/api/getpendingorders'); // Full URL for the API
+    if (!response.ok) throw new Error('Failed to fetch pending orders');
+    return await response.json();  // Parse JSON data from API
+  }
+  catch (error)
+  {
+    console.error('Error fetching pending orders:', error);
+    throw error;  // Rethrow error to handle it in the route
+  }
+};
+
+
 app.get('/api/getdisplayname', async (req, res) =>
 {
   const menuitemID = req.query.menuitemID; // Extract menuitemID from the query string
@@ -680,12 +713,14 @@ app.get('/api/getdisplayname', async (req, res) =>
   try
   {
     // Query the database for the display name
-    const result = await pool.query('SELECT displayname FROM menuitems WHERE menuitemid = $1', [menuitemID]);
+    // const result = await pool.query('SELECT displayname FROM menuitems WHERE menuitemid = $1', [menuitemID]);
+    const result = await pool.query('SELECT menuitem FROM menuitems WHERE menuitemid = $1', [menuitemID]);
 
     // Check if a result was found
     if (result.rows.length > 0)
     {
-      return res.send(result.rows[0].displayname);
+      // return res.send(result.rows[0].displayname);
+      return res.send(result.rows[0].menuitem);
     }
     else
     {

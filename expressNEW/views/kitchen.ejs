@@ -22,26 +22,23 @@
                     <!-- `<%= %>` Used for executing JavaScript code and injecting the result directly into the HTML to display dynamic content like variables or expressions. -->
                     
                     <% if (pendingOrders && pendingOrders.length > 0) { %> <!-- Check if there are any pending orders -->
-
                         <% pendingOrders.forEach(order => { %> <!-- Loop through each pending order -->
-
-                            <div class="orderCard" data-status="in-progress" data-total-cost="<%= order.totalCost %>"> <!-- Create a div for each order -->
-
-                                <h3>Order #<%= order.orderId %></h3> <!-- Display the order ID dynamically -->
-
-                                <ul> <!-- Start an unordered list for the items in the order -->
-                                    <% order.items.forEach(item => { %> <!-- Loop through each item in the order -->
-                                        <li><%= item %></li> <!-- Display each item in the order as a list item -->
-                                    <% }) %> <!-- End the loop for items -->
+                            <div class="orderCard" data-status="in-progress" data-total-cost="<%= order.totalCost %>">
+                                <h3>Order #<%= order.pendingorderid %></h3> <!-- Display the order ID dynamically -->
+                                <ul>
+                                    <% if (order.items && order.items.length > 0) { %> <!-- Ensure there are items -->
+                                        <% order.items.forEach(item => { %>
+                                            <li><%= item %></li>
+                                        <% }) %>
+                                    <% } else { %> <!-- If no items -->
+                                        <li>No items available</li>
+                                    <% } %>
                                 </ul>
-
                             </div>
-
                         <% }) %> <!-- End the loop for orders -->
-
                     <% } else { %> <!-- If no pending orders -->
-                        <p>No pending orders.</p> <!-- Display a message indicating no orders -->
-                    <% } %> <!-- End the if statement -->
+                        <p>No pending orders.</p>
+                    <% } %>
 
                     <!-- Example Orders
                     <div class="orderCard" data-status="in-progress">
