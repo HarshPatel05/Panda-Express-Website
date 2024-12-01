@@ -250,7 +250,7 @@ app.get('/api/menuitems', async (req, res) =>
   {
     try 
     {
-      const result = await pool.query('SELECT menuItemId, menuItem, price, size, displayName FROM menuItems');
+      const result = await pool.query('SELECT menuItemId, menuItem, price, size, displayName FROM menuItems ORDER BY menuitemid ASC;');
       res.json(result.rows);
     } 
     catch (error) 
@@ -791,6 +791,28 @@ app.get('/api/xReport', async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   } 
 });
+
+app.post('/api/changePrice', async (req, res) => {
+  const { menuItemID, newPrice } = req.body;
+
+  if (!menuItemID || !newPrice) {
+    return res.status(400).json({ error: 'Invalid data' });
+  }
+
+  try {
+    const result = await pool.query('UPDATE menuitems SET price = $1 WHERE menuitemid = $2 RETURNING *;', [newPrice, menuItemID]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    res.json({ message: `Price updated successfully for item ${menuItemID}`, item: result.rows[0] });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'An error occurred while updating the price' });
+  }
+});
+
 
 
 /**
