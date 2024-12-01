@@ -630,12 +630,15 @@ app.post('/api/updateinventory', async (req, res) =>
 // Endpoint to update pending orders table
 app.post('/api/updatependingorders', async (req, res) =>
 {
-  const { totalCost, menuItemIDs, inputName } = req.body; // Extract total cost and menu item IDs from request body
+  const { totalCost, menuItemIDs, inputName } = req.body;
 
-  if (!totalCost || !menuItemIDs || !inputName)
+  // Log request body for debugging
+  console.log('Received:', req.body);
+
+  // Validate required fields
+  if (!totalCost || !menuItemIDs || !Array.isArray(menuItemIDs) || menuItemIDs.length === 0 || !inputName)
   {
-    // Validate required fields
-    return res.status(400).json({ error: 'TotalCost, MenuItemIDs, and Name are required' });
+    return res.status(400).json({ error: 'Invalid input: TotalCost, MenuItemIDs (array), and Name are required' });
   }
 
   const client = await pool.connect(); // Get a connection from the database pool
@@ -644,36 +647,42 @@ app.post('/api/updatependingorders', async (req, res) =>
   {
     await client.query('BEGIN'); // Start a database transaction
 
+    console.log('Inserting into pending orders:', { totalCost, menuItemIDs, inputName });
+
     // Insert the pending order into the table
-    // Convert the menuItemIDs array to a JSON string using JSON.stringify
-    const pendingOrderResult = await client.query(
-      'INSERT INTO pendingorders (totalCost, date, menuitemids, name) VALUES ($1, $2, $3, $4) RETURNING pendingorderid',
-      [totalCost, new Date(), JSON.stringify(menuItemIDs), inputName] // Insert total cost, current timestamp, and menu item IDs
-    );
+    const query = `
+      INSERT INTO pendingorders (totalcost, menuitemids, name) 
+      VALUES ($1, $2, $3) 
+      RETURNING pendingorderid
+    `;
 
-    // Retrieve the newly created order ID from the result
-    const PendingOrderID = pendingOrderResult.rows[0].pendingorderid;
+    const values = [totalCost, JSON.stringify(menuItemIDs), inputName];
+    const pendingOrderResult = await client.query(query, values);
 
-    await client.query('COMMIT'); // Commit the transaction to save changes
+    // Retrieve the newly created order ID
+    const pendingOrderID = pendingOrderResult.rows[0].pendingorderid;
+
+    await client.query('COMMIT'); // Commit the transaction
 
     res.status(200).json
     ({
-      message: 'Pending order updated successfully!', // Send success message to client
-      orderID: PendingOrderID, // Include the new order ID in the response
+      message: 'Pending order updated successfully!',
+      orderID: pendingOrderID,
     });
   }
   catch (error)
   {
-    console.error('Error updating pending order:', error); // Log any errors for debugging
+    console.error('Error updating pending order:', error.stack);
 
-    await client.query('ROLLBACK'); // Rollback the transaction if an error occurs
-    res.status(500).json({ error: 'Failed to update pending order' }); // Send error response to client
+    await client.query('ROLLBACK'); // Rollback on error
+    res.status(500).json({ error: 'Failed to update pending order' });
   }
   finally
   {
-    client.release(); // Release the database connection back to the pool
+    client.release(); // Release the database connection
   }
 });
+
 
 
 // API enpoint to get pending orders to display it on the screen

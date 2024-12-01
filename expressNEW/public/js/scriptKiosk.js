@@ -1160,8 +1160,13 @@ function proceedWithCheckout(userInput) {
     const checkoutPanel = document.getElementById('checkoutPanel');
     checkoutPanel.style.display = 'none';
 
-    // Flatten the array of menuIds from each order item
-    const menuItemIDs = orderItems.flatMap(item => item.menuIds);
+        // Flatten the array of menuIds from each order item
+        // const menuItemIDs = orderItems.flatMap(item => item.menuIds);
+        const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id != undefined);
+
+        console.log('Total Amount:', totalAmount);
+        console.log('Menu Item IDs:', menuItemIDs);
+        console.log('Input Name:', userInput);
 
     // Update pending orders
     updatePendingOrders(totalAmount, menuItemIDs, userInput);
@@ -1173,6 +1178,39 @@ function proceedWithCheckout(userInput) {
     clearOrder(); // Assuming clearOrder() resets the order and total
 }
 
+
+async function updatePendingOrders(totalCost, menuItemIDs, inputName)
+{
+    // Debugging the values being sent to the backend
+    console.log('Sending to API:', { totalCost, menuItemIDs, inputName });
+
+    try
+    {
+        const response = await fetch('/api/updatependingorders', {
+            method: 'POST', // HTTP method for sending data
+            headers: { 'Content-Type': 'application/json' }, // Specify JSON content type
+            body: JSON.stringify ({ totalCost, menuItemIDs, inputName })
+        });
+
+        // Check if the response is successful
+        if (!response.ok)
+        {
+            // Parse the response text for error details, if any
+            const errorText = await response.text();
+            throw new Error(`Failed to update pending order: ${errorText}`);
+        }
+
+        const data = await response.json(); // Parse JSON response from the server
+        console.log('Pending order updated successfully:', data);
+        alert('Pending order placed successfully!');
+    }
+    catch (error)
+    {
+        // Log and display an error message if something went wrong
+        console.error('Error:', error);
+        alert('An error occurred while placing your pending order. Please try again.');
+    }
+}
 
 
 
@@ -1380,43 +1418,7 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 
-async function updatePendingOrders(totalAmount, menuItemIDs, inputName)
-{
-    try
-    {
-        const response = await fetch('/api/updatependingorders',
-        {
-            method: 'POST', // HTTP method for sending data
-            headers: { 'Content-Type': 'application/json' }, // Specify JSON content type
-            body: JSON.stringify
-            ({
-                TotalCost: totalAmount, // Send the total cost
-                MenuItemIDs: menuItemIDs, // Send the array of menu item IDs
-                Name: inputName // Send the customer name
-            })
-        });
 
-        // Check if the response is successful
-        if (!response.ok)
-        {
-            // Parse the response text for error details, if any
-            const errorText = await response.text();
-            throw new Error(`Failed to update pending order: ${errorText}`);
-        }
-
-        const data = await response.json(); // Parse JSON response from the server
-
-        // debugging statments
-        console.log('Pending order updated successfully:', data);
-        alert('Pending order placed successfully!');
-    }
-    catch (error)
-    {
-        // Log and display an error message if something went wrong
-        console.error('Error:', error);
-        alert('An error occurred while placing your pending order. Please try again.');
-    }
-}
 
 
 
