@@ -900,6 +900,27 @@ app.get('/api/product-usage', async (req, res) =>
 });
 
 
+// API Endpoint to add a seasonal entree
+/**
+  fetch('/api/addseasonalentree', 
+    {
+      method: 'POST',
+      headers:{ 'Content-Type': 'application/json' },
+      body: JSON.stringify
+      ({
+        itemName = "frenchFries"
+        itemPrice = 
+      }) 
+    }
+  )
+  .then(response => response.json()) // Parse JSON response
+  .then(data => console.log(data))    // Log the response data
+  .catch(error => console.error('Error:', error)); // Handle any errors
+*/
+app.post('/api/addseasonalentree', async (req, res) =>
+{
+  const { itemName, itemPrice, itemIngredients, quantities, displayname } = req.body;
+});
 
 
 
