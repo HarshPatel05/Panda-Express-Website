@@ -92,6 +92,16 @@
 
         <div id="menuitemsDiv" class="tabContent">
             <h3>Menu Items</h3>
+            <div class="menuItemsControls">
+                <label for="menuItemID">Item ID:</label>
+                <input type="text" id="menuItemID" name="menuItemID" placeholder="Enter item ID">
+        
+                <label for="newPrice">New Price:</label>
+                <input type="number" id="newPrice" name="newPrice" placeholder="Enter new price" step="0.01" min="0">
+        
+                <button id="changePriceButton" onclick="changePrice()">Change Price</button>
+            </div>
+        
             <table id="menuitems" border="2">
                 <thead>
                     <th>Item ID</th>
@@ -102,11 +112,9 @@
                 </thead>
             </table>
             <tbody>
-
             </tbody>
-
         </div>
-
+    
         <div id="seasonalItems" class="tabContent">
             <h3>Seasonal Menu Items</h3>
             <tbody>
