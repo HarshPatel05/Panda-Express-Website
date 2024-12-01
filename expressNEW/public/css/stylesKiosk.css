@@ -252,21 +252,6 @@ body {
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-
-.hidden-panel .cancel button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #DB372E;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 4px;
-    display: block;
-    width: 150px;
-    text-align: center;
-}
-
 /* Feedback Popup */
 .feedback-popup {
     position: fixed;
@@ -342,6 +327,7 @@ body {
     padding: 10px; /* Add some padding around the grid */
 }
 
+/* General Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -362,6 +348,7 @@ body {
     width: 300px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative; /* Required for positioning the close button */
 }
 
 .modal img {
@@ -377,12 +364,25 @@ body {
     color: #333;
 }
 
-.modal-drink-image {
-    width: 100px;
-    height: auto;
-    margin-bottom: 10px;
+/* Close Button */
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333; /* Default color */
+    transition: color 0.3s ease, transform 0.2s ease;
 }
 
+.close-modal:hover {
+    color: #d9534f; /* Match the hover red effect of rewards button */
+    transform: scale(1.1); /* Optional: Add a slight zoom effect */
+}
+
+/* Quantity Selector Styles */
 .quantity-selector, .quantity-selection {
     display: flex;
     justify-content: center;
@@ -408,6 +408,7 @@ body {
     font-weight: bold;
 }
 
+/* Add-to-Order Button */
 .add-to-order {
     background-color: #d9534f;
     color: white;
@@ -424,55 +425,7 @@ body {
     background-color: #c9302c;
 }
 
-.close-modal {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-
-#alaCarteModal img {
-    width: 100px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-#appetizerModal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
-}
-
-#appetizerModal img {
-    width: 100px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-#appetizerModal h3 {
-    font-size: 18px;
-    margin-bottom: 15px;
-    font-weight: bold;
-    color: #333;
-}
-
-.section-header {
-    font-size: 1.8vw; /* Keep the font size the same */
-    font-weight: bold;
-    margin: 5px 0; /* Reduce top and bottom margin */
-    padding: 0; /* Remove any additional padding */
-}
-
+/* Size Buttons */
 .size-button, .appetizerSizeSelection {
     background-color: #f0f0f0;
     border: none;
@@ -490,6 +443,13 @@ body {
     color: #fff;
 }
 
+/* Section Header */
+.section-header {
+    font-size: 1.8vw; /* Keep the font size the same */
+    font-weight: bold;
+    margin: 5px 0; /* Reduce top and bottom margin */
+    padding: 0; /* Remove any additional padding */
+}
 
 /* ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
@@ -660,3 +620,53 @@ body {
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Add shadow on the top */
     height: 50px; /* Set a fixed height for the bar */
 }
+
+.cancel-btn {
+    background-color: #DB372E;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: clamp(16px, 1vw, 16px);
+    cursor: pointer;
+    width: 150px; /* Match the original width */
+    align-self: flex-start;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    text-align: center; /* Ensure text alignment */
+}
+
+.cancel-btn:hover {
+    background-color: white;
+    color: #DB372E;
+    box-shadow: 0 0 0 3px #DB372E; /* Adds a red outline on hover */
+}
+
+
+.remove-button {
+    background-color: white;
+    color: #DB372E;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 10px; /* Adds spacing above the button */
+    width: 100%; /* Makes the button span the full width */
+    text-align: center;
+}
+
+.remove-button:hover {
+    background-color: #DB372E;
+    color: white;
+    box-shadow: 0 0 0 3px white; /* Adds a red outline on hover */
+}
+
+.order-item {
+    border-bottom: 1px solid #ccc; /* Adds separation between items */
+    padding: 10px;
+    margin-bottom: 10px;
+}
+

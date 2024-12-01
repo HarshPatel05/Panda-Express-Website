@@ -349,6 +349,9 @@ function updateOrderList() {
             console.error('Invalid total price for item:', item);
         }
 
+        // Format the name to remove size from the item's display name
+        const formattedName = item.name.replace(/\s*\(.*?\)/, '');
+
         // Display main item details
         let listItemHTML = `
             <div>
@@ -361,21 +364,21 @@ function updateOrderList() {
         if (item.type === 'a la carte') {
             listItemHTML += `
                 <div class="item-components">
-                    <div>- ${item.name}</div>
+                    <div>- ${formattedName}</div>
                 </div>
             `;
         } else if (item.type === 'composite' && item.components?.length > 0) {
             listItemHTML += `
                 <div class="item-components">
                     ${item.components
-                        .map(component => `<div>- ${component.itemName}</div>`)
+                        .map(component => `<div>- ${camelCaseToNormal(component.itemName)}</div>`)
                         .join('')}
                 </div>
             `;
         } else if (item.type === 'appetizer') {
             listItemHTML += `
                 <div class="item-components">
-                    <div>- ${item.name} (${capitalize(item.size)})</div>
+                    <div>- ${item.name.replace(/\s*\(.*?\)/, '')}</div>
                 </div>
             `;
         }
@@ -578,26 +581,75 @@ async function selectDrink(drinkName, menuIdName) {
     modal.style.display = 'block'; // Show modal
 }
 
+function addDrinkToOrder() {
+    if (!selectedDrinkItem || !menuItemMap[selectedDrinkItem.menuitem]) {
+        console.error("Invalid drink selected or not found in menu map.");
+        return;
+    }
+
+    const selectedSizeData = menuItemMap[selectedDrinkItem.menuitem][drinkSize];
+    if (!selectedSizeData) {
+        console.error(`Size data for ${drinkSize} not found.`);
+        return;
+    }
+
+    const { menuitemid, price } = selectedSizeData;
+
+    const drinkOrder = {
+        type: 'drink',
+        name: `${camelCaseToNormal(selectedDrinkItem.menuitem)} (${capitalize(drinkSize)})`,
+        size: drinkSize,
+        price: price,
+        quantity: drinkQuantity,
+        menuIds: Array(drinkQuantity).fill(menuitemid),
+    };
+
+    orderItems.push(drinkOrder);
+    updateOrderList();
+    calculateTotal();
+    closeDrinkModal();
+}
 
 // Function to select a size
 function selectDrinkSize(size) {
-    drinkSize = size;
+    drinkSize = size; // Update selected size
+    const sizeButtons = document.querySelectorAll('#sizeSelection .size-button');
+    sizeButtons.forEach((button) => {
+        if (button.id === `${size}DrinkSize`) {
+            button.classList.add('selected');
+        } else {
+            button.classList.remove('selected');
+        }
+    });
+
+    // Find the menu item in the global menuItems array
+    const selectedMenuItem = menuItems.find(
+        (item) =>
+            item.menuitem === selectedDrinkItem.menuitem &&
+            item.size === drinkSize
+    );
+
+    if (selectedMenuItem) {
+        console.log(`Price for selected size: $${selectedMenuItem.price}`);
+    } else {
+        console.error("No matching drink item found for the selected size.");
+    }
 }
 
 
-// Function to increase drink quantity
+
 function increaseDrinkQuantity() {
     drinkQuantity++;
     document.getElementById('drinkQuantity').innerText = drinkQuantity;
 }
 
-// Function to decrease drink quantity
 function decreaseDrinkQuantity() {
     if (drinkQuantity > 1) {
         drinkQuantity--;
         document.getElementById('drinkQuantity').innerText = drinkQuantity;
     }
 }
+
 
 // Function to add the selected drink to the order
 function addDrinkToOrder() {
@@ -623,26 +675,53 @@ function addDrinkToOrder() {
 
     // Close modal
     closeDrinkModal();
+    closePanel();
 }
 
-// Function to close the modal
+function openDrinkModal(menuItem) {
+    selectedDrinkItem = menuItem;
+    drinkSize = 'md'; // Default size
+    drinkQuantity = 1;
+
+    const normalizedMenuItem = camelCaseToNormal(menuItem.menuitem);
+
+    // Update modal content
+    document.getElementById('drinkImage').src = `/Panda Express Photos/${normalizedMenuItem}.png`;
+    document.getElementById('drinkImage').alt = normalizedMenuItem;
+    document.getElementById('drinkItemName').innerText = normalizedMenuItem;
+
+    // Update size selection buttons
+    const sizeSelection = document.getElementById('sizeSelection');
+    sizeSelection.innerHTML = ''; // Clear existing buttons
+
+    Object.keys(menuItemMap[menuItem.menuitem]).forEach((size) => {
+        const sizeData = menuItemMap[menuItem.menuitem][size];
+
+        if (sizeData) {
+            const sizeButton = document.createElement('button');
+            sizeButton.classList.add('size-button');
+            sizeButton.id = `${size}DrinkSize`;
+            sizeButton.innerHTML = `${capitalize(size)}<br>$${sizeData.price.toFixed(2)}`;
+            sizeButton.onclick = () => selectDrinkSize(size);
+
+            sizeSelection.appendChild(sizeButton);
+        }
+    });
+
+    // Reset quantity and show the modal
+    document.getElementById('drinkQuantity').innerText = drinkQuantity;
+    document.getElementById('drinkModal').style.display = 'block';
+}
+
 function closeDrinkModal() {
     const modal = document.getElementById('drinkModal');
     if (modal) {
         modal.style.display = 'none';
     }
-    selectedDrink = null;
-    selectedDrinkType = null;
-    drinkSize = 'sm';
+    selectedDrinkItem = null;
+    drinkSize = 'md';
     drinkQuantity = 1;
 }
-
-// Helper function to capitalize size names
-function capitalize(word) {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-}
-
-
 
 //**************************************************************************************************************************//
 //**************************************************************************************************************************//
@@ -786,6 +865,7 @@ function addAlaCarteToOrder() {
 
     // Close the modal
     closeAlaCarteModal();
+    closePanel();
 }
 
 //**************************************************************************************************************************//
@@ -865,10 +945,11 @@ function addAppetizerToOrder() {
 
     const { menuitemid: menuId, price } = sizeData;
 
+    // Construct the order item without adding size redundantly to the name
     const appetizerOrder = {
         type: 'appetizer',
-        name: `${camelCaseToNormal(selectedAppetizer)} (${capitalize(appetizerSize)})`,
-        size: appetizerSize,
+        name: camelCaseToNormal(selectedAppetizer), // Do not include size here
+        size: capitalize(appetizerSize), // Size is stored separately
         price: price,
         quantity: appetizerQuantity,
         menuIds: Array(appetizerQuantity).fill(menuId),
@@ -878,6 +959,7 @@ function addAppetizerToOrder() {
     updateOrderList();
     calculateTotal();
     closeAppetizerModal();
+    closePanel();
 }
 
 //**************************************************************************************************************************//

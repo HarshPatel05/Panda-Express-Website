@@ -90,7 +90,7 @@
         <!-- Panels for each category with added IDs for dynamic buttons -->
         <div id="hiddenPanelMain" class="hidden-panel">
             <div class="cancel">
-                <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
+                <button class="cancel-btn" onclick="cancelCurrentCompositeItem()">Cancel Item</button>
             </div>
             <div class="panel-content">
                 <div class="entrees-section">
@@ -107,8 +107,8 @@
 
         <div id="drinksPanel" class="hidden-panel">
             <div class="cancel">
-                <button onclick="closePanel()">Cancel Item</button>
-            </div>
+                <button class="cancel-btn" onclick="closePanel()">Cancel Item</button>
+            </div>            
             <h3>Drinks</h3>
             <div class="drink-columns" id="drink-buttons">
                 <!-- Hardcoded drink buttons -->
@@ -157,8 +157,8 @@
         
         <div id="alacartePanel" class="hidden-panel">
             <div class="cancel">
-                <button onclick="cancelCurrentCompositeItem()">Cancel Item</button>
-            </div>
+                <button class="cancel-btn" onclick="closePanel()">Cancel Item</button>
+            </div>            
             <div class="panel-content">
                 <div class="entrees-section">
                     <h3 class="section-header">Entrees</h3>
@@ -173,8 +173,9 @@
         
         <div id="appetizersPanel" class="hidden-panel">
             <div class="cancel">
-                <button onclick="closePanel()">Cancel Item</button>
+                <button class="cancel-btn" onclick="closePanel()">Cancel Item</button>
             </div>
+            
             <h3>Appetizers</h3>
             <div class="appetizer-columns panel-content"></div>
         </div>
@@ -196,7 +197,7 @@
         
         <div id="alaCarteModal" class="modal">
             <div class="modal-content">
-                <button class="close" onclick="closeAlaCarteModal()">✖</button>
+                <button class="close-modal" onclick="closeAlaCarteModal()">✖</button>
                 <img id="alaCarteImage" src="" alt="Selected Item" class="modal-image">
                 <h3 id="alaCarteItemName"></h3>
                 <div id="sizeSelection">
@@ -215,14 +216,16 @@
 
         <div id="drinkModal" class="modal">
             <div class="modal-content">
-                <button class="close" onclick="closeDrinkModal()">✖</button>
+                <button class="close-modal" onclick="closeDrinkModal()">✖</button>
                 <img id="drinkImage" src="" alt="Selected Drink" class="modal-image">
                 <h3 id="drinkItemName"></h3>
+        
                 <div id="sizeSelection" class="size-selection">
                     <button id="smDrinkSize" class="size-button" onclick="selectDrinkSize('sm')">Small</button>
                     <button id="mdDrinkSize" class="size-button" onclick="selectDrinkSize('md')">Medium</button>
                     <button id="lgDrinkSize" class="size-button" onclick="selectDrinkSize('lg')">Large</button>
-                </div>                
+                </div>  
+        
                 <div class="quantity-selector">
                     <button onclick="decreaseDrinkQuantity()">-</button>
                     <span id="drinkQuantity">1</span>
@@ -232,10 +235,11 @@
             </div>
         </div>
         
+        
 
         <div id="appetizerModal" class="modal">
             <div class="modal-content">
-                <button class="close" onclick="closeAppetizerModal()">✖</button>
+                <button class="close-modal" onclick="closeAppetizerModal()">✖</button>
                 <img id="appetizerImage" src="" alt="Selected Appetizer" class="modal-image">
                 <h3 id="appetizerItemName"></h3>
                 <div id="appetizerSizeSelection" class="size-selection">
