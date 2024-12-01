@@ -16,6 +16,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
+const { DateTime } = require('luxon');
 const PlayHT = require('playht');
 
 const app = express();
@@ -73,8 +74,25 @@ app.get('/manager', (req, res) => {
   res.render('manager'); // Render the views/manager.ejs file
 });
 
-app.get('/kitchen', (req, res) => {
-  res.render('kitchen'); // Render the views/kitchen.ejs file
+// app.get('/kitchen', (req, res) => {
+//   res.render('kitchen'); // Render the views/kitchen.ejs file
+// });
+
+// Route to render the kitchen page
+app.get('/kitchen', async (req, res) =>
+{
+  try
+  {
+    // Fetch pending orders using the API endpoint
+    const pendingOrders = await fetchPendingOrdersFromAPI();
+    
+    res.render('kitchen', { pendingOrders });
+  }
+  catch (error)
+  {
+    console.error('Error loading the kitchen page:', error);
+    res.status(500).send('Error loading the kitchen page');
+  }
 });
 
 
@@ -84,6 +102,7 @@ app.get('/kitchen', (req, res) => {
 //####   |   #######################################################  SETTING UP API ENDPOINTS  ###########################################################   |   ####
 //#### \ | / ############################################################################################################################################## \ | / ####
 //####  \|/  ##############################################################################################################################################  \|/  ####
+
 
 // added steps for Google OAuth
 // need more steps after reward system is added in database 
@@ -133,6 +152,7 @@ app.get('/api/sessions/oauth/google', async (req, res) => {
   }
 });
 
+
 //API Endpoint to get OAuth information
 app.get('/api/config', (req, res) => {
   res.json({
@@ -140,6 +160,7 @@ app.get('/api/config', (req, res) => {
       redirectUrl: process.env.REDIRECT_URL,
   });
 });
+
 
 // API Endpoint to get all the employees
 app.get('/api/employees', async (req, res) => 
@@ -156,6 +177,7 @@ app.get('/api/employees', async (req, res) =>
     }
   }
 );
+
 
 // API Endpoint to get the weather for College Station
 app.get('/api/weather', async (req, res) => {
@@ -176,9 +198,6 @@ app.get('/api/weather', async (req, res) => {
 });
 
 
-
-
-
 // Initialize PlayHT client
 PlayHT.init({
   userId: process.env.TTS_USER_ID,
@@ -186,6 +205,7 @@ PlayHT.init({
 });
 
 const CUSTOM_VOICE_ID = 's3://voice-cloning-zero-shot/2e1ff2b9-48cf-4fd9-b48a-45a61cbc3b18/original/manifest.json'; // Replace with your custom voice ID
+
 
 // API Endpoint to generate audio
 app.get('/api/generate-audio', async (req, res) => {
@@ -208,8 +228,6 @@ app.get('/api/generate-audio', async (req, res) => {
 });
 
 
-
-
 // API Endpoint to get the inventory
 app.get('/api/inventory', async (req, res) => 
   {
@@ -225,6 +243,7 @@ app.get('/api/inventory', async (req, res) =>
     }
   }
 );
+
 
 // API Endpoint to get all the menu items
 app.get('/api/menuitems', async (req, res) => 
@@ -259,6 +278,7 @@ app.get('/api/orderHistory', async (req, res) =>
   }
 );
 
+
 // API Endpoint to get restock report 
 app.get('/api/restockReport', async (req, res) => {
   try {
@@ -271,6 +291,47 @@ app.get('/api/restockReport', async (req, res) => {
   } catch (err) {
     console.error('Error fetching restock report:', err.stack);
     res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+app.get('/api/restockInventory', async (req, res) => {
+  const { ingredientName } = req.query;
+
+  if (!ingredientName) {
+    return res.status(400).json({ error: 'Ingredient name is required.' });
+  }
+
+  const queryGetValues = 'SELECT quantity, minimumquantity FROM inventory WHERE ingredient = $1';
+
+  try {
+    // Fetch current quantity and minimum quantity
+    const result = await pool.query(queryGetValues, [ingredientName]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: `No inventory item found with the name: ${ingredientName}` });
+    }
+
+    const { quantity, minimumquantity } = result.rows[0];
+    const targetQuantity = minimumquantity * 1.25;
+
+    // If current quantity is less than the target quantity, restock it
+    if (quantity < targetQuantity) {
+      const queryUpdate = `
+        UPDATE inventory
+        SET lastShipment = CURRENT_DATE, quantity = minimumquantity * 1.25
+        WHERE ingredient = $1
+      `;
+      await pool.query(queryUpdate, [ingredientName]);
+
+      console.log(`Successfully restocked inventory for: ${ingredientName}`);
+      return res.status(200).json({ message: `Restocked ${ingredientName} to the minimum amount.` });
+    } else {
+      console.log(`No need to restock for: ${ingredientName}`);
+      return res.status(200).json({ message: `No need to restock ${ingredientName}. Current quantity is sufficient.` });
+    }
+  } catch (err) {
+    console.error('Error restocking inventory:', err);
+    return res.status(500).json({ error: 'Server Error' });
   }
 });
 
@@ -298,44 +359,68 @@ app.post('/api/login', async (req, res) =>
   }
 );
 
+
 // API Endpoint to get sales report
 app.get('/api/salesReport', async (req, res) => {
   const { startDate, endDate } = req.query;
 
+  // Ensure both start and end dates are provided
   if (!startDate || !endDate) {
     return res.status(400).json({ error: 'Start date and end date are required.' });
   }
 
   try {
-    const startOrderQuery = `SELECT * FROM orderhistory WHERE date::date = $1::date ORDER BY date ASC LIMIT 1`;
-    const startResult = await pool.query(startOrderQuery, [startDate]);
+    // Parse and format dates using Luxon
+    const formattedStartDate = DateTime.fromISO(startDate).toFormat('yyyy-MM-dd');
+    const formattedEndDate = DateTime.fromISO(endDate).toFormat('yyyy-MM-dd');
 
-    const endOrderQuery = `SELECT * FROM orderhistory WHERE date::date = $1::date ORDER BY date DESC LIMIT 1`;
-    const endResult = await pool.query(endOrderQuery, [endDate]);
+    // Query to get the first order within the date range
+    const startOrderQuery = `
+      SELECT * 
+      FROM orderhistory 
+      WHERE date::date >= $1::date AND date::date <= $2::date
+      ORDER BY date ASC LIMIT 1
+    `;
+    const startResult = await pool.query(startOrderQuery, [formattedStartDate, formattedEndDate]);
 
+    // Query to get the last order within the date range
+    const endOrderQuery = `
+      SELECT * 
+      FROM orderhistory 
+      WHERE date::date >= $1::date AND date::date <= $2::date
+      ORDER BY date DESC LIMIT 1
+    `;
+    const endResult = await pool.query(endOrderQuery, [formattedStartDate, formattedEndDate]);
+
+    // If no orders found in the specified date range
     if (startResult.rowCount === 0 || endResult.rowCount === 0) {
       return res.status(404).json({ error: 'No results found for the given dates.' });
     }
 
+    // Extract order IDs
     const startOrderId = startResult.rows[0].orderid;
     const endOrderId = endResult.rows[0].orderid;
 
+    // Query to count the total number of menu items
     const countQuery = 'SELECT COUNT(*) FROM menuitems';
     const countResult = await pool.query(countQuery);
     const numberOfMenuItems = countResult.rows[0].count;
 
+    // Initialize the report data
     const reportData = [];
 
+    // Loop through each menu item to calculate the sales report
     for (let i = 1; i <= numberOfMenuItems; i++) {
       const menuQuery = 'SELECT * FROM menuitems WHERE menuitemid = $1';
       const menuResult = await pool.query(menuQuery, [i]);
 
       if (menuResult.rowCount === 0) {
-        continue; 
+        continue;  // Skip if no menu item found for the given id
       }
 
       const { menuitem: item, price, size } = menuResult.rows[0];
 
+      // Query to get the total units sold for each menu item within the order range
       const orderQuery = `
         SELECT SUM(quantity) 
         FROM orderitems 
@@ -343,9 +428,10 @@ app.get('/api/salesReport', async (req, res) => {
       `;
       const orderResult = await pool.query(orderQuery, [i, startOrderId, endOrderId]);
 
-      const unitsSold = orderResult.rows[0].sum || 0; 
-      const totalSales = price * unitsSold;
+      const unitsSold = orderResult.rows[0].sum || 0;  // Default to 0 if no units sold
+      const totalSales = price * unitsSold;  // Calculate total sales
 
+      // Push data into the report array
       reportData.push({
         menuitemid: i,
         item,
@@ -355,6 +441,7 @@ app.get('/api/salesReport', async (req, res) => {
       });
     }
 
+    // Return the sales report data as JSON
     res.json(reportData);
 
   } catch (err) {
@@ -362,6 +449,7 @@ app.get('/api/salesReport', async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 });
+
 
 // API request to update an order
 /**
@@ -542,7 +630,13 @@ app.post('/api/updateinventory', async (req, res) =>
 // Endpoint to update pending orders table
 app.post('/api/updatependingorders', async (req, res) =>
 {
-  const { totalCost, menuItemIDs } = req.body; // Extract total cost and menu item IDs from request body
+  const { totalCost, menuItemIDs, inputName } = req.body; // Extract total cost and menu item IDs from request body
+
+  if (!totalCost || !menuItemIDs || !inputName)
+  {
+    // Validate required fields
+    return res.status(400).json({ error: 'TotalCost, MenuItemIDs, and Name are required' });
+  }
 
   const client = await pool.connect(); // Get a connection from the database pool
 
@@ -553,18 +647,19 @@ app.post('/api/updatependingorders', async (req, res) =>
     // Insert the pending order into the table
     // Convert the menuItemIDs array to a JSON string using JSON.stringify
     const pendingOrderResult = await client.query(
-      'INSERT INTO pendingorders (totalCost, date, menuitemids) VALUES ($1, $2, $3) RETURNING orderid',
-      [totalCost, new Date(), JSON.stringify(menuItemIDs)] // Insert total cost, current timestamp, and menu item IDs
+      'INSERT INTO pendingorders (totalCost, date, menuitemids, name) VALUES ($1, $2, $3, $4) RETURNING pendingorderid',
+      [totalCost, new Date(), JSON.stringify(menuItemIDs), inputName] // Insert total cost, current timestamp, and menu item IDs
     );
 
     // Retrieve the newly created order ID from the result
-    const newOrderID = pendingOrderResult.rows[0].orderid;
+    const PendingOrderID = pendingOrderResult.rows[0].pendingorderid;
 
     await client.query('COMMIT'); // Commit the transaction to save changes
+
     res.status(200).json
     ({
       message: 'Pending order updated successfully!', // Send success message to client
-      orderID: newOrderID, // Include the new order ID in the response
+      orderID: PendingOrderID, // Include the new order ID in the response
     });
   }
   catch (error)
@@ -594,6 +689,56 @@ app.get('/api/getpendingorders', async (req, res) =>
     console.error('Error fetching Pending Orders:', err.stack);
     res.status(500).json({ error: 'Server Error' });
   }
+});
+
+
+const fetchPendingOrdersFromAPI = async () =>
+{
+  try
+  {
+    const response = await fetch('http://localhost:5000/api/getpendingorders'); // Full URL for the API
+    if (!response.ok) throw new Error('Failed to fetch pending orders');
+    return await response.json();  // Parse JSON data from API
+  }
+  catch (error)
+  {
+    console.error('Error fetching pending orders:', error);
+    throw error;  // Rethrow error to handle it in the route
+  }
+};
+
+
+app.get('/api/getdisplayname', async (req, res) =>
+{
+  const menuitemID = req.query.menuitemID; // Extract menuitemID from the query string
+
+  if (!menuitemID)
+  {
+    return res.status(400).send({ error: 'menuitemID is required' }); // Validate input
+  }
+
+  try
+  {
+    // Query the database for the display name
+    // const result = await pool.query('SELECT displayname FROM menuitems WHERE menuitemid = $1', [menuitemID]);
+    const result = await pool.query('SELECT menuitem FROM menuitems WHERE menuitemid = $1', [menuitemID]);
+
+    // Check if a result was found
+    if (result.rows.length > 0)
+    {
+      // return res.send(result.rows[0].displayname);
+      return res.send(result.rows[0].menuitem);
+    }
+    else
+    {
+      return res.status(404).send('Menu item not found');
+    }
+  }
+  catch(err)
+  {
+    console.error('Error fetching display name:', err.stack);
+    return res.status(500).send('Server Error');
+  };
 });
 
 
@@ -667,113 +812,158 @@ async function isIngredientValid(ingredient)
 }
 
 
-app.get('/api/product-usage', async (req, res) =>
-  {
-    const { ingredient, timeframe, month, day } = req.query;
 
-    // Validate ingredient presence
-    if (!ingredient)
+/** API endpoint to get product usage
+ *  This endpoint retrieves the product usage data for a specific ingredient based on the given timeframe (hourly, daily, or monthly).
+ * 
+ * The timeframe can be:
+
+    1. 'hourly' - For hourly data on a specific day (requires 'day' parameter in the format YYYY-MM-DD).
+      Example: /api/product-usage?ingredient=chicken&timeframe=hourly&day=2024-03-19
+      This will fetch the ingredient usage for 'chicken' on August 15, 2024, broken down by hour.
+
+    2. 'daily' - For daily data in a specific month (requires 'month' parameter in the format YYYY-MM).
+      Example: /api/product-usage?ingredient=chicken&timeframe=daily&month=2024-03
+      This will fetch the ingredient usage for 'chicken' for the entire month of August 2024, broken down by day.
+
+    3. 'monthly' - For monthly data in a specific year (requires 'year' parameter in the format YYYY).
+      Example: /api/product-usage?ingredient=chicken&timeframe=monthly&year=2024
+      This will fetch the ingredient usage for 'chicken' for the year 2024, broken down by month.
+
+ */
+app.get('/api/product-usage', async (req, res) =>
+{
+  const { ingredient, timeframe, year, month, day } = req.query;
+
+  // Validate ingredient presence
+  if (!ingredient)
+  {
+    return res.status(400).json({ message: 'Ingredient is required.' });
+  }
+
+  try
+  {
+    // Validate if the ingredient exists in the inventory table
+    const isValidIngredient = await isIngredientValid(ingredient);
+    if (!isValidIngredient)
     {
-      return res.status(400).json({ message: 'Ingredient is required.' });
+      return res.status(404).json({ message: `Ingredient '${ingredient}' does not exist in inventory.` });
     }
 
-    try
+    // Define variables for query construction
+    let dateTrunc, dateFilter = '', dateFormat, params = [ingredient.toLowerCase()];
+
+    // Handle timeframe validation and SQL setup
+    if (timeframe === 'hourly')
     {
-      // Validate if the ingredient exists in the inventory table
-      const isValidIngredient = await isIngredientValid(ingredient);
-      if (!isValidIngredient)
+      if (!day)
       {
-        return res.status(404).json({ message: `Ingredient '${ingredient}' does not exist in inventory.` });
+        return res.status(400).json({ message: 'Day is required for hourly data (format: YYYY-MM-DD).' });
       }
 
-      let dateTrunc, dateFormat, buildDate, year = '2023';
+      dateTrunc = 'hour';
+      dateFormat = 'YYYY-MM-DD HH24'; // Year, Month, Day, and Hour format
+      dateFilter = "AND TO_CHAR(oh.date, 'YYYY-MM-DD') = $2";
+      params.push(day);
 
-      // Timeframe validation and setup
-      if (timeframe === 'hourly')
-      {
-        if (!day)
-        {
-          return res.status(400).json({ message: 'Day is required for hourly data.' });
-        }
+    }
 
-        dateTrunc = 'hour';
-        dateFormat = "YYYY-MM-DD HH24";  // Year, Month, Day, and Hour format
-        buildDate = "AND TO_CHAR(oh.date, 'YYYY-MM-DD') = $1"; // Placeholder for prepared statement
-      }
-      else if (timeframe === 'daily')
+    else if (timeframe === 'daily')
+    {
+      if (!month)
       {
-        if (!month)
-        {
-          return res.status(400).json({ message: 'Month is required for daily data.' });
-        }
-
-        dateTrunc = 'day';
-        dateFormat = "YYYY-MM-DD";  // Year, Month, and Day format
-        buildDate = "AND TO_CHAR(oh.date, 'YYYY-MM') = $1"; // Placeholder for prepared statement
-      }
-      else
-      {
-        // Default to monthly
-        dateTrunc = 'month';
-        dateFormat = "YYYY-MM";  // Year and Month format
-        buildDate = "AND EXTRACT(YEAR FROM oh.date) = $1 AND EXTRACT(MONTH FROM oh.date) = $2";  // Fixed year 2023
+        return res.status(400).json({ message: 'Month is required for daily data (format: YYYY-MM).' });
       }
 
-      // SQL Query construction
-      const query = `
+      dateTrunc = 'day';
+      dateFormat = 'YYYY-MM-DD'; // Year, Month, and Day format
+      dateFilter = "AND TO_CHAR(oh.date, 'YYYY-MM') = $2";
+      params.push(month);
+    }
+
+    else if (timeframe === 'monthly')
+    {
+      if (!year)
+      {
+        return res.status(400).json({ message: 'Year is required for monthly data (format: YYYY).' });
+      }
+
+      dateTrunc = 'month';
+      dateFormat = 'YYYY-MM'; // Year and Month format
+      dateFilter = "AND EXTRACT(YEAR FROM oh.date) = $2";
+      params.push(year);
+    }
+
+    else
+    {
+      return res.status(400).json({ message: 'Invalid timeframe. Valid options are: hourly, daily, monthly.' });
+    }
+
+    // SQL Query construction
+    const query = `
       SELECT inv.ingredient AS ingredient_name,
-      ROUND(SUM(order_items.quantity * menu_ing.quantity)::numeric, 2) AS total_usage,
-      TO_CHAR(DATE_TRUNC($1, oh.date), $2) AS time_period
+             ROUND(SUM(order_items.quantity * menu_ing.quantity)::numeric, 2) AS total_usage,
+             TO_CHAR(DATE_TRUNC($1, oh.date), $2) AS time_period
       FROM orderhistory oh
       JOIN orderitems order_items ON oh.orderid = order_items.orderid
       JOIN menuitemingredients menu_ing ON order_items.menuitemid = menu_ing.menuitemid
       JOIN inventory inv ON menu_ing.ingredient = inv.ingredient
       WHERE LOWER(inv.ingredient) = $3
-      ${buildDate}
+      ${dateFilter}
       GROUP BY inv.ingredient, time_period
       ORDER BY time_period;
-      `;
+    `;
 
-      // Execute the query with dynamic parameters
-      const params = [dateTrunc, dateFormat, ingredient.toLowerCase()];
+    console.log('Executing query:', query); // For debugging
 
-      if (timeframe === 'hourly')
-      {
-        params.push(day); // For hourly, use day
-      }
-      else if (timeframe === 'daily')
-      {
-        params.push(month); // For daily, use month
-      }
-      else if (timeframe === 'monthly')
-      {
-        params.push(year, month); // For monthly, use year (fixed to 2023) and month
-      }
+    // Execute the query
+    const result = await client.query(query, [dateTrunc, dateFormat, ...params]);
 
-      const result = await client.query(query, params);
+    // Format the result into a response
+    const productUsageList = result.rows.map(row =>
+    ({
+      ingredient_name: row.ingredient_name,
+      total_usage: row.total_usage,
+      time_period: row.time_period,
+    }));
 
-      // Format the result into a response
-      const productUsageList = result.rows.map(row => 
-      ({
-        ingredient_name: row.ingredient_name,
-        total_usage: row.total_usage,
-        time_period: row.time_period,
-      }));
-
-      if (productUsageList.length === 0)
-      {
-        return res.status(404).json({ message: `No usage data found for ingredient: ${ingredient}` });
-      }
-
-      return res.json(productUsageList);
-    }
-    catch (error)
+    if (productUsageList.length === 0)
     {
-      console.error('Error fetching product usage data:', error);
-      return res.status(500).json({ message: 'An error occurred while fetching product usage data.' });
+      return res.status(404).json({ message: `No usage data found for ingredient: ${ingredient}` });
     }
+
+    return res.json(productUsageList);
   }
-);
+  catch (error)
+  {
+    console.error('Error fetching product usage data:', error);
+    return res.status(500).json({ message: 'An error occurred while fetching product usage data.' });
+  }
+});
+
+
+// API Endpoint to add a seasonal entree
+/**
+  fetch('/api/addseasonalentree', 
+    {
+      method: 'POST',
+      headers:{ 'Content-Type': 'application/json' },
+      body: JSON.stringify
+      ({
+        itemName = "frenchFries"
+        itemPrice = 
+      }) 
+    }
+  )
+  .then(response => response.json()) // Parse JSON response
+  .then(data => console.log(data))    // Log the response data
+  .catch(error => console.error('Error:', error)); // Handle any errors
+*/
+app.post('/api/addseasonalentree', async (req, res) =>
+{
+  const { itemName, itemPrice, itemIngredients, quantities, displayname } = req.body;
+});
+
 
 
 

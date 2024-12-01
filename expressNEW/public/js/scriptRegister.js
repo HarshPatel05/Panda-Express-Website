@@ -4,6 +4,13 @@ let totalAmount = 0;
 let selectedSize = 'Medium'; // Default size for A La Carte
 let currentAlaCarteItem = null;
 
+let menuItemMap = {}; // Define globally
+
+
+let selectedAppetizer = null;
+let appetizerSize = 'sm'; // Default size
+let appetizerQuantity = 1; // Default quantity
+let appetizerMap = {};
 
 async function loadMenuItems() {
     try {
@@ -25,13 +32,6 @@ async function loadMenuItems() {
         const entreeContainer = document.getElementById('entree-buttons');
         const sideContainer = document.getElementById('side-buttons');
         const drinkContainer = document.getElementById('drink-buttons');
-
-        const smallEntreeContainer = document.getElementById('small-entree-buttons');
-        const smallSideContainer = document.getElementById('small-side-buttons');
-        const mediumEntreeContainer = document.getElementById('medium-entree-buttons');
-        const mediumSideContainer = document.getElementById('medium-side-buttons');
-        const largeEntreeContainer = document.getElementById('large-entree-buttons');
-        const largeSideContainer = document.getElementById('large-side-buttons');
 
         // Debug containers
         if (!entreeContainer) console.error("Entree container not found");
@@ -63,6 +63,77 @@ async function loadMenuItems() {
                 biggerPlateButton.onclick = () => selectItemType('biggerPlate', 11.30, 3, 2, biggerPlateData.menuitemid);
             }
         }
+
+        const alacarteEntreeContainer = document.getElementById('ALaCarte-entrees');
+        const alacarteSideContainer = document.getElementById('ALaCarte-sides');
+        
+        if (!alacarteEntreeContainer) {
+            console.error("ALaCarte-entrees container not found in the DOM.");
+            return;
+        }
+        
+        if (!alacarteSideContainer) {
+            console.error("ALaCarte-sides container not found in the DOM.");
+            return;
+        } 
+
+        menuItems.forEach((item) => {
+            if (!menuItemMap[item.menuitem]) {
+                menuItemMap[item.menuitem] = {
+                    sm: null,
+                    md: null,
+                    lg: null,
+                };
+            }
+            // Populate size-specific details
+            menuItemMap[item.menuitem][item.size] = {
+                menuitemid: item.menuitemid,
+                price: item.price,
+                displayname: item.displayname,
+            };
+        });
+
+        menuItems.forEach((item) => {
+            // Add entrees to the À La Carte panel
+            if (item.size === 'sm' && item.menuitemid >= 1 && item.menuitemid <= 39) {
+                const button = document.createElement('button');
+                button.classList.add('menu-item-button');
+                button.dataset.menuId = item.menuitemid;
+                button.onclick = () => addAlaCarteItem('entree', item.menuitemid, item.menuitem, 'sm', item.price);
+    
+                // Convert `item.menuitem` to normal case for the image file name
+                const normalizedMenuItem = camelCaseToNormal(item.menuitem);
+    
+                // Add the text
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.menuitem);
+                text.classList.add('button-text');
+                button.appendChild(text);
+    
+                // Append to the À La Carte entrees container
+                alacarteEntreeContainer.appendChild(button);
+            }
+    
+            // Add sides to the À La Carte panel
+            if (item.size === 'sm' && item.menuitemid >= 40 && item.menuitemid <= 51) {
+                const button = document.createElement('button');
+                button.classList.add('menu-item-button');
+                button.dataset.menuId = item.menuitemid;
+                button.onclick = () => addAlaCarteItem('side', item.menuitemid, item.menuitem, 'sm', item.price);
+    
+                // Convert `item.menuitem` to normal case for the image file name
+                const normalizedMenuItem = camelCaseToNormal(item.menuitem);
+    
+                // Add the text
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.menuitem);
+                text.classList.add('button-text');
+                button.appendChild(text);
+    
+                // Append to the À La Carte sides container
+                alacarteSideContainer.appendChild(button);
+            }
+        });
 
         // Populate standard entrees, sides, drinks, and appetizers
         menuItems.forEach((item) => {
@@ -107,7 +178,7 @@ async function loadMenuItems() {
                 button.dataset.price = item.price;
         
                 // Attach click handler to open the modal or perform the action
-                button.onclick = () => showAppetizerModal(item);
+                button.onclick = () => addAppetizerToOrder(item.menuitem, item.price);
         
                 // Append the button to the appetizersPanelContent
                 appetizersPanelContent.appendChild(button);
@@ -132,58 +203,6 @@ async function loadMenuItems() {
                 wrapper.appendChild(button);
                 drinkContainer.appendChild(wrapper);
             }
-
-            // Ensure containers exist
-            const smallEntreeContainer = document.getElementById('small-entree-buttons');
-            const smallSideContainer = document.getElementById('small-side-buttons');
-            const mediumEntreeContainer = document.getElementById('medium-entree-buttons');
-            const mediumSideContainer = document.getElementById('medium-side-buttons');
-            const largeEntreeContainer = document.getElementById('large-entree-buttons');
-            const largeSideContainer = document.getElementById('large-side-buttons');
-
-            if (item.size === 'sm') {
-                if (item.menuitemid >= 1 && item.menuitemid <= 39) {
-                    const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
-                    button.classList.add('menu-item-button');
-                    button.onclick = () => addAlaCarteItem('entree', item.menuitemid, item.menuitem, item.size, item.price);
-                    smallEntreeContainer.appendChild(button);
-                } else if (item.menuitemid >= 40 && item.menuitemid <= 51) {
-                    const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
-                    button.classList.add('menu-item-button');
-                    button.onclick = () => addAlaCarteItem('side', item.menuitemid, item.menuitem, item.size, item.price);
-                    smallSideContainer.appendChild(button);
-                }
-            } else if (item.size === 'md') {
-                if (item.menuitemid >= 1 && item.menuitemid <= 39) {
-                    const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
-                    button.classList.add('menu-item-button');
-                    button.onclick = () => addAlaCarteItem('entree', item.menuitemid, item.menuitem, item.size, item.price);
-                    mediumEntreeContainer.appendChild(button);
-                } else if (item.menuitemid >= 40 && item.menuitemid <= 51) {
-                    const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
-                    button.classList.add('menu-item-button');
-                    button.onclick = () => addAlaCarteItem('side', item.menuitemid, item.menuitem, item.size, item.price);
-                    mediumSideContainer.appendChild(button);
-                }
-            } else if (item.size === 'lg') {
-                if (item.menuitemid >= 1 && item.menuitemid <= 39) {
-                    const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
-                    button.classList.add('menu-item-button');
-                    button.onclick = () => addAlaCarteItem('entree', item.menuitemid, item.menuitem, item.size, item.price);
-                    largeEntreeContainer.appendChild(button);
-                } else if (item.menuitemid >= 40 && item.menuitemid <= 51) {
-                    const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
-                    button.classList.add('menu-item-button');
-                    button.onclick = () => addAlaCarteItem('side', item.menuitemid, item.menuitem, item.size, item.price);
-                    largeSideContainer.appendChild(button);
-                }
-            }
         });
     } catch (error) {
         console.error('Error loading menu items:', error);
@@ -192,42 +211,32 @@ async function loadMenuItems() {
 
 // Handle size selection and panel toggling
 function setSize(size) {
+    // Hide all size-specific panels
     const panels = document.querySelectorAll('#sizePanels > .hidden-panel');
-    panels.forEach((panel) => (panel.style.display = 'none')); // Hide all panels
-
-    const selectedPanel = document.getElementById(`size-${size}-panel`);
-    if (selectedPanel) {
-        selectedPanel.style.display = 'block'; // Show the selected size panel
-    }
-
-    const sizeButtons = document.querySelectorAll('.size-button');
-    sizeButtons.forEach((button) => {
-        button.style.backgroundColor = button.id === `size-${size}` ? 'green' : '';
+    panels.forEach((panel) => {
+        if (panel) panel.style.display = 'none'; // Null-check added
     });
 
-    // Hide the sides section and title for "Small" A La Carte
-    if (size === 'Small') {
-        const sideSections = selectedPanel.querySelectorAll('.sides-section');
-        sideSections.forEach(section => (section.style.display = 'none')); // Hide sides
-
-        const sideHeaders = selectedPanel.querySelectorAll('.section-header');
-        sideHeaders.forEach(header => {
-            if (header.textContent === 'Sides') {
-                header.style.display = 'none'; // Hide side title
-            }
-        });
+    // Show the selected size panel
+    const selectedPanel = document.getElementById(`size-${size}-panel`);
+    if (selectedPanel) {
+        selectedPanel.style.display = 'block'; // Null-check added
     } else {
-        const sideSections = selectedPanel.querySelectorAll('.sides-section');
-        sideSections.forEach(section => (section.style.display = 'block')); // Show sides
-
-        const sideHeaders = selectedPanel.querySelectorAll('.section-header');
-        sideHeaders.forEach(header => {
-            if (header.textContent === 'Sides') {
-                header.style.display = 'block'; // Show side title
-            }
-        });
+        console.error(`Panel for size ${size} not found in DOM.`);
     }
+
+    // Update the active button style
+    const sizeButtons = document.querySelectorAll('.size-button');
+    sizeButtons.forEach((button) => {
+        if (button.id === `size-${size}`) {
+            button.style.backgroundColor = 'green';
+        } else {
+            button.style.backgroundColor = ''; // Reset others
+        }
+    });
 }
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadMenuItems();
@@ -348,113 +357,150 @@ function addDrinkToOrder(drinkName, price, size = null) {
 }
 
 // Function to add an appetizer to the order
-function addAppetizerToOrder(appetizerName, price, size) {
+function addAppetizerToOrder(appetizerName, price) {
     const appetizerItem = {
         type: 'appetizer',
-        name: `${size} ${appetizerName}`,
+        name: appetizerName,
         price: price,
         components: []
     };
-
-    orderItems.push(appetizerItem); // Add to order list
-    updateOrderList(); // Refresh UI
-    calculateTotal(); // Recalculate total
-    closePanel(); // Close the panel after adding
+    orderItems.push(appetizerItem);
+    updateOrderList();
+    calculateTotal();
+    closePanel();
 }
 
-
-function showAppetizerModal(appetizer) {
-    const modal = document.getElementById('appetizersPanel');
-    const modalContent = modal.querySelector('.panel-content');
-
-    // Clear previous content
-    modalContent.innerHTML = '';
-
-    // Add title and size options
-    const title = document.createElement('h3');
-    title.innerText = `Select Size for ${camelCaseToNormal(appetizer.menuitem)}`;
-    modalContent.appendChild(title);
-
-    const sizeOptions = ['Small', 'Medium', 'Large']; // Define possible sizes
-    sizeOptions.forEach((size) => {
-        if (appetizer.size.toLowerCase().includes(size.toLowerCase())) {
-            const button = document.createElement('button');
-            button.innerText = `${size} - $${appetizer.price.toFixed(2)}`;
-            button.classList.add('size-button');
-            button.onclick = () => addAppetizerToOrder(appetizer.menuitem, appetizer.price, size);
-            modalContent.appendChild(button);
+// Adjust the size
+function selectAlaCarteSize(size) {
+    alaCarteSize = size; // Update selected size
+    const sizeButtons = document.querySelectorAll('#sizeSelection .size-button');
+    sizeButtons.forEach((button) => {
+        if (button.id === `${size}Size`) {
+            button.classList.add('selected');
+        } else {
+            button.classList.remove('selected');
         }
     });
 
-    // Show the modal
-    modal.style.display = 'block';
+    // Fetch price dynamically from menuItemMap
+    const selectedSizeData = menuItemMap[selectedAlaCarteItem.menuitem]?.[size];
+    if (selectedSizeData) {
+        const price = selectedSizeData.price;
+        console.log(`Price for selected size (${size}): $${price.toFixed(2)}`);
+        document.getElementById('alaCartePrice').innerText = `$${price.toFixed(2)}`;
+    } else {
+        console.error(`Size data for ${size} not found in menuItemMap.`);
+    }
+}
+
+
+// Adds the item to the order
+function addAlaCarteToOrder() {
+    if (!selectedAlaCarteItem || !menuItemMap[selectedAlaCarteItem.menuitem]) {
+        console.error("Invalid item selected or item not found in menu map.");
+        return;
+    }
+
+    const selectedSizeData = menuItemMap[selectedAlaCarteItem.menuitem][alaCarteSize];
+    if (!selectedSizeData) {
+        console.error(`Size data for ${alaCarteSize} not found.`);
+        return;
+    }
+
+    const { menuitemid, price } = selectedSizeData;
+
+    const alaCarteOrder = {
+        type: 'a la carte',
+        name: `${camelCaseToNormal(selectedAlaCarteItem.menuitem)} (${capitalize(alaCarteSize)})`,
+        size: alaCarteSize,
+        price: price,
+        quantity: alaCarteQuantity,
+        menuIds: Array(alaCarteQuantity).fill(menuitemid),
+    };
+
+    // Add to the order and update UI
+    orderItems.push(alaCarteOrder);
+    updateOrderList();
+    calculateTotal();
+    closeAlaCarteModal();
 }
 
 
 
 function addAlaCarteItem(category, menuId, itemName, size, price) {
-    // Set the current A La Carte item for preview
-    currentAlaCarteItem = {
-        size: size,
-        category: category,
-        menuId: menuId,
-        itemName: camelCaseToNormal(itemName), // Format for readability
-        price: price
-    };
+    console.log(`Adding A La Carte item: ${itemName}, Category: ${category}, Size: ${size}, Price: ${price}`);
 
-    // Update the preview
-    updateAlaCartePreview();
+    // Open the A La Carte modal with the selected item details
+    openAlaCarteModal({
+        category: category,
+        menuitemid: menuId,
+        menuitem: itemName,
+        price: price,
+        size: size,
+    });
 }
 
-function updateAlaCartePreview() {
-    const preview = document.getElementById("currentItemPreview");
+// Opens the modal for A La Carte items
+function openAlaCarteModal(menuItem) {
+    selectedAlaCarteItem = menuItem;
+    alaCarteSize = 'md'; // Default size
+    alaCarteQuantity = 1;
 
-    if (!currentAlaCarteItem) {
-        preview.innerHTML = ""; // Clear preview if no item selected
-        return;
+    const normalizedMenuItem = camelCaseToNormal(menuItem.menuitem);
+
+    // Update modal content
+    const itemNameElement = document.getElementById('alaCarteItemName');
+    if (itemNameElement) {
+        itemNameElement.innerText = normalizedMenuItem;
+    } else {
+        console.error('Element with ID alaCarteItemName not found.');
     }
 
-    let previewHTML = `
-        <strong>${currentAlaCarteItem.size} A La Carte</strong><br>
-        <div class='item-components'>
-            <div>- ${currentAlaCarteItem.itemName}</div>
-        </div>
-        <button onclick="cancelCurrentAlaCarteItem()">Cancel</button>
-    `;
+    // Dynamically populate size buttons and prices
+    const sizeSelection = document.getElementById('sizeSelection');
+    if (sizeSelection) {
+        sizeSelection.innerHTML = ''; // Clear existing buttons
 
-    preview.innerHTML = previewHTML;
+        Object.keys(menuItemMap[menuItem.menuitem]).forEach((size) => {
+            const sizeData = menuItemMap[menuItem.menuitem][size];
+
+            // Skip the small size for all side options
+            if (menuItem.category === 'side' && size === 'sm') {
+                return; // Do not render the small button for sides
+            }
+
+            if (sizeData) {
+                const sizeButton = document.createElement('button');
+                sizeButton.classList.add('size-button');
+                sizeButton.id = `${size}Size`;
+                sizeButton.innerHTML = `${capitalize(size)}<br>$${sizeData.price.toFixed(2)}`;
+                sizeButton.onclick = () => selectAlaCarteSize(size);
+
+                sizeSelection.appendChild(sizeButton);
+            }
+        });
+    } else {
+        console.error('Element with ID sizeSelection not found.');
+    }
+
+    // Set default price for the default size
+    const modal = document.getElementById('alaCarteModal');
+    if (modal) {
+        modal.style.display = 'block';
+    } else {
+        console.error('Element with ID alaCarteModal not found.');
+    }
 }
 
-function finalizeAlaCarteItem() {
-    if (!currentAlaCarteItem) return;
-
-    // Convert size abbreviation to full name
-    const fullSizeName = getFullSizeName(currentAlaCarteItem.size);
-
-    // Add the finalized item to the order with its menuId
-    const orderItem = {
-        menuIds: [currentAlaCarteItem.menuId], // Store the menuId of the item
-        name: `${fullSizeName} A La Carte`,
-        price: currentAlaCarteItem.price,
-        type: 'a la carte',
-        components: [{ itemName: currentAlaCarteItem.itemName }] // Include the item name
-    };
-
-    // Add the order item to the orderItems array
-    orderItems.push(orderItem);
-
-    // Refresh the order list
-    updateOrderList();
-
-    // Update the total price
-    calculateTotal();
-
-    // Clear the preview
-    currentAlaCarteItem = null;
-    updateAlaCartePreview();
-
-    // Close the panel and return to the main buttons
-    closePanel();
+// Closes the modal
+function closeAlaCarteModal() {
+    const modal = document.getElementById('alaCarteModal');
+    if (modal) {
+        modal.style.display = 'none'; // Hide the modal
+    }
+    selectedAlaCarteItem = null; // Reset the selected item
+    alaCarteSize = 'md'; // Reset size to default
+    alaCarteQuantity = 1; // Reset quantity
 }
 
 // Update preview for the current composite item
