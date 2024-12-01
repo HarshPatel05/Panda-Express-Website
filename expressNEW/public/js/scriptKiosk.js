@@ -1083,7 +1083,8 @@ function checkoutOrder() {
     popupInput.focus();
 
     // Attach an event listener for the "Done" button
-    popupDoneBtn.addEventListener('click', () => {
+    popupDoneBtn.addEventListener('click', () =>
+    {
         const userInput = popupInput.value;
 
         // Close the virtual keyboard
@@ -1094,6 +1095,8 @@ function checkoutOrder() {
 
         // Flatten the array of menuIds from each order item
         const menuItemIDs = orderItems.flatMap(item => item.menuIds);
+
+        updatePendingOrders(totalAmount, menuItemIDs, userInput);
 
         // Show an alert with the menu IDs, total price, and user input
         alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}\nUser Input: ${userInput}`);
@@ -1309,6 +1312,44 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 
+async function updatePendingOrders(totalAmount, menuItemIDs, inputName)
+{
+    try
+    {
+        const response = await fetch('/api/updatependingorders',
+        {
+            method: 'POST', // HTTP method for sending data
+            headers: { 'Content-Type': 'application/json' }, // Specify JSON content type
+            body: JSON.stringify
+            ({
+                TotalCost: totalAmount, // Send the total cost
+                MenuItemIDs: menuItemIDs, // Send the array of menu item IDs
+                Name: inputName // Send the customer name
+            })
+        });
+
+        // Check if the response is successful
+        if (!response.ok)
+        {
+            // Parse the response text for error details, if any
+            const errorText = await response.text();
+            throw new Error(`Failed to update pending order: ${errorText}`);
+        }
+
+        const data = await response.json(); // Parse JSON response from the server
+
+        // debugging statments
+        console.log('Pending order updated successfully:', data);
+        alert('Pending order placed successfully!');
+    }
+    catch (error)
+    {
+        // Log and display an error message if something went wrong
+        console.error('Error:', error);
+        alert('An error occurred while placing your pending order. Please try again.');
+    }
+}
+
 
 
 // function checkoutOrder() {
@@ -1331,8 +1372,9 @@ window.addEventListener("DOMContentLoaded", function () {
 //         headers: { 'Content-Type': 'application/json' }, // Tell the server the data is in JSON format
 //         body: JSON.stringify
 //         ({
-//             totalCost: totalAmount, // Send the total cost of the order (totalAmount is a global variable)
-//             menuItemIDs: menuItemIDs, // Send the array of menu item IDs
+//             TotalCost: totalAmount, // Send the total cost of the order (totalAmount is a global variable)
+//             MenuItemIDs: menuItemIDs, // Send the array of menu item IDs
+//             Name: inputName
 //         })
 //     })
 

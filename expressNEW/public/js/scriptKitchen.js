@@ -151,7 +151,7 @@ async function loadPendingOrders()
 }
 
 
-// Function to get the display name of a menu item by its ID
+// Function to get the menu item name by its ID
 async function getItemNameById(itemId)
 {
     try

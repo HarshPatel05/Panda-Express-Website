@@ -630,7 +630,13 @@ app.post('/api/updateinventory', async (req, res) =>
 // Endpoint to update pending orders table
 app.post('/api/updatependingorders', async (req, res) =>
 {
-  const { totalCost, menuItemIDs } = req.body; // Extract total cost and menu item IDs from request body
+  const { totalCost, menuItemIDs, inputName } = req.body; // Extract total cost and menu item IDs from request body
+
+  if (!totalCost || !menuItemIDs || !inputName)
+  {
+    // Validate required fields
+    return res.status(400).json({ error: 'TotalCost, MenuItemIDs, and Name are required' });
+  }
 
   const client = await pool.connect(); // Get a connection from the database pool
 
@@ -641,18 +647,19 @@ app.post('/api/updatependingorders', async (req, res) =>
     // Insert the pending order into the table
     // Convert the menuItemIDs array to a JSON string using JSON.stringify
     const pendingOrderResult = await client.query(
-      'INSERT INTO pendingorders (totalCost, date, menuitemids) VALUES ($1, $2, $3) RETURNING orderid',
-      [totalCost, new Date(), JSON.stringify(menuItemIDs)] // Insert total cost, current timestamp, and menu item IDs
+      'INSERT INTO pendingorders (totalCost, date, menuitemids, name) VALUES ($1, $2, $3, $4) RETURNING pendingorderid',
+      [totalCost, new Date(), JSON.stringify(menuItemIDs), inputName] // Insert total cost, current timestamp, and menu item IDs
     );
 
     // Retrieve the newly created order ID from the result
-    const newOrderID = pendingOrderResult.rows[0].orderid;
+    const PendingOrderID = pendingOrderResult.rows[0].pendingorderid;
 
     await client.query('COMMIT'); // Commit the transaction to save changes
+
     res.status(200).json
     ({
       message: 'Pending order updated successfully!', // Send success message to client
-      orderID: newOrderID, // Include the new order ID in the response
+      orderID: PendingOrderID, // Include the new order ID in the response
     });
   }
   catch (error)
