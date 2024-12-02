@@ -190,7 +190,7 @@ PlayHT.init({
   apiKey: process.env.TTS_KEY,
 });
 
-const CUSTOM_VOICE_ID = 's3://voice-cloning-zero-shot/2e1ff2b9-48cf-4fd9-b48a-45a61cbc3b18/original/manifest.json'; // Replace with your custom voice ID
+const CUSTOM_VOICE_ID = 's3://voice-cloning-zero-shot/92519089-3c97-4f31-8743-ab4f06047b88/larrysaad/manifest.json'; // Replace with your custom voice ID
 
 
 // API Endpoint to generate audio
@@ -212,7 +212,6 @@ app.get('/api/generate-audio', async (req, res) => {
         res.status(500).send('Error generating audio');
     }
 });
-
 
 // API Endpoint to get the inventory
 app.get('/api/inventory', async (req, res) => 

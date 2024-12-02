@@ -37,6 +37,23 @@ function formatWithSize(name, size) {
     return formattedSize === "N/A" ? convertCamelCaseToReadable(name) : `${formattedSize} ${convertCamelCaseToReadable(name)}`;
 }
 
+// Function to fetch and play audio
+const playAudioFromAPI = async (text) => {
+    try {
+        const response = await fetch(`/api/generate-audio?text=${encodeURIComponent(text)}`);
+        if (!response.ok) throw new Error('Failed to fetch audio');
+        
+        const blob = await response.blob();
+        const audioURL = URL.createObjectURL(blob);
+        
+        // Play the audio
+        const audio = new Audio(audioURL);
+        audio.play();
+    } catch (error) {
+        console.error('Error playing audio:', error);
+    }
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
     await fetchMenuItemDetails(); // Fetch menu item details before loading orders
     await loadPendingOrders();
@@ -89,7 +106,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 speech.voice = selectedVoice;
             }
 
-            speechSynthesis.speak(speech);
+            // speechSynthesis.speak(speech);
+
+            //AI ZONE DO NOT TOUCH
+            playAudioFromAPI(text);
 
             // Checkout the order
             const menuItemIDs = JSON.parse(order.dataset.menuItemIDs); // Parse the menuItemIDs into an array
