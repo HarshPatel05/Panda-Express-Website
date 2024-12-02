@@ -1217,6 +1217,202 @@ app.get('/api/getactiveseasonalitems', async (req, res) =>
 });
 
 
+// API endpoint to add rewards account
+/**
+ *  EXAMPLE API CALL
+ * 
+  fetch('/api/addrewardsaccount',
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify
+    ({
+      name: "John",
+      email: "johnsmith@gmail.com",
+      points: 10
+    })
+  })
+  .then(response =>
+  {
+    if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+    return response.json();
+  })
+  .then(data => console.log(data)) // Log success response
+  .catch(error => console.error('Error:', error)); // Handle errors
+*/
+app.post('/api/addrewardsaccount', async (req, res) =>
+{
+  const { name, email, points } = req.body;
+
+  if (!name || !email || points === undefined)
+  {
+    return res.status(400).json({ error: 'Missing required fields (name, email, points)' });
+  }
+
+  const client = await pool.connect(); // Get a database connection
+
+  try
+  {
+    await client.query('BEGIN'); // Start transaction
+
+    // Check if email already exists in the rewards table
+    const checkUser = await client.query('SELECT * FROM rewards WHERE email = $1', [email]);
+
+    if (checkUser.rows.length > 0)
+    {
+      await client.query('ROLLBACK'); // Rollback on conflict (email already exists)
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+
+    // Insert new rewards account
+    const result = await client.query
+    (
+      'INSERT INTO rewards (name, email, points) VALUES ($1, $2, $3) RETURNING *',
+      [name, email, points]
+    );
+
+    await client.query('COMMIT'); // Commit transaction
+
+    // Return the newly created user
+    res.status(201).json
+    ({
+      message: 'Rewards account created successfully',
+      user: result.rows[0],
+    });
+  }
+  catch(error)
+  {
+    await client.query('ROLLBACK'); // Rollback on error
+
+    console.error('Error Creating Rewards Account:', error);
+
+    res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+  finally
+  {
+    client.release(); // Release database connection
+  }
+});
+
+
+// API endpoint to add points to a specific user
+/**
+ *  EXAMPLE API CALL
+ * 
+  fetch('/api/addpoints',
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify
+    ({
+      email: "johnsmith@gmail.com",
+      points: 15
+    })
+  })
+  .then(response =>
+  {
+    if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+    return response.json();
+  })
+  .then(data => console.log(data)) // Log success response
+  .catch(error => console.error('Error:', error)); // Handle errors
+*/
+app.post('/api/addpoints', async (req, res) =>
+{
+  const { email, points } = req.body;
+
+  if (points === undefined || points <= 0)
+  {
+    return res.status(400).json({ error: 'Invalid points to add' });
+  }
+
+  const client = await pool.connect(); // Get a database connection
+
+  try
+  {
+    await client.query('BEGIN'); // Start transaction
+
+    // Check if the user exists in the rewards table
+    const userResult = await client.query('SELECT * FROM rewards WHERE email = $1', [email]);
+
+    if (userResult.rows.length === 0)
+    {
+      await client.query('ROLLBACK'); // Rollback if user doesn't exist
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const currentPoints = userResult.rows[0].points;
+    const updatedPoints = currentPoints + points;
+
+    // Update the points for the given user
+    const updateResult = await client.query
+    (
+      'UPDATE rewards SET points = $1 WHERE email = $2 RETURNING *',
+      [updatedPoints, email]
+    );
+
+    await client.query('COMMIT'); // Commit transaction
+
+    // Return the updated user data
+    res.status(200).json
+    ({
+      message: 'Points added successfully',
+      user: updateResult.rows[0],
+    });
+
+  }
+  catch(error)
+  {
+    await client.query('ROLLBACK'); // Rollback on error
+
+    console.error('Error Adding Points in the Rewards Table:', error);
+
+    res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+  finally
+  {
+    client.release(); // Release database connection
+  }
+});
+
+
+// API endpoint to check if an account exsits with the given email
+app.get('/api/checkaccount', async (req, res) =>
+{
+  const { email } = req.query;  // Get email from query parameters
+
+  if (!email)
+  {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const client = await pool.connect(); // Get a database connection
+
+  try
+  {
+    // Check if the user exists in the rewards table
+    const userResult = await client.query('SELECT * FROM rewards WHERE email = $1', [email]);
+
+    if (userResult.rows.length > 0) // Account exists
+    {
+      return res.status(200).json({ exists: true });
+    }
+    else // Account does not exist
+    {
+      return res.status(404).json({ exists: false, message: 'User not found' });
+    }
+  }
+  catch (error)
+  {
+    console.error('Error Checking Rewards Account:', error);
+    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+  finally
+  {
+    client.release(); // Release database connection
+  }
+
+});
 
 
 
