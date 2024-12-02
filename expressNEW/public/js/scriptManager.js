@@ -95,11 +95,11 @@ async function removeIngredient() {
 
 async function changePrice() {
 
-    const menuitemID = document.getElementById('menuItemID').value;
+    let ID = document.getElementById('menuItemID').value;
 
-    const price = document.getElementById('newPrice').value;
+    let price = document.getElementById('newPrice').value;
 
-    if (!menuitemID || !price) {
+    if (!ID || !price) {
         alert("Please fill both required parts");
         return;
     }
@@ -111,7 +111,7 @@ async function changePrice() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                menuItemID: menuItemID,
+                menuItemID: ID,
                 newPrice: price
             }),
         });

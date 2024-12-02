@@ -819,7 +819,8 @@ app.post('/api/removeStock', async (req, res) => {
 
 
 app.post('/api/changePrice', async (req, res) => {
-  const { menuItemID, newPrice } = req.body;
+
+  let { menuItemID, newPrice } = req.body;
 
   if (!menuItemID || !newPrice) {
     return res.status(400).json({ error: 'Invalid data' });
@@ -831,6 +832,9 @@ app.post('/api/changePrice', async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Item not found' });
     }
+
+    menuItemID = parseInt(menuItemID, 10);
+    newPrice = parseFloat(newPrice);
 
     res.json({ message: `Price updated successfully for item ${menuItemID}`, item: result.rows[0] });
   } catch (error) {
