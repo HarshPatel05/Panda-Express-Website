@@ -21,6 +21,8 @@ let appetizerSize = 'sm'; // Default size
 let appetizerQuantity = 1; // Default quantity
 let appetizerMap = {};
 
+let globalEmail = '';
+
 async function loadMenuItems() {
     try {
         const response = await fetch('/api/menuitems');
@@ -1345,17 +1347,23 @@ function showCreateAccount() {
     document.getElementById('nameInput').focus();
 }
 
-function handleSignIn() {
+async function handleSignIn()
+{
     const emailIn = document.getElementById('signInInput').value.trim(); // Trim whitespace
-    if (validateEmail(emailIn) /* CHECK HERE IF THE INPUT IS ALSO AN EXISTING EMAIL */) {
+
+    if (validateEmail(emailIn) && await validateEmailDB(emailIn))
+    {
         alert(`Signed in with email: ${emailIn}`);
         closeRewardsPanel();
-    } else{
+    }
+    else
+    {
         alert("Please enter a valid email.");
     }
 }
 
-function handleCreateAccount() {
+async function handleCreateAccount()
+{
     const name = document.getElementById('nameInput').value.trim();
     const email = document.getElementById('emailInput').value.trim();
     const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
@@ -1374,15 +1382,86 @@ function handleCreateAccount() {
         alert("Please enter a valid email.");
         return;
     }
-    /* Add the name, email, and 0 points to the account when generated */
-    alert(`Account created successfully for ${name}!`);
-    closeRewardsPanel();
+
+    // Check if email exists in the DB only if the email format is valid
+    const emailExists = await validateEmailDB(email);
+    if (emailExists) {
+        alert("The email already exists.");
+        return;
+    }
+
+    // /* Add the name, email, and 0 points to the account when generated */
+    // alert(`Account created successfully for ${name}!`);
+    // closeRewardsPanel();
+
+    globalEmail = email;
+
+    // Send a POST request to the server to create the rewards account
+    fetch('/api/addrewardsaccount',
+    {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify
+        ({
+            name: name, 
+            email: email, 
+            points: 0 // Initialize with 0 points
+        })
+    })
+    .then(response =>
+    {
+        if (!response.ok)
+        {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data =>
+    {
+        // Handle success response
+        alert(`Account created successfully for ${data.user.name}!`);
+        closeRewardsPanel();
+    })
+    .catch(error =>
+    {
+        // Handle errors
+        console.error('Error:', error);
+        alert('There was an error creating the account. Please try again later.');
+    });
 }
 
 
 function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+}
+
+async function validateEmailDB(email)
+{
+    try
+    {
+        const response = await fetch(`/api/checkaccount?email=${encodeURIComponent(email)}`,
+        {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok)
+        {
+            throw new Error(`Failed to fetch from /api/checkaccount: HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Check if the account exists
+        return data.exists; // true if account exists, false otherwise
+
+    }
+    catch (error)
+    {
+        console.error('Error:', error);
+        return false; // Handle errors, return false by default
+    }
 }
 
 function closeRewardsPanel() {
@@ -1491,7 +1570,7 @@ function showRetry() {
     popupDoneBtn.addEventListener('click', handleNameValidation, { once: true });
 }
 
-function proceedWithCheckout(userInput) {
+async function proceedWithCheckout(userInput) {
     // Close the virtual keyboard
     Keyboard.close();
 
@@ -1510,11 +1589,57 @@ function proceedWithCheckout(userInput) {
     // Update pending orders
     updatePendingOrders(totalAmount, menuItemIDs, userInput);
 
-    // Show an alert with the menu IDs, total price, and user input
-    alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}\nUser Input: ${userInput}`);
+    // Round totalAmount to an integer for points (assuming points are integers)
+    const roundedPoints = Math.round(totalAmount);
 
-    // Clear the order
-    clearOrder(); // Assuming clearOrder() resets the order and total
+    // Call the addPointsToAccount function
+    const data = await addPointsToAccount(globalEmail, roundedPoints);
+
+    // If points were added successfully, proceed with showing the order details
+    if (data)
+    {
+        // Show an alert with the menu IDs, total price, and user input
+        alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}\nUser Input: ${userInput}`);
+
+        // Clear the order
+        clearOrder(); // Assuming clearOrder() resets the order and total
+    }
+}
+
+
+async function addPointsToAccount(email, points)
+{
+    try
+    {
+        // Send a POST request to add points to the user's account
+        const response = await fetch('/api/addpoints',
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify
+            ({
+                email: email,
+                points: points
+            })
+        });
+
+        if (!response.ok)
+        {
+            throw new Error(`Error adding points: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Points added successfully:', data);
+
+        return data; // Return the data from the response
+
+    }
+    catch (error)
+    {
+        console.error('Error:', error);
+        alert('There was an error adding points. Please try again.');
+        return null; // Return null if there is an error
+    }
 }
 
 
