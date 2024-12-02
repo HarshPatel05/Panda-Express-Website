@@ -6,8 +6,8 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #DB372E;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to bottom, #DB372E, #000); /* Fade effect from red to black */
     color: #333;
     display: flex;
     flex-direction: column;
@@ -16,81 +16,187 @@ body {
     padding: 20px;
 }
 
+/* Header Styling */
 header {
     margin-bottom: 20px;
 }
 
 header h1 {
-    font-size: 2em;
-    color: #fff;
+    font-size: 3em;
+    color: white;
     text-transform: uppercase;
     text-align: center;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #000; /* Black background for header */
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.4);
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    border: 3px solid #DB372E; /* Red border for Panda Express theme */
 }
 
+/* Main Layout */
 main {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1600px; /* Increased max width for a more expansive layout */
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 40px; /* Larger gap between sections */
     align-items: flex-start;
 }
 
+/* Board Layout */
 .board {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     width: 100%;
-    gap: 20px;
+    gap: 40px;
 }
 
+/* Section Styling */
 section {
     flex: 1;
     text-align: center;
-    background-color: #DB372E;
-    padding: 20px;
-    border-radius: 10px;
+    background-color: #000; /* Solid black for section */
+    padding: 40px; /* Increased padding for better spacing */
+    border-radius: 20px;
     color: white;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    border: 2px solid #DB372E; /* Adds a red border for contrast */
 }
 
 section h2 {
-    font-size: 1.5em;
+    font-size: 2em;
     margin-bottom: 20px;
     color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding-bottom: 10px;
 }
 
+/* Order Container and Cards */
 .orderContainer {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 items per row */
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr); /* 3 fixed columns */
+    gap: 30px; /* Spacing between cards */
     width: 100%;
-    justify-items: center; /* Center items horizontally */
+    justify-items: center;
 }
 
 .orderCard {
     color: black;
-    background-color: white;
-    border: none;
-    border-radius: 5px;
+    background-color: #32CD32; /* Default green */
+    border: 2px solid #fff; /* White border for contrast */
+    border-radius: 15px;
     padding: 20px;
-    font-size: 1em;
-    width: 90%; /* Adjust width as needed */
+    font-size: 1.1em;
+    width: 100%;
     text-align: left;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out, background-color 0.2s;
-    box-sizing: border-box;
+    transition: transform 0.2s, background-color 0.5s ease-in-out; /* Smooth transition for color changes */
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.orderCard.green {
+    background-color: #32CD32; /* Green for fresh orders */
+    color: black;
+}
+
+.orderCard.yellow {
+    background-color: #FFD700; /* Yellow for medium time elapsed */
+    color: black;
+}
+
+.orderCard.red {
+    background-color: #FF6347; /* Red for long time elapsed */
+    color: white;
+}
+
+.timer {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 10px;
+    color: black;
 }
 
 .orderCard:hover {
-    background-color: #a62921;
-    transform: scale(1.03);
+    transform: scale(1.05);
+    box-shadow: 0px 10px 16px rgba(0, 0, 0, 0.3);
+    border-color: #DB372E; /* Red border on hover */
+}
+
+.orderCard:hover h3 {
+    color: white; /* Highlight title on hover */
+}
+
+.orderCard h3 {
+    font-size: 1.5em;
+    color: black;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    transition: color 0.2s ease-in-out;
+}
+
+.orderCard ul {
+    padding: 10px 0 0 20px;
+}
+
+.orderCard ul li {
+    margin-bottom: 8px;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
+.orderCard ul li:hover {
+    color: white; /* Highlight list items on hover */
 }
 
 /* Divider Style */
 .divider {
-    width: 5px;
+    width: 10px;
     background-color: #fff;
     height: 100%;
+    border-radius: 5px;
+}
+
+/* Order List Styling */
+.order-list {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.order-list > div {
+    display: inline-block;
+    margin: 5px;
+}
+
+.order-list ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+.order-list ul li {
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2em;
+    }
+
+    main {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .orderContainer {
+        grid-template-columns: repeat(1, 1fr); /* Single column for smaller screens */
+        gap: 20px;
+    }
 }

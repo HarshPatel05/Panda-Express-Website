@@ -792,6 +792,31 @@ app.get('/api/xReport', async (req, res) => {
   } 
 });
 
+app.post('/api/removeStock', async (req, res) => {
+  const { ingredientName, quantity } = req.query;
+
+  if (!ingredientName || !quantity || quantity <= 0) {
+      return res.status(400).json({ error: 'Invalid data' });
+  }
+
+  try {
+      const result = await pool.query(
+          'UPDATE inventory SET quantity = quantity - $1 WHERE ingredient = $2 RETURNING *;',
+          [quantity, ingredientName]
+      );
+
+      if (result.rows.length === 0) {
+          return res.status(404).json({ error: 'Ingredient not found' });
+      }
+
+      res.json({ message: `Successfully removed ${quantity} from ${ingredientName}` });
+  } catch (error) {
+      console.error('Error removing stock:', error);
+      res.status(500).json({ error: 'Failed to remove stock' });
+  }
+});
+
+
 app.post('/api/changePrice', async (req, res) => {
   const { menuItemID, newPrice } = req.body;
 
