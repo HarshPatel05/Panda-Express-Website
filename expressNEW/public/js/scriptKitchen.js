@@ -100,6 +100,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             order.remove();
         }
     });
+
+    // Real-time update check every 30 seconds
+    setInterval(async () => {
+        await loadPendingOrders();
+    }, 30000);
 });
 
 async function loadPendingOrders() {
@@ -114,7 +119,7 @@ async function loadPendingOrders() {
         const pendingOrders = await response.json();
         console.log('Fetched Pending Orders (Kitchen):', pendingOrders);
 
-        inProgressContainer.innerHTML = '';
+        inProgressContainer.innerHTML = ''; // Clear existing orders
 
         for (const order of pendingOrders) {
             const orderCard = document.createElement("div");
@@ -251,7 +256,6 @@ function startTimer(orderCard, timerElement) {
     // Update the timer every second
     setInterval(updateTimer, 1000);
 }
-
 
 async function updateOrder(totalCost, menuItemIDs) {
     try {
