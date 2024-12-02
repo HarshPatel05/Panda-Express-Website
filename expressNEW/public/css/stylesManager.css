@@ -212,7 +212,7 @@ tbody tr:nth-child(odd) {
 #salesReport tbody tr:nth-child(odd) {
     background-color: #ffffff; 
 }
-/* Dropdown Button Styling */
+
 .dropdownButton {
     font-size: 1.5vw;
     padding: 0.8vh 2vw;
@@ -226,13 +226,13 @@ tbody tr:nth-child(odd) {
     width: auto;
 }
 
-/* Dropdown Button Hover Effects */
+
 .dropdownButton:hover {
     background-color: #cc0000;
     transform: scale(1.05);
 }
 
-/* Dropdown Content */
+
 .dropdownContent {
     display: none;
     position: absolute;
@@ -253,12 +253,84 @@ tbody tr:nth-child(odd) {
     transition: background-color 0.3s ease;
 }
 
-/* Dropdown Link Hover Effect */
 .dropdownContent a:hover {
     background-color: #f2f2f2;
 }
 
-/* Show Dropdown */
 .dropdownContent.show {
     display: block;
+}
+
+.usageControls label,
+.menuItemsControls label,
+.inventoryControls label {
+    font-size: 1.5vw;
+    color: #e60000;
+    font-weight: bold;
+}
+
+.usageControls input,
+.menuItemsControls input,
+.inventoryControls input {
+    padding: 0.8vh 1vw;
+    font-size: 1.5vw;
+    border: 0.1vw solid #ddd;
+    border-radius: 0.5vw;
+    width: 15%;
+    box-shadow: 0 0.2vw 0.5vw rgba(0, 0, 0, 0.1);
+}
+
+.usageControls button,
+.menuItemsControls button,
+.inventoryControls button {
+    font-size: 1.5vw;
+    padding: 0.8vh 2vw;
+    background-color: #e60000;
+    color: white;
+    border: none;
+    border-radius: 0.5vw;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.usageControls button:hover,
+.menuItemsControls button:hover,
+.inventoryControls button:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+
+.usageControls,
+.menuItemsControls,
+.inventoryControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1vw;
+    margin-bottom: 2vh;
+}
+
+#timeframe {
+    padding: 0.8vh 1vw;
+    font-size: 1.5vw;
+    border: 0.1vw solid #ddd;
+    border-radius: 0.5vw;
+    background-color: white;
+    color: #e60000;
+    box-shadow: 0 0.2vw 0.5vw rgba(0, 0, 0, 0.1);
+    width: 15%;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#timeframe:focus {
+    border-color: #e60000;
+    box-shadow: 0 0.2vw 0.5vw rgba(230, 0, 0, 0.5);
+    outline: none;
+}
+
+#timeframe option {
+    font-size: 1.5vw;
+    background-color: white;
+    color: #e60000;
 }
