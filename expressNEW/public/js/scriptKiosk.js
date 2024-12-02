@@ -21,6 +21,8 @@ let appetizerSize = 'sm'; // Default size
 let appetizerQuantity = 1; // Default quantity
 let appetizerMap = {};
 
+let globalEmail = '';
+
 async function loadMenuItems() {
     try {
         const response = await fetch('/api/menuitems');
@@ -1352,6 +1354,7 @@ async function handleCreateAccount()
     // alert(`Account created successfully for ${name}!`);
     // closeRewardsPanel();
 
+    globalEmail = email;
 
     // Send a POST request to the server to create the rewards account
     fetch('/api/addrewardsaccount',
@@ -1527,7 +1530,7 @@ function showRetry() {
     popupDoneBtn.addEventListener('click', handleNameValidation, { once: true });
 }
 
-function proceedWithCheckout(userInput) {
+async function proceedWithCheckout(userInput) {
     // Close the virtual keyboard
     Keyboard.close();
 
@@ -1546,11 +1549,57 @@ function proceedWithCheckout(userInput) {
     // Update pending orders
     updatePendingOrders(totalAmount, menuItemIDs, userInput);
 
-    // Show an alert with the menu IDs, total price, and user input
-    alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}\nUser Input: ${userInput}`);
+    // Round totalAmount to an integer for points (assuming points are integers)
+    const roundedPoints = Math.round(totalAmount);
 
-    // Clear the order
-    clearOrder(); // Assuming clearOrder() resets the order and total
+    // Call the addPointsToAccount function
+    const data = await addPointsToAccount(globalEmail, roundedPoints);
+
+    // If points were added successfully, proceed with showing the order details
+    if (data)
+    {
+        // Show an alert with the menu IDs, total price, and user input
+        alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}\nUser Input: ${userInput}`);
+
+        // Clear the order
+        clearOrder(); // Assuming clearOrder() resets the order and total
+    }
+}
+
+
+async function addPointsToAccount(email, points)
+{
+    try
+    {
+        // Send a POST request to add points to the user's account
+        const response = await fetch('/api/addpoints',
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify
+            ({
+                email: email,
+                points: points
+            })
+        });
+
+        if (!response.ok)
+        {
+            throw new Error(`Error adding points: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Points added successfully:', data);
+
+        return data; // Return the data from the response
+
+    }
+    catch (error)
+    {
+        console.error('Error:', error);
+        alert('There was an error adding points. Please try again.');
+        return null; // Return null if there is an error
+    }
 }
 
 
