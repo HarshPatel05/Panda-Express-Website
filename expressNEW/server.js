@@ -73,26 +73,10 @@ app.get('/manager', (req, res) => {
   res.render('manager'); // Render the views/manager.ejs file
 });
 
-// app.get('/kitchen', (req, res) => {
-//   res.render('kitchen'); // Render the views/kitchen.ejs file
-// });
-
-// Route to render the kitchen page
-app.get('/kitchen', async (req, res) =>
-{
-  try
-  {
-    // Fetch pending orders using the API endpoint
-    const pendingOrders = await fetchPendingOrdersFromAPI();
-    
-    res.render('kitchen', { pendingOrders });
-  }
-  catch (error)
-  {
-    console.error('Error loading the kitchen page:', error);
-    res.status(500).send('Error loading the kitchen page');
-  }
+app.get('/kitchen', (req, res) => {
+  res.render('kitchen'); // Render the views/kitchen.ejs file
 });
+
 
 
 
