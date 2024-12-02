@@ -1376,6 +1376,45 @@ app.post('/api/addpoints', async (req, res) =>
 });
 
 
+// API endpoint to check if an account exsits with the given email
+app.get('/api/checkaccount', async (req, res) =>
+{
+  const { email } = req.query;  // Get email from query parameters
+
+  if (!email)
+  {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const client = await pool.connect(); // Get a database connection
+
+  try
+  {
+    // Check if the user exists in the rewards table
+    const userResult = await client.query('SELECT * FROM rewards WHERE email = $1', [email]);
+
+    if (userResult.rows.length > 0) // Account exists
+    {
+      return res.status(200).json({ exists: true });
+    }
+    else // Account does not exist
+    {
+      return res.status(404).json({ exists: false, message: 'User not found' });
+    }
+  }
+  catch (error)
+  {
+    console.error('Error Checking Rewards Account:', error);
+    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+  finally
+  {
+    client.release(); // Release database connection
+  }
+
+});
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////                                                                       //////////////////////////////////////////////////
