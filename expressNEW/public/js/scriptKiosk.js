@@ -1165,13 +1165,26 @@ function loadProhibitedWords() {
         .then(response => response.text())
         .then(csvData => {
             const parsedData = Papa.parse(csvData, { header: true, skipEmptyLines: true });
-            // Extract the 'text' column and store it in the prohibitedWords array
-            prohibitedWords = parsedData.data.map(row => row.text.trim().toLowerCase()).filter(text => text !== '');
+
+            // Combine `text` and `canonical_form_1` columns into a single set to remove duplicates
+            const wordsSet = new Set();
+            parsedData.data.forEach(row => {
+                if (row.text && row.text.trim() !== "") {
+                    wordsSet.add(row.text.trim().toLowerCase());
+                }
+                if (row.canonical_form_1 && row.canonical_form_1.trim() !== "") {
+                    wordsSet.add(row.canonical_form_1.trim().toLowerCase());
+                }
+            });
+
+            // Convert the Set back to an array
+            prohibitedWords = Array.from(wordsSet);
         })
         .catch(error => {
             console.error('Error loading CSV:', error);
         });
 }
+
 
 // Load prohibited words on page load
 window.onload = loadProhibitedWords;
