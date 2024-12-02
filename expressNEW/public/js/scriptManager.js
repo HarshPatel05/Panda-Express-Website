@@ -105,14 +105,14 @@ async function changePrice() {
     }
 
     try  {
-        await fetch('/api/changePrice', {
+        const response = await fetch('/api/changePrice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 menuItemID: menuItemID,
-                newPrice: newPrice
+                newPrice: price
             }),
         });
         // Parse the response

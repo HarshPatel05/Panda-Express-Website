@@ -1716,11 +1716,6 @@ function showRetry() {
 }
 
 async function proceedWithCheckout(userInput) {
-    if (!globalEmail || globalEmail.trim() === '') {
-        alert('Please sign in or create an account to complete your order.');
-        redirectToRewards(); // Redirect user to rewards login or sign-up panel
-        return;
-    }
 
     // Close the virtual keyboard
     Keyboard.close();
