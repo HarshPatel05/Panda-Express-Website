@@ -1066,8 +1066,22 @@ function getFullSizeName(abbreviation) {
 //////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function redirectToRewards() {
-    // Placeholder for future redirection logic
-    console.log("Redirect to Rewards section.");
+    // Show the rewards panel
+    document.getElementById('rewardsPanel').style.display = 'block';
+
+    // Optionally, disable scrolling in the background while the panel is visible
+    document.body.style.overflow = 'hidden';
+
+    // Focus the input field so that the user can start typing immediately
+    const popupInput = document.getElementById('popupInput');
+    popupInput.focus();
+}
+
+function closeRewardsPanel() {
+    document.getElementById('rewardsPanel').style.display = 'none';
+    // Re-enable scrolling if the panel is closed
+    document.body.style.overflow = 'auto';
+    Keyboard.close();
 }
 
 
@@ -1085,15 +1099,8 @@ function loadProhibitedWords() {
         .then(response => response.text())
         .then(csvData => {
             const parsedData = Papa.parse(csvData, { header: true, skipEmptyLines: true });
-            
-            // Extract the 'text' column and 'canonical_form_1' column, and add them to the prohibitedWords array
-            const newProhibitedWords = [
-                ...parsedData.data.map(row => row.text.trim().toLowerCase()).filter(text => text !== ''),
-                ...parsedData.data.map(row => row.canonical_form_1.trim().toLowerCase()).filter(canonical => canonical !== '')
-            ];
-
-            // Remove duplicates by converting the array to a Set and back to an array
-            prohibitedWords = [...new Set(newProhibitedWords)];
+            // Extract the 'text' column and store it in the prohibitedWords array
+            prohibitedWords = parsedData.data.map(row => row.text.trim().toLowerCase()).filter(text => text !== '');
         })
         .catch(error => {
             console.error('Error loading CSV:', error);
@@ -1102,6 +1109,7 @@ function loadProhibitedWords() {
 
 // Load prohibited words on page load
 window.onload = loadProhibitedWords;
+
 
 let isProfanityDetected = false;
 
@@ -1121,13 +1129,15 @@ function checkoutOrder() {
     const popupDoneBtn = document.getElementById('popupDoneBtn');
 
     // Show the checkout panel and focus on the textarea
-    checkoutPanel.style.display = 'block';
+    checkoutPanel.style.display = 'block'; // Make it visible
     popupInput.value = ''; // Clear any previous input
     popupInput.focus();
 
     // Listen for the "Done" button click and handle name input validation
     popupDoneBtn.addEventListener('click', handleNameValidation, { once: true });
 }
+    
+
 
 function handleNameValidation() {
     const popupInput = document.getElementById('popupInput');
@@ -1140,8 +1150,8 @@ function handleNameValidation() {
         // Check for profanity in the user input
         const containsProfanity = checkForProfanity(userInput);
 
-        if (containsProfanity) {
-            alert('Your name contains inappropriate words. Please enter a valid name.');
+        if (containsProfanity || userInput == "") {
+            alert('Your name is invalid. Please enter a valid name.');
             isProfanityDetected = true;
 
             // Allow the user to re-enter their name by showing the input and done button again
@@ -1228,7 +1238,6 @@ async function updatePendingOrders(totalCost, menuItemIDs, inputName)
         alert('An error occurred while placing your pending order. Please try again.');
     }
 }
-
 
 
 

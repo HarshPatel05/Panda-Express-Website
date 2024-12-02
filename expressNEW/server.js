@@ -907,6 +907,8 @@ app.get('/api/product-usage', async (req, res) =>
     return res.status(400).json({ message: 'Ingredient is required.' });
   }
 
+  const client = await pool.connect(); // Establish database connection
+
   try
   {
     // Validate if the ingredient exists in the inventory table
@@ -969,12 +971,12 @@ app.get('/api/product-usage', async (req, res) =>
     const query = `
       SELECT inv.ingredient AS ingredient_name,
              ROUND(SUM(order_items.quantity * menu_ing.quantity)::numeric, 2) AS total_usage,
-             TO_CHAR(DATE_TRUNC($1, oh.date), $2) AS time_period
+             TO_CHAR(DATE_TRUNC('${dateTrunc}', oh.date), '${dateFormat}') AS time_period
       FROM orderhistory oh
       JOIN orderitems order_items ON oh.orderid = order_items.orderid
       JOIN menuitemingredients menu_ing ON order_items.menuitemid = menu_ing.menuitemid
       JOIN inventory inv ON menu_ing.ingredient = inv.ingredient
-      WHERE LOWER(inv.ingredient) = $3
+      WHERE LOWER(inv.ingredient) = $1
       ${dateFilter}
       GROUP BY inv.ingredient, time_period
       ORDER BY time_period;
@@ -983,7 +985,7 @@ app.get('/api/product-usage', async (req, res) =>
     console.log('Executing query:', query); // For debugging
 
     // Execute the query
-    const result = await client.query(query, [dateTrunc, dateFormat, ...params]);
+    const result = await client.query(query, params);
 
     // Format the result into a response
     const productUsageList = result.rows.map(row =>

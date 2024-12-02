@@ -252,6 +252,23 @@ body {
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
+#checkoutPanel {
+    display: none; /* Hide the checkout panel by default */
+}
+
+#rewardsPanel {
+    position: fixed;  /* Ensure it's fixed on the screen */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);  /* Semi-transparent overlay */
+    display: none;  /* Initially hidden */
+    z-index: 1000;  /* High value to make sure it's on top */
+    overflow: auto;  /* Allows for scrolling if the content is too tall */
+}
+
+
 /* Feedback Popup */
 .feedback-popup {
     position: fixed;
