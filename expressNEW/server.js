@@ -750,6 +750,16 @@ app.get('/api/getdisplayname', async (req, res) =>
   };
 });
 
+app.delete('/api/deletependingorder/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+      await pool.query('DELETE FROM pendingorders WHERE pendingorderid = $1', [id]);
+      res.status(200).send({ message: `Pending order ${id} deleted successfully.` });
+  } catch (error) {
+      console.error('Error deleting pending order:', error);
+      res.status(500).send({ error: 'Failed to delete pending order.' });
+  }
+});
 
 
 //######################################################################  FEATURES ENDPOINTS  ########################################################################
