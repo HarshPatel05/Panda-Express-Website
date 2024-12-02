@@ -212,3 +212,53 @@ tbody tr:nth-child(odd) {
 #salesReport tbody tr:nth-child(odd) {
     background-color: #ffffff; 
 }
+/* Dropdown Button Styling */
+.dropdownButton {
+    font-size: 1.5vw;
+    padding: 0.8vh 2vw;
+    background-color: #e60000;
+    color: white;
+    border: none;
+    border-radius: 0.5vw;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-align: center;
+    width: auto;
+}
+
+/* Dropdown Button Hover Effects */
+.dropdownButton:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+
+/* Dropdown Content */
+.dropdownContent {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 0.5vw;
+    overflow: hidden;
+}
+
+.dropdownContent a {
+    color: #e60000;
+    padding: 1vh 2vw;
+    text-decoration: none;
+    display: block;
+    font-size: 1.5vw;
+    transition: background-color 0.3s ease;
+}
+
+/* Dropdown Link Hover Effect */
+.dropdownContent a:hover {
+    background-color: #f2f2f2;
+}
+
+/* Show Dropdown */
+.dropdownContent.show {
+    display: block;
+}

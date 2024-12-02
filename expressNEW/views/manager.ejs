@@ -17,9 +17,16 @@
         </div>
 
         <div class="viewContols">
-            <button class="viewButtons" onclick="window.location.href='/register'">Switch View</button>
+            <div class="dropdown">
+                <button class="viewButtons dropdownButton" onclick="toggleDropdown()">Switch View</button>
+                <div class="dropdownContent" id="dropdownMenu">
+                    <a href="/register">Register View</a>
+                    <a href="/menuboard">Menu Board View</a>
+                    <a href="/kitchen">Kitchen View</a>
+                    <a href="/kiosk">Kiosk View</a>
+                </div>
+            </div>
             <button class="viewButtons" onclick="window.location.href='/index'">Sign Out</button>
-
         </div>
     </div>
 
