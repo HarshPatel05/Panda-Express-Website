@@ -131,7 +131,7 @@ app.get('/api/sessions/oauth/google', async (req, res) => {
       picture: googleUser.picture,
     };
 
-    return res.redirect(`/kiosk`);
+    return res.redirect(`/kiosk?email=${encodeURIComponent(user.email)}`);
   } catch (err) {
     console.error('Error fetching OAuthSession', err.stack);
     res.status(500).send('Server Error');

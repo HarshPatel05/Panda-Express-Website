@@ -1319,6 +1319,53 @@ let userDetails = {
     email: ""
 };
 
+async function googleOAuthURL() {
+    const URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+    try {
+        const response = await fetch('/api/config');
+        const config = await response.json();
+
+        const scopes = [
+            'https://www.googleapis.com/auth/userinfo.profile',
+            'https://www.googleapis.com/auth/userinfo.email'
+        ]
+        const options = {
+            redirect_uri: config.redirectUrl,
+            client_id: config.googleClientId,
+            access_type: 'offline',
+            response_type: 'code',
+            prompt: 'consent',
+            scope: scopes.join(' ')
+        }
+    
+        const qs = new URLSearchParams(options)
+    
+        const oauthURL = `${URL}?${qs.toString()}`;
+    
+        const authLink = document.getElementById('OAuthLogin');
+        if (authLink) {
+            authLink.href = oauthURL;
+        }
+    }catch (err) {
+
+    }
+}
+
+function autoSignInFromOAuth() {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get('email');
+  
+    if (email) {
+      handleSignIn(email);
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    googleOAuthURL();
+    autoSignInFromOAuth();
+  });
+
 function redirectToRewards() {
     // Show the rewards panel
     document.getElementById('rewardsPanel').style.display = 'block';
@@ -1355,8 +1402,8 @@ function showCreateAccount() {
     document.getElementById('nameInput').focus();
 }
 
-async function handleSignIn() {
-    const emailIn = document.getElementById('signInInput').value.trim();
+async function handleSignIn(emailFromOAuth = null) {
+    const emailIn = emailFromOAuth ? emailFromOAuth.trim() : document.getElementById('signInInput').value.trim();
 
     if (!validateEmail(emailIn)) {
         alert('Please enter a valid email.');
