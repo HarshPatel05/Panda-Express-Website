@@ -66,6 +66,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             completedContainer.appendChild(order);
             order.style.cursor = "default";
 
+            // Update styles for completed orders
+            const orderTitle = order.querySelector("h3");
+            const timerElement = order.querySelector(".timer");
+
+            order.style.backgroundColor = "white"; // Set background to white
+            order.style.borderColor = "green"; // Optional: Add green border
+            orderTitle.style.color = "green"; // Set name to green
+
+            if (timerElement) {
+                timerElement.remove(); // Remove the timer
+            }
+
             // Play the announcement
             const speechSynthesis = window.speechSynthesis;
             const name = order.dataset.name || "unknown customer";
@@ -82,10 +94,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Checkout the order
             const menuItemIDs = JSON.parse(order.dataset.menuItemIDs); // Parse the menuItemIDs into an array
             const totalCost = parseFloat(order.dataset.totalCost);
+            const pendingOrderID = order.dataset.pendingOrderID; // Extract the pending order ID
 
             console.log("Checking out order:", menuItemIDs, "Total cost:", totalCost);
 
-            await checkoutOrder(totalCost, menuItemIDs);
+            await checkoutOrder(totalCost, menuItemIDs, pendingOrderID);
 
             // Remove the order after 5 minutes
             setTimeout(() => {
@@ -101,6 +114,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await loadPendingOrders();
     }, 30000);
 });
+
 
 async function loadPendingOrders() {
     const inProgressContainer = document.querySelector("#inProgress .orderContainer");
@@ -123,8 +137,8 @@ async function loadPendingOrders() {
             orderCard.dataset.menuItemIDs = JSON.stringify(convertToArray(order.menuitemids));
             orderCard.dataset.totalCost = order.totalcost;
             orderCard.dataset.name = order.name;
+            orderCard.dataset.pendingOrderID = order.pendingorderid; // Store pending order ID
 
-            // Use the `date` field from the pending orders as the starting timestamp
             const orderTimestamp = order.date ? new Date(order.date) : new Date();
             orderCard.dataset.startTime = orderTimestamp.getTime();
 
@@ -164,12 +178,11 @@ async function loadPendingOrders() {
 
                     bowlItem.appendChild(bowlList);
                     orderList.appendChild(bowlItem);
-                    i += 4;
-                } 
-                else if (itemDetails.name.toLowerCase().includes("plate")) {
-                    const bowlItem = document.createElement("div");
-                    bowlItem.textContent = `Plate`;
-                    const bowlList = document.createElement("ul");
+                    i += 4; // Skip the bowl and its 3 items
+                } else if (itemDetails.name.toLowerCase().includes("plate") && !itemDetails.name.toLowerCase().includes("bigger")) {
+                    const plateItem = document.createElement("div");
+                    plateItem.textContent = `Plate`;
+                    const plateList = document.createElement("ul");
 
                     for (let j = 1; j <= 4 && i + j < items.length; j++) {
                         const subItemId = items[i + j];
@@ -178,17 +191,16 @@ async function loadPendingOrders() {
                         subListItem.textContent = subItemDetails
                             ? convertCamelCaseToReadable(subItemDetails.name)
                             : `Unknown item`;
-                        bowlList.appendChild(subListItem);
+                        plateList.appendChild(subListItem);
                     }
 
-                    bowlItem.appendChild(bowlList);
-                    orderList.appendChild(bowlItem);
-                    i += 4;
-                } 
-                else if (itemDetails.name.toLowerCase().includes("biggerPlate")) {
-                    const bowlItem = document.createElement("div");
-                    bowlItem.textContent = `Bigger Plate`;
-                    const bowlList = document.createElement("ul");
+                    plateItem.appendChild(plateList);
+                    orderList.appendChild(plateItem);
+                    i += 5; // Skip the plate and its 4 items
+                } else if (itemDetails.name.toLowerCase().includes("bigger plate")) {
+                    const biggerPlateItem = document.createElement("div");
+                    biggerPlateItem.textContent = `Bigger Plate`;
+                    const biggerPlateList = document.createElement("ul");
 
                     for (let j = 1; j <= 5 && i + j < items.length; j++) {
                         const subItemId = items[i + j];
@@ -197,14 +209,13 @@ async function loadPendingOrders() {
                         subListItem.textContent = subItemDetails
                             ? convertCamelCaseToReadable(subItemDetails.name)
                             : `Unknown item`;
-                        bowlList.appendChild(subListItem);
+                        biggerPlateList.appendChild(subListItem);
                     }
 
-                    bowlItem.appendChild(bowlList);
-                    orderList.appendChild(bowlItem);
-                    i += 4;
-                } 
-                else {
+                    biggerPlateItem.appendChild(biggerPlateList);
+                    orderList.appendChild(biggerPlateItem);
+                    i += 6; // Skip the bigger plate and its 5 items
+                } else {
                     const singleItem = document.createElement("div");
                     singleItem.textContent = formatWithSize(itemDetails.name, itemDetails.size);
                     orderList.appendChild(singleItem);
@@ -246,15 +257,21 @@ function startTimer(orderCard, timerElement) {
 
         const minutes = Math.floor(elapsedTime / 60);
         const seconds = elapsedTime % 60;
-        timerElement.textContent = `Time: ${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
 
-        // Update card color based on elapsed time
-        if (elapsedTime >= 300) {
-            orderCard.style.backgroundColor = "#FF6347"; // Red after 5 minutes
-        } else if (elapsedTime >= 180) {
-            orderCard.style.backgroundColor = "#FFD700"; // Yellow after 3 minutes
-        } else {
-            orderCard.style.backgroundColor = "#32CD32"; // Green at the start
+        // Only update the timer if it exists
+        if (timerElement) {
+            timerElement.textContent = `Time: ${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+        }
+
+        // Update card color based on elapsed time (only for in-progress orders)
+        if (orderCard.dataset.status === "in-progress") {
+            if (elapsedTime >= 300) {
+                orderCard.style.backgroundColor = "#FF6347"; // Red after 5 minutes
+            } else if (elapsedTime >= 180) {
+                orderCard.style.backgroundColor = "#FFD700"; // Yellow after 3 minutes
+            } else {
+                orderCard.style.backgroundColor = "#32CD32"; // Green at the start
+            }
         }
     };
 
@@ -262,7 +279,8 @@ function startTimer(orderCard, timerElement) {
     setInterval(updateTimer, 1000);
 }
 
-async function checkoutOrder(totalCost, menuItemIDs) {
+
+async function checkoutOrder(totalCost, menuItemIDs, pendingOrderID) {
     try {
         const response = await fetch('/api/updateorders', {
             method: 'POST',
@@ -277,8 +295,28 @@ async function checkoutOrder(totalCost, menuItemIDs) {
         console.log('Order successfully checked out:', await response.json());
 
         await updateInventory(menuItemIDs); // Update inventory after successful checkout
+
+        // Delete the pending order
+        await deletePendingOrder(pendingOrderID);
+
     } catch (error) {
         console.error('Error during checkout:', error);
+    }
+}
+
+async function deletePendingOrder(pendingOrderID) {
+    try {
+        const response = await fetch(`/api/deletependingorder/${pendingOrderID}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete pending order.');
+        }
+
+        console.log(`Pending order ${pendingOrderID} deleted successfully.`);
+    } catch (error) {
+        console.error('Error deleting pending order:', error);
     }
 }
 

@@ -184,6 +184,26 @@ section h2 {
     font-weight: bold;
 }
 
+/* Styling for completed orders (optional for extra styling) */
+.completed .orderCard {
+    background-color: white; /* White background */
+    border: 2px solid green; /* Green border for completed */
+    color: black; /* Default text color */
+}
+
+.completed .orderCard h3 {
+    color: green; /* Green text fill */
+    font-weight: bold; /* Make the text bold */
+    text-shadow: 
+        -1px -1px 0 black, 
+         1px -1px 0 black, 
+        -1px  1px 0 black, 
+         1px  1px 0 black; /* Black outline effect */
+    font-size: 1.5em; /* Adjust font size if needed */
+}
+
+
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     header h1 {
