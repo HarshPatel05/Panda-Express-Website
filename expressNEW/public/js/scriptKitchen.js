@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // speechSynthesis.speak(speech);
 
             //AI ZONE DO NOT TOUCH
-            playAudioFromAPI(text);
+            //playAudioFromAPI(text);
 
             // Checkout the order
             const menuItemIDs = JSON.parse(order.dataset.menuItemIDs); // Parse the menuItemIDs into an array
