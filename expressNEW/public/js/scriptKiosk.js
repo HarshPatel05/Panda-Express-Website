@@ -1636,7 +1636,18 @@ function loadProhibitedWords() {
         .then(csvData => {
             const parsedData = Papa.parse(csvData, { header: true, skipEmptyLines: true });
             // Extract the 'text' column and store it in the prohibitedWords array
-            prohibitedWords = parsedData.data.map(row => row.text.trim().toLowerCase()).filter(text => text !== '');
+            // Combine `text` and `canonical_form_1` columns into a single set to remove duplicates
+            const wordsSet = new Set();
+            parsedData.data.forEach(row => {
+                if (row.text && row.text.trim() !== "") {
+                    wordsSet.add(row.text.trim().toLowerCase());
+                }
+                if (row.canonical_form_1 && row.canonical_form_1.trim() !== "") {
+                    wordsSet.add(row.canonical_form_1.trim().toLowerCase());
+                }
+            });
+            // Convert the Set back to an array
+            prohibitedWords = Array.from(wordsSet);
         })
         .catch(error => {
             console.error('Error loading CSV:', error);
@@ -1716,42 +1727,64 @@ function showRetry() {
 }
 
 async function proceedWithCheckout(userInput) {
+<<<<<<< HEAD
+=======
+    // Check if user is signed in
+    if (globalEmail && globalEmail.trim() !== '') {
+        // If signed in, add points and proceed with account-specific actions
+        // Flatten the array of menuIds from each order item
+        const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id !== undefined);
+>>>>>>> 3ce5f14398d1f06d6374489646799e0297ce8d86
 
-    // Close the virtual keyboard
-    Keyboard.close();
+        console.log('Total Amount:', totalAmount);
+        console.log('Menu Item IDs:', menuItemIDs);
+        console.log('Input Name:', userInput);
+
+        // Round totalAmount to an integer for points
+        const roundedPoints = Math.round(totalAmount);
+
+        // Add points to the account
+        const data = await addPointsToAccount(globalEmail, roundedPoints);
+
+        if (data) {
+            // Show an alert with the order details
+            alert(`Order placed successfully!\nDetails:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal: $${totalAmount.toFixed(2)}\nThank you, ${userInput}!`);
+
+            // Clear the order
+            clearOrder();
+
+            // Log the user out after order
+            handleLogOut();
+
+            alert('You have been logged out. Please sign in again for your next order.');
+        }
+    } else {
+        // If not signed in, proceed normally without adding points
+        console.log('Proceeding without sign-in...');
+        
+        // Flatten the array of menuIds from each order item
+        const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id !== undefined);
+
+        console.log('Total Amount:', totalAmount);
+        console.log('Menu Item IDs:', menuItemIDs);
+        console.log('Input Name:', userInput);
+
+        // Update pending orders
+        updatePendingOrders(totalAmount, menuItemIDs, userInput);
+
+        // Show a simple alert with the order details
+        alert(`Order placed successfully!\nDetails:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal: $${totalAmount.toFixed(2)}`);
+        
+        // Clear the order
+        clearOrder();
+    }
 
     // Hide the checkout panel
     const checkoutPanel = document.getElementById('checkoutPanel');
     checkoutPanel.style.display = 'none';
 
-    // Flatten the array of menuIds from each order item
-    const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id !== undefined);
-
-    console.log('Total Amount:', totalAmount);
-    console.log('Menu Item IDs:', menuItemIDs);
-    console.log('Input Name:', userInput);
-
-    // Update pending orders
-    updatePendingOrders(totalAmount, menuItemIDs, userInput);
-
-    // Round totalAmount to an integer for points
-    const roundedPoints = Math.round(totalAmount);
-
-    // Add points to the account
-    const data = await addPointsToAccount(globalEmail, roundedPoints);
-
-    if (data) {
-        // Show an alert with the order details
-        alert(`Order placed successfully!\nDetails:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal: $${totalAmount.toFixed(2)}\nThank you, ${userInput}!`);
-
-        // Clear the order
-        clearOrder();
-
-        // Log the user out after order
-        handleLogOut();
-
-        alert('You have been logged out. Please sign in again for your next order.');
-    }
+    // Close the virtual keyboard
+    Keyboard.close();
 }
 
 
