@@ -29,8 +29,14 @@ async function loadMenuItems() {
             return;
         }
 
-        const menuItems = await response.json();
-        console.log('Fetched Menu Items:', menuItems);
+        // Fetch and store all menu items
+        const fetchedMenuItems = await response.json();
+        console.log('Fetched Menu Items:', fetchedMenuItems);
+
+        // Update the global menuItems array
+        menuItems = [...fetchedMenuItems];
+
+        console.log('Updated menuItems:', menuItems);
 
         const entreeContainer = document.getElementById('entree-buttons');
         const sideContainer = document.getElementById('side-buttons');
@@ -296,193 +302,227 @@ async function loadSeasonalItems() {
         const seasonalItems = await seasonalItemsResponse.json();
         console.log('Fetched Seasonal Items:', seasonalItems);
 
+        // Fetch all menu items for ID matching
+        const menuItemsResponse = await fetch('/api/menuitems');
+        if (!menuItemsResponse.ok) {
+            console.error('Failed to fetch menu items:', menuItemsResponse.statusText);
+            return;
+        }
+
+        const menuItems = await menuItemsResponse.json();
+
         const entreeContainer = document.getElementById('entree-buttons');
         const sideContainer = document.getElementById('side-buttons');
+        const alacarteEntreeContainer = document.getElementById('ALaCarte-entrees');
+        const alacarteSideContainer = document.getElementById('ALaCarte-sides');
+        const appetizersPanelContent = document.querySelector('#appetizersPanel .appetizer-columns');
 
         if (!entreeContainer || !sideContainer) {
             console.error('One or more containers are missing in the DOM.');
             return;
         }
 
-        // Process seasonal items
+        if (!alacarteEntreeContainer || !alacarteSideContainer) {
+            console.error('One or more À La Carte containers are missing in the DOM.');
+            return;
+        }
+
+        // Process seasonal items and match with menu items
         seasonalItems.forEach((item) => {
-            if (item.size === 'sm') {
-                if (item.type === 'entree') {
-                    // Create button for seasonal entree
-                    const button = document.createElement('button');
-                    button.classList.add('menu-item-button');
-                    button.dataset.menuId = item.menuitemid;
-                    button.onclick = () => addComponentToCurrentOrder('entree', item.menuitemid, item.menuitem);
+            const matchedMenuItem = menuItems.find(
+                (menuItem) =>
+                    menuItem.menuitem === item.menuitem &&
+                    menuItem.menuitemid > 72 &&
+                    menuItem.size === item.size
+            );
 
-                    // Use the default image for seasonal items
-                    const image = document.createElement('img');
-                    image.src = `../Panda Express Photos/Panda Express Logo.png`;
-                    image.alt = camelCaseToNormal(item.menuitem);
-                    image.classList.add('button-image');
-                    button.appendChild(image);
+            if (!matchedMenuItem) {
+                console.warn(`No match found for seasonal item: ${item.menuitem} (${item.size})`);
+                return;
+            }
 
-                    // Add the text
-                    const text = document.createElement('div');
-                    text.innerText = camelCaseToNormal(item.menuitem);
-                    text.classList.add('button-text');
-                    button.appendChild(text);
+            // Use matched data for seasonal item
+            const menuId = matchedMenuItem.menuitemid;
+            const price = matchedMenuItem.price;
 
-                    // Append to the entree container
-                    entreeContainer.appendChild(button);
-                } else if (item.type === 'side') {
-                    // Create button for seasonal side
-                    const button = document.createElement('button');
-                    button.classList.add('menu-item-button');
-                    button.dataset.menuId = item.menuitemid;
-                    button.onclick = () => addComponentToCurrentOrder('side', item.menuitemid, item.menuitem);
+            // Create buttons based on type
+            if (item.type === 'entree' && item.size === 'sm') {
+                const button = document.createElement('button');
+                button.classList.add('menu-item-button');
+                button.dataset.menuId = menuId;
+                button.onclick = () => addComponentToCurrentOrder('entree', menuId, item.menuitem);
 
-                    // Use the default image for seasonal items
-                    const image = document.createElement('img');
-                    image.src = `../Panda Express Photos/Panda Express Logo.png`;
-                    image.alt = camelCaseToNormal(item.menuitem);
-                    image.classList.add('button-image');
-                    button.appendChild(image);
+                // Add image
+                const image = document.createElement('img');
+                image.src = `../Panda Express Photos/Panda Express Logo.png`;
+                image.alt = camelCaseToNormal(item.menuitem);
+                image.classList.add('button-image');
+                button.appendChild(image);
 
-                    // Add the text
-                    const text = document.createElement('div');
-                    text.innerText = camelCaseToNormal(item.menuitem);
-                    text.classList.add('button-text');
-                    button.appendChild(text);
+                // Add text
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.menuitem);
+                text.classList.add('button-text');
+                button.appendChild(text);
 
-                    // Append to the side container
-                    sideContainer.appendChild(button);
-                }
+                entreeContainer.appendChild(button);
+            } else if (item.type === 'side' && item.size === 'sm') {
+                const button = document.createElement('button');
+                button.classList.add('menu-item-button');
+                button.dataset.menuId = menuId;
+                button.onclick = () => addComponentToCurrentOrder('side', menuId, item.menuitem);
+
+                // Add image
+                const image = document.createElement('img');
+                image.src = `../Panda Express Photos/Panda Express Logo.png`;
+                image.alt = camelCaseToNormal(item.menuitem);
+                image.classList.add('button-image');
+                button.appendChild(image);
+
+                // Add text
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.menuitem);
+                text.classList.add('button-text');
+                button.appendChild(text);
+
+                sideContainer.appendChild(button);
             }
         });
 
-//**************************************************************************************************************************//
-//**************************************************************************************************************************//
-//**************************************************************************************************************************//
-    
-    const alacarteEntreeContainer = document.getElementById('ALaCarte-entrees');
-    const alacarteSideContainer = document.getElementById('ALaCarte-sides');
+        seasonalItems.forEach((item) => {
+            const matchedMenuItem = menuItems.find(
+                (menuItem) =>
+                    menuItem.menuitem === item.menuitem &&
+                    menuItem.menuitemid > 72 &&
+                    menuItem.size === item.size
+            );
 
-    if (!alacarteEntreeContainer || !alacarteSideContainer) {
-        console.error('À La Carte containers are missing in the DOM.');
-        return;
-    }
+            if (!matchedMenuItem) {
+                console.warn(`No match found for seasonal item: ${item.menuitem} (${item.size})`);
+                return;
+            }
 
-    seasonalItems.forEach((item) => {
-        if (item.size === 'sm') {
-            if (item.type === 'entree') {
-                // Create À La Carte button for seasonal entree
+            // Use matched data for seasonal item
+            const menuId = matchedMenuItem.menuitemid;
+            const price = matchedMenuItem.price;
+
+            // Create buttons for À La Carte items
+            if (item.type === 'entree' && item.size === 'sm') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
-                button.dataset.menuId = item.menuitemid;
-                button.onclick = () => addAlaCarteItem('entree', item.menuitemid, item.menuitem, 'sm', item.price);
+                button.dataset.menuId = menuId;
+                button.onclick = () => addAlaCarteItem('entree', menuId, item.menuitem, 'sm', price);
 
-                // Use the default image for seasonal items
+                // Add image
                 const image = document.createElement('img');
                 image.src = `../Panda Express Photos/Panda Express Logo.png`;
                 image.alt = camelCaseToNormal(item.menuitem);
                 image.classList.add('button-image');
                 button.appendChild(image);
 
-                // Add the text
+                // Add text
                 const text = document.createElement('div');
                 text.innerText = camelCaseToNormal(item.menuitem);
                 text.classList.add('button-text');
                 button.appendChild(text);
 
-                // Append to the À La Carte entrees container
                 alacarteEntreeContainer.appendChild(button);
-            } else if (item.type === 'side') {
-                // Create À La Carte button for seasonal side
+            } else if (item.type === 'side' && item.size === 'sm') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
-                button.dataset.menuId = item.menuitemid;
-                button.onclick = () => addAlaCarteItem('side', item.menuitemid, item.menuitem, 'sm', item.price);
+                button.dataset.menuId = menuId;
+                button.onclick = () => addAlaCarteItem('side', menuId, item.menuitem, 'sm', price);
 
-                // Use the default image for seasonal items
+                // Add image
                 const image = document.createElement('img');
                 image.src = `../Panda Express Photos/Panda Express Logo.png`;
                 image.alt = camelCaseToNormal(item.menuitem);
                 image.classList.add('button-image');
                 button.appendChild(image);
 
-                // Add the text
+                // Add text
                 const text = document.createElement('div');
                 text.innerText = camelCaseToNormal(item.menuitem);
                 text.classList.add('button-text');
                 button.appendChild(text);
 
-                // Append to the À La Carte sides container
                 alacarteSideContainer.appendChild(button);
             }
-        }
-    });
+        });
 
-//**************************************************************************************************************************//
-//**************************************************************************************************************************//
-//**************************************************************************************************************************//
+        // Filter seasonal appetizers
+        const seasonalAppetizers = seasonalItems.filter(item => item.type === 'appetizer');
 
-    const appetizersPanelContent = document.querySelector('#appetizersPanel .appetizer-columns');
+        seasonalAppetizers.forEach((item) => {
+            const matchedMenuItem = menuItems.find(
+                menuItem => menuItem.menuitem === item.menuitem && menuItem.size === item.size
+            );
 
-    if (!appetizersPanelContent) {
-        console.error('Appetizers panel content container is missing in the DOM.');
-        return;
-    }
+            if (!matchedMenuItem) {
+                console.warn(`No match found for seasonal appetizer: ${item.menuitem} (${item.size})`);
+                return;
+            }
 
-    // Filter seasonal appetizers
-    const seasonalAppetizers = seasonalItems.filter(item => item.type === 'appetizer');
+            // Update the appetizer map with seasonal items
+            if (!appetizerMap[matchedMenuItem.menuitem]) {
+                appetizerMap[matchedMenuItem.menuitem] = {};
+            }
 
-    // Add seasonal items to the existing appetizer map
-    seasonalAppetizers.forEach((item) => {
-        if (!appetizerMap[item.menuitem]) {
-            appetizerMap[item.menuitem] = {}; // Initialize an object for sizes
-        }
-        appetizerMap[item.menuitem][item.size] = {
-            menuitemid: item.menuitemid,
-            price: item.price,
-        };
-    });
+            appetizerMap[matchedMenuItem.menuitem][matchedMenuItem.size] = {
+                menuitemid: matchedMenuItem.menuitemid,
+                price: matchedMenuItem.price,
+            };
+        });
 
-    console.log('Updated Appetizer Map with Seasonal Items:', appetizerMap);
+        console.log('Updated Appetizer Map with Seasonal Items:', appetizerMap);
 
-    // Add buttons for appetizers (including seasonal)
-    Object.keys(appetizerMap).forEach((menuitem) => {
-        // Check if the button for this menuitem already exists
-        if (document.querySelector(`button[data-menuitem="${menuitem}"]`)) {
-            return; // Skip if the button already exists
-        }
+        // Add seasonal appetizer buttons
+        Object.keys(appetizerMap).forEach((menuitem) => {
+            const appetizersPanelContent = document.querySelector('#appetizersPanel .appetizer-columns');
+            if (!appetizersPanelContent) {
+                console.error('Appetizers panel-content not found');
+                return;
+            }
 
-        // Create a button for the appetizer
-        const button = document.createElement('button');
-        button.classList.add('menu-item-button');
-        button.dataset.menuitem = menuitem;
+            // Skip adding buttons for non-seasonal items
+            if (!seasonalAppetizers.some(item => item.menuitem === menuitem)) {
+                return;
+            }
 
-        // Use the default image for seasonal items or construct a path for standard appetizers
-        const image = document.createElement('img');
-        const normalizedMenuItem = camelCaseToNormal(menuitem).replace(/ /g, '%20');
-        image.src = `../Panda Express Photos/Panda Express Logo.png`;
-        image.alt = camelCaseToNormal(menuitem);
-        image.classList.add('button-image');
-        button.appendChild(image);
+            // Create a button for the seasonal appetizer
+            const button = document.createElement('button');
+            button.classList.add('menu-item-button');
+            button.dataset.menuitem = menuitem;
 
-        // Add the text
-        const text = document.createElement('div');
-        text.innerText = camelCaseToNormal(menuitem);
-        text.classList.add('button-text');
-        button.appendChild(text);
+            // Add the image
+            const image = document.createElement('img');
+            const normalizedMenuItem = camelCaseToNormal(menuitem).replace(/ /g, '%20'); // Ensure correct file path
+            image.src = `../Panda Express Photos/Panda Express Logo.png`;
+            image.alt = camelCaseToNormal(menuitem);
+            image.classList.add('button-image'); // Add a CSS class for styling the image
+            button.appendChild(image);
 
-        // Attach click handler to open the modal
-        button.onclick = () => showAppetizerModal(menuitem);
+            // Add the text (name of the appetizer)
+            const text = document.createElement('div');
+            text.innerText = camelCaseToNormal(menuitem);
+            text.classList.add('button-text'); // Add a CSS class for styling the text
+            button.appendChild(text);
 
-        // Append the button to the appetizers panel
-        appetizersPanelContent.appendChild(button);
-        console.log('Appetizer Button Added:', button);
-    });
+            // Attach click handler to open the modal
+            button.onclick = () => showAppetizerModal(menuitem);
 
-        console.log('Seasonal Item Buttons Added.');
+            // Append the button to the appetizersPanelContent
+            appetizersPanelContent.appendChild(button);
+            console.log('Seasonal Appetizer Button Added:', button);
+        });
+
+        console.log('Seasonal items successfully added.');
+
     } catch (error) {
         console.error('Error loading seasonal items:', error);
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadSeasonalItems();
