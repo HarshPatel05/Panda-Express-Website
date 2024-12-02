@@ -1980,3 +1980,53 @@ window.addEventListener("DOMContentLoaded", function () {
     Keyboard.init();
     getWeather();
 });
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////                 DISCOUNTS                 /////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function applyOrderDiscount(percent) {
+    if (totalAmount > 0) {
+        totalAmount -= totalAmount * percent;
+        document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
+        alert(`Your new total is $${totalAmount.toFixed(2)}!`);
+    } else {
+        alert('No items in the order to apply a discount.');
+    }
+}
+
+function applyDiscount(type) {
+    if (!userDetails || userDetails.points < 50) {
+        alert('You do not have enough points to redeem a discount.');
+        return;
+    }
+
+    switch (type) {
+        case 'freeDrink':
+            if (userDetails.points >= 50) {
+                alert('You have redeemed a Free Large Fountain Drink!');
+                userDetails.points -= 50; // Deduct 50 points
+                updatePointsDisplay();
+            } else {
+                alert('Not enough points for this discount.');
+            }
+            break;
+
+        case 'percentOff':
+            if (userDetails.points >= 100) {
+                alert('You have redeemed 20% Off your Order!');
+                userDetails.points -= 100; // Deduct 100 points
+                applyOrderDiscount(0.2); // Apply 20% discount
+                updatePointsDisplay();
+            } else {
+                alert('Not enough points for this discount.');
+            }
+            break;
+
+        default:
+            alert('Invalid discount type.');
+            break;
+    }
+}
