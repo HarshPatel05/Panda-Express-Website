@@ -719,3 +719,15 @@ body {
     margin-bottom: 10px;
 }
 
+.discount-options {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.discount-options .button {
+    width: 200px;
+    text-align: center;
+}
+
