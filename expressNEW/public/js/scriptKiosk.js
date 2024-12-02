@@ -1062,9 +1062,60 @@ function getFullSizeName(abbreviation) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////               REWARDS ZONE                /////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function redirectToRewards() {
+    // Show the rewards panel
+    document.getElementById('rewardsPanel').style.display = 'block';
+
+    // Optionally, disable scrolling in the background while the panel is visible
+    document.body.style.overflow = 'hidden';
+
+    // Focus the input field so that the user can start typing immediately
+    const popupInput = document.getElementById('popupInput');
+    popupInput.focus();
+}
+
+function closeRewardsPanel() {
+    document.getElementById('rewardsPanel').style.display = 'none';
+    // Re-enable scrolling if the panel is closed
+    document.body.style.overflow = 'auto';
+    Keyboard.close();
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////        CHECKOUT AND KEYBOARD ZONE         /////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Define an array to store the prohibited words from the CSV
+let prohibitedWords = [];
+
+// Function to load the CSV file and extract prohibited words
+function loadProhibitedWords() {
+    fetch('/supportFiles/profanity_en.csv')
+        .then(response => response.text())
+        .then(csvData => {
+            const parsedData = Papa.parse(csvData, { header: true, skipEmptyLines: true });
+            // Extract the 'text' column and store it in the prohibitedWords array
+            prohibitedWords = parsedData.data.map(row => row.text.trim().toLowerCase()).filter(text => text !== '');
+        })
+        .catch(error => {
+            console.error('Error loading CSV:', error);
+        });
+}
+
+// Load prohibited words on page load
+window.onload = loadProhibitedWords;
+
+
+let isProfanityDetected = false;
+
+// List of allowed names to bypass profanity check
+const allowedNames = ['assunta', 'cass', 'cassandra', 'cassidy', 'cassie', 'cassius', 'cassondra', 'classie', 
+    'douglass', 'hassan', 'hassie', 'kass', 'kassandra', 'kassidy', 'kassie', 'lassie', 'vassie'];
 
 function checkoutOrder() {
     // Check if there are no items in the order
@@ -1078,20 +1129,63 @@ function checkoutOrder() {
     const popupDoneBtn = document.getElementById('popupDoneBtn');
 
     // Show the checkout panel and focus on the textarea
-    checkoutPanel.style.display = 'block';
+    checkoutPanel.style.display = 'block'; // Make it visible
     popupInput.value = ''; // Clear any previous input
     popupInput.focus();
 
-    // Attach an event listener for the "Done" button
-    popupDoneBtn.addEventListener('click', () =>
-    {
-        const userInput = popupInput.value;
+    // Listen for the "Done" button click and handle name input validation
+    popupDoneBtn.addEventListener('click', handleNameValidation, { once: true });
+}
+    
 
-        // Close the virtual keyboard
-        Keyboard.close();
 
-        // Hide the popup and process the user input
-        checkoutPanel.style.display = 'none';
+function handleNameValidation() {
+    const popupInput = document.getElementById('popupInput');
+    const userInput = popupInput.value.trim().toLowerCase();
+
+    // Check if the name is in the whitelist (bypass profanity check)
+    if (allowedNames.includes(userInput)) {
+        proceedWithCheckout(userInput);
+    } else {
+        // Check for profanity in the user input
+        const containsProfanity = checkForProfanity(userInput);
+
+        if (containsProfanity || userInput == "") {
+            alert('Your name is invalid. Please enter a valid name.');
+            isProfanityDetected = true;
+
+            // Allow the user to re-enter their name by showing the input and done button again
+            showRetry();
+        } else {
+            // Proceed with the checkout
+            proceedWithCheckout(userInput);
+        }
+    }
+}
+
+function checkForProfanity(userInput) {
+    return prohibitedWords.some(word => userInput.includes(word));
+}
+
+function showRetry() {
+    // Get the checkout panel and input elements
+    const checkoutPanel = document.getElementById('checkoutPanel');
+    const popupInput = document.getElementById('popupInput');
+    const popupDoneBtn = document.getElementById('popupDoneBtn');
+
+    // Show the input field and done button again so the user can try a new name
+    checkoutPanel.style.display = 'block';
+    popupInput.focus();
+    popupDoneBtn.addEventListener('click', handleNameValidation, { once: true });
+}
+
+function proceedWithCheckout(userInput) {
+    // Close the virtual keyboard
+    Keyboard.close();
+
+    // Hide the checkout panel
+    const checkoutPanel = document.getElementById('checkoutPanel');
+    checkoutPanel.style.display = 'none';
 
         // Flatten the array of menuIds from each order item
         // const menuItemIDs = orderItems.flatMap(item => item.menuIds);
@@ -1101,14 +1195,14 @@ function checkoutOrder() {
         console.log('Menu Item IDs:', menuItemIDs);
         console.log('Input Name:', userInput);
 
-        updatePendingOrders(totalAmount, menuItemIDs, userInput);
+    // Update pending orders
+    updatePendingOrders(totalAmount, menuItemIDs, userInput);
 
-        // Show an alert with the menu IDs, total price, and user input
-        alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}\nUser Input: ${userInput}`);
+    // Show an alert with the menu IDs, total price, and user input
+    alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}\nUser Input: ${userInput}`);
 
-        // Clear the order
-        clearOrder(); // Assuming clearOrder() resets the order and total
-    }, { once: true }); // Add listener once to avoid multiple triggers
+    // Clear the order
+    clearOrder(); // Assuming clearOrder() resets the order and total
 }
 
 

@@ -250,7 +250,7 @@ app.get('/api/menuitems', async (req, res) =>
   {
     try 
     {
-      const result = await pool.query('SELECT menuItemId, menuItem, price, size, displayName FROM menuItems');
+      const result = await pool.query('SELECT menuItemId, menuItem, price, size, displayName FROM menuItems ORDER BY menuitemid ASC;');
       res.json(result.rows);
     } 
     catch (error) 
@@ -750,6 +750,16 @@ app.get('/api/getdisplayname', async (req, res) =>
   };
 });
 
+app.delete('/api/deletependingorder/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+      await pool.query('DELETE FROM pendingorders WHERE pendingorderid = $1', [id]);
+      res.status(200).send({ message: `Pending order ${id} deleted successfully.` });
+  } catch (error) {
+      console.error('Error deleting pending order:', error);
+      res.status(500).send({ error: 'Failed to delete pending order.' });
+  }
+});
 
 
 //######################################################################  FEATURES ENDPOINTS  ########################################################################
@@ -791,6 +801,53 @@ app.get('/api/xReport', async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   } 
 });
+
+app.post('/api/removeStock', async (req, res) => {
+  const { ingredientName, quantity } = req.query;
+
+  if (!ingredientName || !quantity || quantity <= 0) {
+      return res.status(400).json({ error: 'Invalid data' });
+  }
+
+  try {
+      const result = await pool.query(
+          'UPDATE inventory SET quantity = quantity - $1 WHERE ingredient = $2 RETURNING *;',
+          [quantity, ingredientName]
+      );
+
+      if (result.rows.length === 0) {
+          return res.status(404).json({ error: 'Ingredient not found' });
+      }
+
+      res.json({ message: `Successfully removed ${quantity} from ${ingredientName}` });
+  } catch (error) {
+      console.error('Error removing stock:', error);
+      res.status(500).json({ error: 'Failed to remove stock' });
+  }
+});
+
+
+app.post('/api/changePrice', async (req, res) => {
+  const { menuItemID, newPrice } = req.body;
+
+  if (!menuItemID || !newPrice) {
+    return res.status(400).json({ error: 'Invalid data' });
+  }
+
+  try {
+    const result = await pool.query('UPDATE menuitems SET price = $1 WHERE menuitemid = $2 RETURNING *;', [newPrice, menuItemID]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    res.json({ message: `Price updated successfully for item ${menuItemID}`, item: result.rows[0] });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'An error occurred while updating the price' });
+  }
+});
+
 
 
 /**
