@@ -61,10 +61,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     inProgressContainer.addEventListener("click", async (e) => {
         const order = e.target.closest(".orderCard");
         if (order && order.dataset.status === "in-progress") {
+            // Move order to "completed"
             order.dataset.status = "completed";
             completedContainer.appendChild(order);
             order.style.cursor = "default";
 
+            // Play the announcement
             const speechSynthesis = window.speechSynthesis;
             const name = order.dataset.name || "unknown customer";
             const text = `Order for ${name} is completed.`;
@@ -77,27 +79,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             speechSynthesis.speak(speech);
 
-            const menuItemIDs = JSON.parse(order.dataset.menuItemIDs); // Convert back to an array
+            // Checkout the order
+            const menuItemIDs = JSON.parse(order.dataset.menuItemIDs); // Parse the menuItemIDs into an array
             const totalCost = parseFloat(order.dataset.totalCost);
 
-            console.log("Menu Item IDs:", menuItemIDs);
-            console.log("Total Cost:", totalCost);
+            console.log("Checking out order:", menuItemIDs, "Total cost:", totalCost);
 
-            await updateOrder(totalCost, menuItemIDs);
-            await updateInventory(menuItemIDs);
+            await checkoutOrder(totalCost, menuItemIDs);
 
+            // Remove the order after 5 minutes
             setTimeout(() => {
                 if (order.parentElement === completedContainer) {
                     order.remove();
                 }
             }, 300000); // 5 minutes
-        }
-    });
-
-    completedContainer.addEventListener("click", (e) => {
-        const order = e.target.closest(".orderCard");
-        if (order && order.dataset.status === "completed") {
-            order.remove();
         }
     });
 
@@ -125,7 +120,7 @@ async function loadPendingOrders() {
             const orderCard = document.createElement("div");
             orderCard.classList.add("orderCard");
             orderCard.dataset.status = "in-progress";
-            orderCard.dataset.menuItemIDs = JSON.stringify(order.menuitemids);
+            orderCard.dataset.menuItemIDs = JSON.stringify(convertToArray(order.menuitemids));
             orderCard.dataset.totalCost = order.totalcost;
             orderCard.dataset.name = order.name;
 
@@ -139,7 +134,7 @@ async function loadPendingOrders() {
             const orderList = document.createElement("div");
             orderList.classList.add("order-list");
 
-            const items = order.menuitemids.slice(1, -1).split(',').map((item) => item.trim());
+            const items = convertToArray(order.menuitemids);
 
             let i = 0;
             while (i < items.length) {
@@ -170,10 +165,11 @@ async function loadPendingOrders() {
                     bowlItem.appendChild(bowlList);
                     orderList.appendChild(bowlItem);
                     i += 4;
-                } else if (itemDetails.name.toLowerCase().includes("plate") && !itemDetails.name.toLowerCase().includes("bigger")) {
-                    const plateItem = document.createElement("div");
-                    plateItem.textContent = `Plate`;
-                    const plateList = document.createElement("ul");
+                } 
+                else if (itemDetails.name.toLowerCase().includes("plate")) {
+                    const bowlItem = document.createElement("div");
+                    bowlItem.textContent = `Plate`;
+                    const bowlList = document.createElement("ul");
 
                     for (let j = 1; j <= 4 && i + j < items.length; j++) {
                         const subItemId = items[i + j];
@@ -182,16 +178,17 @@ async function loadPendingOrders() {
                         subListItem.textContent = subItemDetails
                             ? convertCamelCaseToReadable(subItemDetails.name)
                             : `Unknown item`;
-                        plateList.appendChild(subListItem);
+                        bowlList.appendChild(subListItem);
                     }
 
-                    plateItem.appendChild(plateList);
-                    orderList.appendChild(plateItem);
-                    i += 5;
-                } else if (itemDetails.name.toLowerCase().includes("bigger plate")) {
-                    const biggerPlateItem = document.createElement("div");
-                    biggerPlateItem.textContent = `Bigger Plate`;
-                    const biggerPlateList = document.createElement("ul");
+                    bowlItem.appendChild(bowlList);
+                    orderList.appendChild(bowlItem);
+                    i += 4;
+                } 
+                else if (itemDetails.name.toLowerCase().includes("biggerPlate")) {
+                    const bowlItem = document.createElement("div");
+                    bowlItem.textContent = `Bigger Plate`;
+                    const bowlList = document.createElement("ul");
 
                     for (let j = 1; j <= 5 && i + j < items.length; j++) {
                         const subItemId = items[i + j];
@@ -200,13 +197,14 @@ async function loadPendingOrders() {
                         subListItem.textContent = subItemDetails
                             ? convertCamelCaseToReadable(subItemDetails.name)
                             : `Unknown item`;
-                        biggerPlateList.appendChild(subListItem);
+                        bowlList.appendChild(subListItem);
                     }
 
-                    biggerPlateItem.appendChild(biggerPlateList);
-                    orderList.appendChild(biggerPlateItem);
-                    i += 6;
-                } else {
+                    bowlItem.appendChild(bowlList);
+                    orderList.appendChild(bowlItem);
+                    i += 4;
+                } 
+                else {
                     const singleItem = document.createElement("div");
                     singleItem.textContent = formatWithSize(itemDetails.name, itemDetails.size);
                     orderList.appendChild(singleItem);
@@ -230,6 +228,13 @@ async function loadPendingOrders() {
     } catch (error) {
         console.error('Error loading pending orders:', error);
     }
+}
+
+function convertToArray(menuitemids) {
+    if (typeof menuitemids === "string") {
+        return menuitemids.replace(/[{}[\]]/g, '').split(',').map(id => parseInt(id.trim(), 10));
+    }
+    return menuitemids; // If already an array, return as is
 }
 
 function startTimer(orderCard, timerElement) {
@@ -257,16 +262,23 @@ function startTimer(orderCard, timerElement) {
     setInterval(updateTimer, 1000);
 }
 
-async function updateOrder(totalCost, menuItemIDs) {
+async function checkoutOrder(totalCost, menuItemIDs) {
     try {
         const response = await fetch('/api/updateorders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ totalCost, menuItemIDs }),
         });
-        console.log('Order updated:', await response.json());
+
+        if (!response.ok) {
+            throw new Error('Failed to update order.');
+        }
+
+        console.log('Order successfully checked out:', await response.json());
+
+        await updateInventory(menuItemIDs); // Update inventory after successful checkout
     } catch (error) {
-        console.error('Error updating order:', error);
+        console.error('Error during checkout:', error);
     }
 }
 
@@ -277,7 +289,12 @@ async function updateInventory(menuItemIDs) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ menuItemIDs }),
         });
-        console.log('Inventory updated:', await response.json());
+
+        if (!response.ok) {
+            throw new Error('Failed to update inventory.');
+        }
+
+        console.log('Inventory successfully updated:', await response.json());
     } catch (error) {
         console.error('Error updating inventory:', error);
     }
