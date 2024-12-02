@@ -1313,6 +1313,12 @@ function getFullSizeName(abbreviation) {
 //////////////////////////////////////////////////////////////               REWARDS ZONE                /////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+let userDetails = {
+    name: "",
+    points: 0,
+    email: ""
+};
+
 function redirectToRewards() {
     // Show the rewards panel
     document.getElementById('rewardsPanel').style.display = 'block';
@@ -1347,20 +1353,46 @@ function showCreateAccount() {
     document.getElementById('nameInput').focus();
 }
 
-async function handleSignIn()
-{
-    const emailIn = document.getElementById('signInInput').value.trim(); // Trim whitespace
+async function handleSignIn() {
+    const emailIn = document.getElementById('signInInput').value.trim();
 
-    if (validateEmail(emailIn) && await validateEmailDB(emailIn))
-    {
-        alert(`Signed in with email: ${emailIn}`);
-        closeRewardsPanel();
+    if (!validateEmail(emailIn)) {
+        alert('Please enter a valid email.');
+        return;
     }
-    else
-    {
-        alert("Please enter a valid email.");
+
+    try {
+        const checkResponse = await fetch(`/api/checkaccount?email=${encodeURIComponent(emailIn)}`);
+        if (checkResponse.status === 404) {
+            alert('Account does not exist. Please create an account.');
+            return;
+        }
+
+        const detailsResponse = await fetch(`/api/getuserdetails?email=${encodeURIComponent(emailIn)}`);
+        if (!detailsResponse.ok) {
+            throw new Error(`Failed to fetch user details: HTTP error! Status: ${detailsResponse.status}`);
+        }
+
+        const userDetailsResponse = await detailsResponse.json();
+        userDetails = {
+            name: userDetailsResponse.name || 'Rewards Member',
+            points: userDetailsResponse.points || 0,
+            email: emailIn,
+        };
+
+        globalEmail = userDetails.email; // Set globalEmail
+        console.log('Updated globalEmail:', globalEmail); // Debug log
+
+        updateUIAfterSignIn();
+        alert(`Welcome back, ${userDetails.name}!`);
+        closeRewardsPanel();
+    } catch (error) {
+        console.error('Error signing in:', error);
+        alert('An error occurred while signing in. Please try again later.');
     }
 }
+
+
 
 async function handleCreateAccount()
 {
@@ -1475,6 +1507,61 @@ function closeRewardsPanel() {
 }
 
 
+function updateUIAfterSignIn() {
+    console.log("Updating UI with userDetails:", userDetails); // Debugging: Verify userDetails content
+
+    // Update the title
+    const titleElement = document.getElementById('welcomeTitle');
+    if (!titleElement) {
+        console.error("Element with ID 'welcomeTitle' not found.");
+        return;
+    }
+    titleElement.textContent = `Welcome, ${userDetails.name}`;
+
+    // Update the rewards button to a log-out button
+    const rewardsButton = document.getElementById('rewardsButton');
+    if (!rewardsButton) {
+        console.error("Element with ID 'rewardsButton' not found.");
+        return;
+    }
+    rewardsButton.textContent = "Log Out";
+    rewardsButton.onclick = handleLogOut;
+
+    // Update points display in the bottom bar
+    const pointsDisplay = document.getElementById('pointsDisplay');
+    if (pointsDisplay) {
+        pointsDisplay.textContent = `Points: ${userDetails.points}`;
+    } else {
+        console.error("Element with ID 'pointsDisplay' not found.");
+    }
+}
+
+function handleLogOut() {
+    // Reset global variables
+    globalEmail = '';
+    userDetails = {
+        name: '',
+        points: 0,
+        email: ''
+    };
+
+    // Reset the UI to the logged-out state
+    const titleElement = document.getElementById('welcomeTitle');
+    titleElement.textContent = 'Panda Express Kiosk';
+
+    const rewardsButton = document.getElementById('rewardsButton');
+    rewardsButton.textContent = 'Rewards Member';
+    rewardsButton.onclick = redirectToRewards;
+
+    const pointsDisplay = document.getElementById('pointsDisplay');
+    if (pointsDisplay) {
+        pointsDisplay.textContent = 'Points: 0';
+    }
+
+    console.log('User logged out successfully.');
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
@@ -1571,6 +1658,12 @@ function showRetry() {
 }
 
 async function proceedWithCheckout(userInput) {
+    if (!globalEmail || globalEmail.trim() === '') {
+        alert('Please sign in or create an account to complete your order.');
+        redirectToRewards(); // Redirect user to rewards login or sign-up panel
+        return;
+    }
+
     // Close the virtual keyboard
     Keyboard.close();
 
@@ -1578,69 +1671,65 @@ async function proceedWithCheckout(userInput) {
     const checkoutPanel = document.getElementById('checkoutPanel');
     checkoutPanel.style.display = 'none';
 
-        // Flatten the array of menuIds from each order item
-        // const menuItemIDs = orderItems.flatMap(item => item.menuIds);
-        const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id != undefined);
+    // Flatten the array of menuIds from each order item
+    const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id !== undefined);
 
-        console.log('Total Amount:', totalAmount);
-        console.log('Menu Item IDs:', menuItemIDs);
-        console.log('Input Name:', userInput);
+    console.log('Total Amount:', totalAmount);
+    console.log('Menu Item IDs:', menuItemIDs);
+    console.log('Input Name:', userInput);
 
     // Update pending orders
     updatePendingOrders(totalAmount, menuItemIDs, userInput);
 
-    // Round totalAmount to an integer for points (assuming points are integers)
+    // Round totalAmount to an integer for points
     const roundedPoints = Math.round(totalAmount);
 
-    // Call the addPointsToAccount function
+    // Add points to the account
     const data = await addPointsToAccount(globalEmail, roundedPoints);
 
-    // If points were added successfully, proceed with showing the order details
-    if (data)
-    {
-        // Show an alert with the menu IDs, total price, and user input
-        alert(`Order Details:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal Price: $${totalAmount.toFixed(2)}\nUser Input: ${userInput}`);
+    if (data) {
+        // Show an alert with the order details
+        alert(`Order placed successfully!\nDetails:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal: $${totalAmount.toFixed(2)}\nThank you, ${userInput}!`);
 
         // Clear the order
-        clearOrder(); // Assuming clearOrder() resets the order and total
+        clearOrder();
+
+        // Log the user out after order
+        handleLogOut();
+
+        alert('You have been logged out. Please sign in again for your next order.');
     }
 }
 
 
-async function addPointsToAccount(email, points)
-{
-    try
-    {
-        // Send a POST request to add points to the user's account
-        const response = await fetch('/api/addpoints',
-        {
+async function addPointsToAccount(email, points) {
+    if (!email || email.trim() === '') {
+        console.error('Email is missing or empty.');
+        alert('Email is not set. Please log in or create an account.');
+        return null;
+    }
+
+    try {
+        const response = await fetch('/api/addpoints', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify
-            ({
-                email: email,
-                points: points
-            })
+            body: JSON.stringify({ email, points }),
         });
 
-        if (!response.ok)
-        {
+        if (!response.ok) {
             throw new Error(`Error adding points: ${response.status}`);
         }
 
         const data = await response.json();
         console.log('Points added successfully:', data);
-
-        return data; // Return the data from the response
-
-    }
-    catch (error)
-    {
-        console.error('Error:', error);
-        alert('There was an error adding points. Please try again.');
-        return null; // Return null if there is an error
+        return data;
+    } catch (error) {
+        console.error('Error adding points:', error);
+        return null;
     }
 }
+
+
 
 
 async function updatePendingOrders(totalCost, menuItemIDs, inputName)

@@ -19,8 +19,8 @@
         <a href="/index">
             <img src="../Panda Express Photos/Panda Express Logo.png" alt="Logo" class="logo">
         </a>
-        <h1 class="title">Panda Express Kiosk</h1>
-        <button class="rewards-button" onclick="redirectToRewards()">Rewards Member</button>
+        <h1 id="welcomeTitle" class="title">Panda Express Kiosk</h1>
+        <button id="rewardsButton" class="rewards-button" onclick="redirectToRewards()">Rewards Member</button>
     </div>
 
     <div class="main-content">
@@ -295,6 +295,7 @@
 
     <div class="bottom-bar">
         <p id="weatherInfo">ADD API STUFF HERE!</p>
+        <p id="pointsDisplay" style="position: absolute; right: 10px; bottom: 5px; font-weight: bold;">Points: 0</p>
     </div>
 </body>
 </html>

@@ -653,7 +653,7 @@ body {
     padding: 10px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between; /* Adjust spacing for left and right content */
     color: white;
     font-size: clamp(14px, 1vw, 16px); /* Responsive font size */
     position: fixed;
@@ -661,6 +661,13 @@ body {
     width: 100%;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Add shadow on the top */
     height: 50px; /* Set a fixed height for the bar */
+}
+
+#pointsDisplay {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 80px;
+    color: white; /* Match the color of the bottom bar */
 }
 
 .cancel-btn {
