@@ -226,13 +226,13 @@ tbody tr:nth-child(odd) {
     width: auto;
 }
 
-/* Dropdown Button Hover Effects */
+
 .dropdownButton:hover {
     background-color: #cc0000;
     transform: scale(1.05);
 }
 
-/* Dropdown Content */
+
 .dropdownContent {
     display: none;
     position: absolute;
@@ -253,12 +253,10 @@ tbody tr:nth-child(odd) {
     transition: background-color 0.3s ease;
 }
 
-/* Dropdown Link Hover Effect */
 .dropdownContent a:hover {
     background-color: #f2f2f2;
 }
 
-/* Show Dropdown */
 .dropdownContent.show {
     display: block;
 }
