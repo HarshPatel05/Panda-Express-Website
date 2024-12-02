@@ -199,13 +199,35 @@
                 <div class="popup-box">
                     <!-- Close button -->
                     <button class="close-btn" onclick="closeRewardsPanel()">✖</button>
-                    <label for="popupInput">REWARDS</label>
-                    <textarea class="use-keyboard-input" id="popupInput" maxlength="30"></textarea>
+                    <h2>Rewards Login!</h2>
+        
+                    <!-- Sign In Section -->
+                    <div id="signInSection" style="display: none;">
+                        <label for="signInInput">Enter your email</label>
+                        <textarea class="use-keyboard-input" id="signInInput" maxlength="30"></textarea>
+                        <button onclick="handleSignIn()">Submit</button>
+                    </div>
+        
+                    <!-- Create Account Section -->
+                    <div id="createAccountSection" style="display: none;">
+                        <label for="nameInput">Enter your name</label>
+                        <textarea class="use-keyboard-input" id="nameInput" maxlength="30"></textarea>
+                        
+                        <label for="emailInput">Enter your email</label>
+                        <textarea class="use-keyboard-input" id="emailInput" maxlength="30"></textarea>
+                        
+                        <label for="confirmEmailInput">Confirm your email</label>
+                        <textarea class="use-keyboard-input" id="confirmEmailInput" maxlength="30"></textarea>
+                        <button onclick="handleCreateAccount()">Submit</button>
+                    </div>
+        
+                    <!-- Buttons to toggle sections -->
+                    <button id="signInButton" onclick="showSignIn()">Sign In</button>
+                    <button id="createAccountButton" onclick="showCreateAccount()">Create New Account</button>
                 </div>
             </div>
         </div>
-        
-        
+            
         <!-- CONSTRUCTION ZONE -->
         <!-- END OF STUFF COBY ADDED!!!!!!!!!! -->
         

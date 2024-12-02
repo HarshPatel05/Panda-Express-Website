@@ -308,3 +308,20 @@ function populateProductUsageTable(data) {
 let reportDate = new Date().toISOString().split('T')[0];
 window.onload = setupTabs;
 
+function toggleDropdown() {
+    const dropdown = document.getElementById("dropdownMenu");
+    if (dropdown.style.display === "block") {
+        dropdown.style.display = "none";
+    } else {
+        dropdown.style.display = "block";
+    }
+}
+
+window.onclick = function (event) {
+    if (!event.target.matches('.dropdownButton')) {
+        const dropdowns = document.getElementsByClassName("dropdownContent");
+        for (let i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].style.display = "none";
+        }
+    }
+};

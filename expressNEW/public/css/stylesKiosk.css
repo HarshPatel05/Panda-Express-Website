@@ -474,22 +474,24 @@ body {
 //////////////////////////////////////////////////////////////                                           /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
 
-/* Popup container styling */
+/* Container for centering the popup */
 .popup-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    position: fixed; /* Ensures it stays in place relative to the viewport */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjusts for the popup's size */
+    z-index: 1000; /* Ensures it's above other content */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure popup appears above most elements */
+    width: 100%; /* Makes sure it fills the viewport */
+    height: 100%; /* Makes sure it fills the viewport */
+    background-color: rgba(0, 0, 0, 0.4); /* Adds a semi-transparent background */
 }
 
 /* Popup box styling */
 .popup-box {
+    position: relative; /* Keeps the close button positioned inside the popup */
     background: #ffffff;
     border-radius: 8px;
     padding: 20px;
@@ -501,6 +503,28 @@ body {
     align-items: center;
     gap: 15px;
     box-sizing: border-box; /* Ensure padding is included in width calculation */
+}
+
+/* Close button styling */
+.close-btn {
+    position: absolute; /* Allows positioning inside the popup box */
+    top: 10px; /* Offset from the top edge of the popup box */
+    right: 10px; /* Offset from the right edge of the popup box */
+    font-size: 20px;
+    background: transparent;
+    border: none;
+    color: #9c2824; /* Matches the button theme */
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 10; /* Ensures it stays above the content */
+}
+
+.close-btn:hover {
+    color: #c9302c; /* Slightly brighter red for hover effect */
+}
+
+.close-btn:active {
+    color: #d9534f; /* Slightly darker red for active state */
 }
 
 /* Label above the textbox */
@@ -544,6 +568,7 @@ body {
 .popup-box button:active {
     background-color: #d9534f; /* Custom color */
 }
+
 
 
 /* Keyboard styling */
