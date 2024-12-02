@@ -1332,24 +1332,26 @@ function redirectToRewards() {
 }
 
 function showSignIn() {
-    // Hide other sections
-    document.getElementById('createAccountSection').style.display = 'none';
-
-    // Show the sign-in section
+    // Hide the main buttons and show the sign-in section
     document.getElementById('signInSection').style.display = 'block';
+    document.getElementById('createAccountSection').style.display = 'none';
+    document.getElementById('signInButton').style.display = 'none';
+    document.getElementById('createAccountButton').style.display = 'none';
+    document.getElementById('goBackButton').style.display = 'block';
 
-    // Optionally, focus the email input
-    document.getElementById('popupInput').focus();
+    // Focus on the email input
+    document.getElementById('signInInput').focus();
 }
 
 function showCreateAccount() {
-    // Hide other sections
-    document.getElementById('signInSection').style.display = 'none';
-
-    // Show the create account section
+    // Hide the main buttons and show the create account section
     document.getElementById('createAccountSection').style.display = 'block';
+    document.getElementById('signInSection').style.display = 'none';
+    document.getElementById('signInButton').style.display = 'none';
+    document.getElementById('createAccountButton').style.display = 'none';
+    document.getElementById('goBackButton').style.display = 'block';
 
-    // Optionally, focus the name input
+    // Focus on the name input
     document.getElementById('nameInput').focus();
 }
 
@@ -1496,14 +1498,23 @@ async function validateEmailDB(email)
     }
 }
 
+function goBackToMain() {
+    // Show the main buttons and hide other sections
+    document.getElementById('signInSection').style.display = 'none';
+    document.getElementById('createAccountSection').style.display = 'none';
+    document.getElementById('signInButton').style.display = 'block';
+    document.getElementById('createAccountButton').style.display = 'block';
+    document.getElementById('goBackButton').style.display = 'none';
+    Keyboard.close();
+}
+
 function closeRewardsPanel() {
     document.getElementById('rewardsPanel').style.display = 'none';
     document.body.style.overflow = 'auto';
     Keyboard.close();
 
-    // Hide both sections on close
-    document.getElementById('signInSection').style.display = 'none';
-    document.getElementById('createAccountSection').style.display = 'none';
+    // Hide all sections and reset to the main screen
+    goBackToMain();
 }
 
 
