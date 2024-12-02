@@ -215,7 +215,12 @@ async function populateSales() {
 }
 
 async function populateReports(APIEndpoint, tableID) {
-    let currDate = new Date().toISOString().split('T')[0];
+    let currDate = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Chicago', 
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).format(new Date());
     if (reportDate != currDate) {
         alert("Store is closed");
         return;
@@ -305,7 +310,13 @@ function populateProductUsageTable(data) {
     }
 }
 
-let reportDate = new Date().toISOString().split('T')[0];
+let reportDate = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Chicago',  
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+}).format(new Date());
+
 window.onload = setupTabs;
 
 function toggleDropdown() {
@@ -325,3 +336,20 @@ window.onclick = function (event) {
         }
     }
 };
+
+function toCamelCase(str) {
+    return str
+        .toLowerCase() 
+        .replace(/[^a-zA-Z0-9 ]/g, '') 
+        .split(' ') 
+        .map((word, index) => 
+            index === 0
+                ? word 
+                : word.charAt(0).toUpperCase() + word.slice(1) 
+        )
+        .join(''); 
+}
+
+function enforceCamelCase(input) {
+    input.value = toCamelCase(input.value);
+}
