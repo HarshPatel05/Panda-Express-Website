@@ -134,7 +134,13 @@
             <h3>Seasonal Menu Items</h3>
             <div class="seasonalControls">
                 <label for="seasonalItemInput">New Seasonal Item:</label>
-                <input type="text" id="seasonalItemInput" name="seasonalItemInput" placeholder="Enter seasonal item">
+                <input
+                    type="text"
+                    id="seasonalItemInput"
+                    name="seasonalItemInput"
+                    placeholder="Enter seasonal item"
+                    onblur="enforceCamelCase(this)"
+                >
                 <button id="addSeasonalItemButton" onclick="addSeasonalItem()">Add Seasonal Item</button>
             </div>
             <tbody>
