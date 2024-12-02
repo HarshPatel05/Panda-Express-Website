@@ -5,36 +5,133 @@ function googleTranslateElementInit() {
         "googleTranslateElement"
     )
 }
+function updateTimeframeInputs() {
+    const timeframe = document.getElementById('timeframe').value;
+    const dateInput = document.getElementById('dateInput');
 
-async function changePrice() {
-    const menuItemID = document.getElementById('menuItemID').value.trim();
-    const newPrice = document.getElementById('newPrice').value.trim();
+    if (timeframe === 'hourly') {
+        dateInput.placeholder = 'Enter date (YYYY-MM-DD)';
+        dateInput.type = 'date'; 
+    } else if (timeframe === 'daily') {
+        dateInput.placeholder = 'Enter month (YYYY-MM)';
+        dateInput.type = 'month'; 
+    } else if (timeframe === 'monthly') {
+        dateInput.placeholder = 'Enter year (YYYY)';
+        dateInput.type = 'number'; 
+    }
+}
 
-    if (!menuItemID || !newPrice) {
-        alert("Please fill in both required fields.");
+async function getProductUsage() {
+        const ingredient = document.getElementById('ingredient').value;
+        const timeframe = document.getElementById('timeframe').value;
+        const dateInput = document.getElementById('dateInput').value;
+        let url = `/api/product-usage?ingredient=${ingredient}&timeframe=${timeframe}`;
+
+        if (!dateInput) {
+            alert("Please provide a valid date.");
+            return;
+        }
+
+        if (timeframe === 'hourly') {
+            url += `&day=${dateInput}`;
+        } else if (timeframe === 'daily') {
+            url += `&month=${dateInput}`;
+        } else if (timeframe === 'monthly') {
+            url += `&year=${dateInput}`;
+        }
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (response.ok) {
+                query = "#product-usage"; 
+                const tableBody = document.querySelector(query);
+                data.forEach(row => {
+                    const tableRow = document.createElement('tr');
+                    Object.values(row).forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value;
+                        tableRow.appendChild(cell);
+                    });
+                    tableBody.appendChild(tableRow);
+                });
+
+            } else {
+                alert(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            alert('An error occurred while fetching the product usage data.');
+    }
+}
+
+async function removeIngredient() {
+    const ingredientName = document.getElementById('removeIngredient').value;
+    const quantityToRemove = document.getElementById('removeQuantity').value;
+
+    if (!ingredientName || !quantityToRemove || quantityToRemove <= 0) {
+        alert("Please fill both required fields with valid data.");
         return;
     }
 
     try {
-        const response = await fetch('/api/changePrice', {
+        const response = await fetch(`/api/removeStock?ingredientName=${ingredientName}&quantity=${quantityToRemove}`, {
+            method: 'POST', 
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(`Success: ${data.message}`);
+        } else {
+            alert(`Error: ${data.error}`);
+        }
+    } catch (error) {
+        console.error('Error removing ingredient:', error);
+        alert('An error occurred while trying to remove the ingredient.');
+    }
+}
+
+async function changePrice() {
+
+    const menuitemID = document.getElementById('menuItemID').value;
+
+    const price = document.getElementById('newPrice').value;
+
+    if (!menuitemID || !price) {
+        alert("Please fill both required parts");
+        return;
+    }
+
+    try  {
+        await fetch('/api/changePrice', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ menuItemID, newPrice }),
+            body: JSON.stringify({
+                menuItemID: menuItemID,
+                newPrice: newPrice
+            }),
         });
-
-        if (!response.ok) {
-            const errorText = await response.text(); 
-            throw new Error(`Server error: ${response.status} - ${errorText}`);
-        }
-
+        // Parse the response
         const data = await response.json();
-        alert(`Success: ${data.message}`);
-    } catch (error) {
-        console.error('Error changing price:', error);
-        alert(error.message || 'An unexpected error occurred.');
+
+        if (response.ok) {
+            // Success message
+            alert(`Success: ${data.message}`);
+        } else {
+            // Error message
+            alert(`Error: ${data.error}`);
+        }
     }
+
+    catch (error) {
+        console.error('Error changing price:', error);
+        alert('An error occurred while trying to change the price.');
+    }
+
 }
 
 async function restockIngredient() {
@@ -187,47 +284,6 @@ function setupTabs() {
     populateTable(APIEndpoint, tableID);
 }
 
-async function getProductUsage() {
-    const ingredient = document.getElementById('ingredient').value;
-    const timeframe = document.getElementById('timeframe').value;
-    const day = document.getElementById('day').value;
-    const month = document.getElementById('month').value;
-
-    if (!ingredient) {
-        alert("Please enter an ingredient.");
-        return;
-    }
-
-    if (timeframe === 'hourly' && !day) {
-        alert("Please enter a day for hourly data.");
-        return;
-    }
-
-    if ((timeframe === 'daily' || timeframe === 'monthly') && !month) {
-        alert("Please enter a month.");
-        return;
-    }
-
-    try {
-        let url = `/api/product-usage?ingredient=${ingredient}&timeframe=${timeframe}&month=${month}`;
-
-        if (timeframe === 'hourly' && day) {
-            url += `&day=${day}`;
-        }
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (response.ok) {
-            populateProductUsageTable(data);
-        } else {
-            alert(data.message || "No data found.");
-        }
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        alert("An error occurred while fetching product usage data.");
-    }
-}
 
 function populateProductUsageTable(data) {
     const tableBody = document.querySelector('#product-usage');
@@ -251,3 +307,4 @@ function populateProductUsageTable(data) {
 
 let reportDate = new Date().toISOString().split('T')[0];
 window.onload = setupTabs;
+
