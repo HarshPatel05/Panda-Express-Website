@@ -211,6 +211,7 @@ async function loadMenuItems() {
 
 async function loadSeasonalItems() {
     try {
+        // Fetch seasonal items
         const seasonalItemsResponse = await fetch('/api/getactiveseasonalitems');
         if (!seasonalItemsResponse.ok) {
             console.error('Failed to fetch seasonal items:', seasonalItemsResponse.statusText);
@@ -220,117 +221,144 @@ async function loadSeasonalItems() {
         const seasonalItems = await seasonalItemsResponse.json();
         console.log('Fetched Seasonal Items:', seasonalItems);
 
+        // Fetch all menu items for ID matching
+        const menuItemsResponse = await fetch('/api/menuitems');
+        if (!menuItemsResponse.ok) {
+            console.error('Failed to fetch menu items:', menuItemsResponse.statusText);
+            return;
+        }
+
+        const menuItems = await menuItemsResponse.json();
+
+        // Containers
         const entreeContainer = document.getElementById('entree-buttons');
         const sideContainer = document.getElementById('side-buttons');
+        const alacarteEntreeContainer = document.getElementById('ALaCarte-entrees');
+        const alacarteSideContainer = document.getElementById('ALaCarte-sides');
+        const appetizersPanelContent = document.querySelector('#appetizersPanel .panel-content');
 
-        if (!entreeContainer || !sideContainer) {
+        if (!entreeContainer || !sideContainer || !alacarteEntreeContainer || !alacarteSideContainer || !appetizersPanelContent) {
             console.error('One or more containers are missing in the DOM.');
             return;
         }
 
-        // Process seasonal items for Bowls, Plates, and Bigger Plates
+        // Update `menuItemMap` with seasonal items
         seasonalItems.forEach((item) => {
-            if (item.size === 'sm') {
-                // Seasonal Entrees
-                if (item.type === 'entree') {
-                    const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
-                    button.classList.add('menu-item-button');
-                    button.dataset.menuId = item.menuitemid;
-                    button.onclick = () => addComponentToCurrentOrder('entree', item.menuitemid, item.menuitem);
-                    entreeContainer.appendChild(button);
-                }
+            const matchedMenuItem = menuItems.find(
+                (menuItem) =>
+                    menuItem.menuitem === item.menuitem &&
+                    menuItem.size === item.size &&
+                    menuItem.menuitemid > 72
+            );
 
-                // Seasonal Sides
-                if (item.type === 'side') {
-                    const button = document.createElement('button');
-                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
-                    button.classList.add('menu-item-button');
-                    button.dataset.menuId = item.menuitemid;
-                    button.onclick = () => addComponentToCurrentOrder('side', item.menuitemid, item.menuitem);
-                    sideContainer.appendChild(button);
+            if (matchedMenuItem) {
+                if (!menuItemMap[item.menuitem]) {
+                    menuItemMap[item.menuitem] = { sm: null, md: null, lg: null };
                 }
+                menuItemMap[item.menuitem][item.size] = {
+                    menuitemid: Number(matchedMenuItem.menuitemid), // Ensure `menuitemid` is stored as a number
+                    price: matchedMenuItem.price,
+                    displayname: matchedMenuItem.displayname,
+                };
+            } else {
+                console.warn(`No match found for seasonal item: ${item.menuitem}`);
             }
         });
 
-        const alacarteEntreeContainer = document.getElementById('ALaCarte-entrees');
-        const alacarteSideContainer = document.getElementById('ALaCarte-sides');
-
-        if (!alacarteEntreeContainer || !alacarteSideContainer) {
-            console.error('One or more À La Carte containers are missing in the DOM.');
-            return;
-        }
-
-        // Process seasonal items for À La Carte
+        // Populate Seasonal Entrees
         seasonalItems.forEach((item) => {
-            if (item.size === 'sm') {
-                // Seasonal Entrees
-                if (item.type === 'entree') {
-                    const button = document.createElement('button');
-                    button.classList.add('menu-item-button');
-                    button.dataset.menuId = item.menuitemid;
-                    button.onclick = () => addAlaCarteItem('entree', item.menuitemid, item.menuitem, 'sm', item.price);
+            if (item.type === 'entree' && item.size === 'sm') {
+                const button = document.createElement('button');
+                button.classList.add('menu-item-button');
+                button.dataset.menuId = Number(menuItemMap[item.menuitem]?.sm?.menuitemid || 'unknown'); // Ensure number
+                button.onclick = () => addComponentToCurrentOrder('entree', Number(button.dataset.menuId), item.menuitem);
 
-                    // Add the text
-                    const text = document.createElement('div');
-                    text.innerText = camelCaseToNormal(item.menuitem);
-                    text.classList.add('button-text');
-                    button.appendChild(text);
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.menuitem);
+                text.classList.add('button-text');
+                button.appendChild(text);
 
-                    alacarteEntreeContainer.appendChild(button);
-                }
-
-                // Seasonal Sides
-                if (item.type === 'side') {
-                    const button = document.createElement('button');
-                    button.classList.add('menu-item-button');
-                    button.dataset.menuId = item.menuitemid;
-                    button.onclick = () => addAlaCarteItem('side', item.menuitemid, item.menuitem, 'sm', item.price);
-
-                    // Add the text
-                    const text = document.createElement('div');
-                    text.innerText = camelCaseToNormal(item.menuitem);
-                    text.classList.add('button-text');
-                    button.appendChild(text);
-
-                    alacarteSideContainer.appendChild(button);
-                }
+                entreeContainer.appendChild(button);
             }
         });
 
-        const appetizersPanelContent = document.getElementById('appetizer-buttons');
-        if (!appetizersPanelContent) {
-            console.error('Appetizers panel-content not found');
-            return;
-        }
+        // Populate Seasonal Sides
+        seasonalItems.forEach((item) => {
+            if (item.type === 'side' && item.size === 'sm') {
+                const button = document.createElement('button');
+                button.classList.add('menu-item-button');
+                button.dataset.menuId = Number(menuItemMap[item.menuitem]?.sm?.menuitemid || 'unknown'); // Ensure number
+                button.onclick = () => addComponentToCurrentOrder('side', Number(button.dataset.menuId), item.menuitem);
 
-        // Process seasonal items for appetizers
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.menuitem);
+                text.classList.add('button-text');
+                button.appendChild(text);
+
+                sideContainer.appendChild(button);
+            }
+        });
+
+        // Populate Seasonal À La Carte Items
+        seasonalItems.forEach((item) => {
+            const matchedMenuId = Number(menuItemMap[item.menuitem]?.sm?.menuitemid || 'unknown'); // Ensure number
+
+            if (item.type === 'entree' && item.size === 'sm') {
+                const button = document.createElement('button');
+                button.classList.add('menu-item-button');
+                button.dataset.menuId = matchedMenuId;
+                button.onclick = () => addAlaCarteItem('entree', matchedMenuId, item.menuitem, 'sm', item.price);
+
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.menuitem);
+                text.classList.add('button-text');
+                button.appendChild(text);
+
+                alacarteEntreeContainer.appendChild(button);
+            }
+
+            if (item.type === 'side' && item.size === 'sm') {
+                const button = document.createElement('button');
+                button.classList.add('menu-item-button');
+                button.dataset.menuId = matchedMenuId;
+                button.onclick = () => addAlaCarteItem('side', matchedMenuId, item.menuitem, 'sm', item.price);
+
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.menuitem);
+                text.classList.add('button-text');
+                button.appendChild(text);
+
+                alacarteSideContainer.appendChild(button);
+            }
+        });
+
+        // Populate Seasonal Appetizers
         seasonalItems.forEach((item) => {
             if (item.type === 'appetizer') {
-                console.log('Processing Seasonal Appetizer:', item); // Debug log
+                const matchedMenuId = Number(menuItemMap[item.menuitem]?.sm?.menuitemid || 'unknown'); // Ensure number
 
-                // Create a button for the seasonal appetizer
                 const button = document.createElement('button');
-                button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
                 button.classList.add('menu-item-button');
-                button.dataset.menuId = item.menuitemid;
-                button.dataset.size = item.size;
-                button.dataset.price = item.price;
-
-                // Attach click handler to open the modal or perform the action
+                button.dataset.menuId = matchedMenuId;
                 button.onclick = () => addAppetizerToOrder(item.menuitem, item.price);
 
-                // Append the button to the appetizersPanelContent
+                const text = document.createElement('div');
+                text.innerText = camelCaseToNormal(item.menuitem);
+                text.classList.add('button-text');
+                button.appendChild(text);
+
                 appetizersPanelContent.appendChild(button);
-                console.log('Seasonal Appetizer Button Added:', button);
             }
         });
 
-        console.log('Seasonal Appetizers Loaded Successfully.');
+        console.log('Seasonal Items Successfully Loaded.', menuItemMap);
+
     } catch (error) {
         console.error('Error loading seasonal items:', error);
     }
 }
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadSeasonalItems();
@@ -714,55 +742,49 @@ function getFullSizeName(abbreviation) {
     return sizeMap[abbreviation.toLowerCase()] || abbreviation; // Fallback to original if not found
 }
 
-function checkoutOrder()
-{
+function checkoutOrder() {
     // Check if there are no items in the order
-    if (orderItems.length === 0)
-    {
+    if (orderItems.length === 0) {
         alert('Your order is empty. Please add items before checking out.');
-        return; // Exit the function if order is empty
+        return; // Exit the function if the order is empty
     }
 
     // Flatten the array of menuIds from each order item
     const menuItemIDs = orderItems.flatMap(item => item.menuIds); // Flatten array of menuIds
 
+    // Log the order details to the console
+    console.log('Order Details:');
+    console.log('Total Cost:', totalAmount.toFixed(2));
+    console.log('Menu Item IDs:', menuItemIDs);
+
     // Make the POST request to the server to update the order
-    fetch('/api/updateorders',
-    {
+    fetch('/api/updateorders', {
         method: 'POST', // HTTP method for sending data
         headers: { 'Content-Type': 'application/json' }, // Tell the server the data is in JSON format
-        body: JSON.stringify
-        ({
+        body: JSON.stringify({
             totalCost: totalAmount, // Send the total cost of the order (totalAmount is a global variable)
             menuItemIDs: menuItemIDs, // Send the array of menu item IDs
+        }),
+    })
+        .then(response => {
+            // If the response is not OK, throw an error to be caught in the catch block
+            if (!response.ok) {
+                throw new Error('Failed to update order.');
+            }
+            return response.json(); // If the response is OK, parse the JSON response (which contains the server message from server.js)
         })
-    })
+        .then(data => {
+            // Show a success message with the total cost and the server's response message
+            alert(`Order placed successfully!\nOrder total: $${totalAmount.toFixed(2)}\n${data.message}`);
+            clearOrder(); // Clear the order items after successful checkout
 
-    .then(response =>
-    {
-        // If the response is not OK, throw an error to be caught in the catch block
-        if (!response.ok)
-        {
-            throw new Error('Failed to update order.');
-        }
-        return response.json(); // If the response is OK, parse the JSON response (which contains the server message from server.js)
-    })
-
-    .then(data =>
-    {
-        // Show a success message with the total cost and the server's response message
-        alert(`Order placed successfully!\nOrder total: $${totalAmount.toFixed(2)}\n${data.message}`);
-        clearOrder(); // Clear the order items after successful checkout
-
-        updateInventory(menuItemIDs); // inventory update should only happen if the order update succeeds
-    })
-
-    .catch(error =>
-    {
-        // Log and display an error message if something went wrong
-        console.error('Error:', error);
-        alert('An error occurred while placing your order. Please try again.');
-    });
+            updateInventory(menuItemIDs); // Inventory update should only happen if the order update succeeds
+        })
+        .catch(error => {
+            // Log and display an error message if something went wrong
+            console.error('Error:', error);
+            alert('An error occurred while placing your order. Please try again.');
+        });
 }
 
 
