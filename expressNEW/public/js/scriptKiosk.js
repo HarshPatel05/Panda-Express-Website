@@ -1716,47 +1716,61 @@ function showRetry() {
 }
 
 async function proceedWithCheckout(userInput) {
-    if (!globalEmail || globalEmail.trim() === '') {
-        alert('Please sign in or create an account to complete your order.');
-        redirectToRewards(); // Redirect user to rewards login or sign-up panel
-        return;
-    }
+    // Check if user is signed in
+    if (globalEmail && globalEmail.trim() !== '') {
+        // If signed in, add points and proceed with account-specific actions
+        // Flatten the array of menuIds from each order item
+        const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id !== undefined);
 
-    // Close the virtual keyboard
-    Keyboard.close();
+        console.log('Total Amount:', totalAmount);
+        console.log('Menu Item IDs:', menuItemIDs);
+        console.log('Input Name:', userInput);
+
+        // Round totalAmount to an integer for points
+        const roundedPoints = Math.round(totalAmount);
+
+        // Add points to the account
+        const data = await addPointsToAccount(globalEmail, roundedPoints);
+
+        if (data) {
+            // Show an alert with the order details
+            alert(`Order placed successfully!\nDetails:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal: $${totalAmount.toFixed(2)}\nThank you, ${userInput}!`);
+
+            // Clear the order
+            clearOrder();
+
+            // Log the user out after order
+            handleLogOut();
+
+            alert('You have been logged out. Please sign in again for your next order.');
+        }
+    } else {
+        // If not signed in, proceed normally without adding points
+        console.log('Proceeding without sign-in...');
+        
+        // Flatten the array of menuIds from each order item
+        const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id !== undefined);
+
+        console.log('Total Amount:', totalAmount);
+        console.log('Menu Item IDs:', menuItemIDs);
+        console.log('Input Name:', userInput);
+
+        // Update pending orders
+        updatePendingOrders(totalAmount, menuItemIDs, userInput);
+
+        // Show a simple alert with the order details
+        alert(`Order placed successfully!\nDetails:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal: $${totalAmount.toFixed(2)}`);
+        
+        // Clear the order
+        clearOrder();
+    }
 
     // Hide the checkout panel
     const checkoutPanel = document.getElementById('checkoutPanel');
     checkoutPanel.style.display = 'none';
 
-    // Flatten the array of menuIds from each order item
-    const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id !== undefined);
-
-    console.log('Total Amount:', totalAmount);
-    console.log('Menu Item IDs:', menuItemIDs);
-    console.log('Input Name:', userInput);
-
-    // Update pending orders
-    updatePendingOrders(totalAmount, menuItemIDs, userInput);
-
-    // Round totalAmount to an integer for points
-    const roundedPoints = Math.round(totalAmount);
-
-    // Add points to the account
-    const data = await addPointsToAccount(globalEmail, roundedPoints);
-
-    if (data) {
-        // Show an alert with the order details
-        alert(`Order placed successfully!\nDetails:\nMenu IDs: ${menuItemIDs.join(', ')}\nTotal: $${totalAmount.toFixed(2)}\nThank you, ${userInput}!`);
-
-        // Clear the order
-        clearOrder();
-
-        // Log the user out after order
-        handleLogOut();
-
-        alert('You have been logged out. Please sign in again for your next order.');
-    }
+    // Close the virtual keyboard
+    Keyboard.close();
 }
 
 
