@@ -1077,12 +1077,78 @@ function redirectToRewards() {
     popupInput.focus();
 }
 
+function showSignIn() {
+    // Hide other sections
+    document.getElementById('createAccountSection').style.display = 'none';
+
+    // Show the sign-in section
+    document.getElementById('signInSection').style.display = 'block';
+
+    // Optionally, focus the email input
+    document.getElementById('popupInput').focus();
+}
+
+function showCreateAccount() {
+    // Hide other sections
+    document.getElementById('signInSection').style.display = 'none';
+
+    // Show the create account section
+    document.getElementById('createAccountSection').style.display = 'block';
+
+    // Optionally, focus the name input
+    document.getElementById('nameInput').focus();
+}
+
+function handleSignIn() {
+    const emailIn = document.getElementById('signInInput').value.trim(); // Trim whitespace
+    if (validateEmail(emailIn) /* CHECK HERE IF THE INPUT IS ALSO AN EXISTING EMAIL */) {
+        alert(`Signed in with email: ${emailIn}`);
+        closeRewardsPanel();
+    } else{
+        alert("Please enter a valid email.");
+    }
+}
+
+function handleCreateAccount() {
+    const name = document.getElementById('nameInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
+
+    if (!name || !email || !confirmEmail) {
+        alert("All fields are required.");
+        return;
+    }
+
+    if (email !== confirmEmail) {
+        alert("Emails do not match.");
+        return;
+    }
+
+    if (!validateEmail(email)) {
+        alert("Please enter a valid email.");
+        return;
+    }
+    /* Add the name, email, and 0 points to the account when generated */
+    alert(`Account created successfully for ${name}!`);
+    closeRewardsPanel();
+}
+
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
 function closeRewardsPanel() {
     document.getElementById('rewardsPanel').style.display = 'none';
-    // Re-enable scrolling if the panel is closed
     document.body.style.overflow = 'auto';
     Keyboard.close();
+
+    // Hide both sections on close
+    document.getElementById('signInSection').style.display = 'none';
+    document.getElementById('createAccountSection').style.display = 'none';
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1315,7 +1381,7 @@ const Keyboard = {
             "q", "w", "e", "r", "t", "y", "u", "i", "o", "p",
             "caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", "'",
             "done", "z", "x", "c", "v", "b", "n", "m", ".", "-",
-            "space"
+            "space", "@"
         ];
 
         // Creates HTML for an icon
