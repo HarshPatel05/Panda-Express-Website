@@ -6,6 +6,37 @@ function googleTranslateElementInit() {
     )
 }
 
+async function changePrice() {
+    const menuItemID = document.getElementById('menuItemID').value.trim();
+    const newPrice = document.getElementById('newPrice').value.trim();
+
+    if (!menuItemID || !newPrice) {
+        alert("Please fill in both required fields.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/changePrice', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ menuItemID, newPrice }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); 
+            throw new Error(`Server error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        alert(`Success: ${data.message}`);
+    } catch (error) {
+        console.error('Error changing price:', error);
+        alert(error.message || 'An unexpected error occurred.');
+    }
+}
+
 async function restockIngredient() {
     // Get the ingredient name from a user input or specify it directly
     const ingredientName = document.getElementById('restockIngredient').value;
