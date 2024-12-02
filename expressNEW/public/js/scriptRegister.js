@@ -209,6 +209,133 @@ async function loadMenuItems() {
     }
 }
 
+async function loadSeasonalItems() {
+    try {
+        const seasonalItemsResponse = await fetch('/api/getactiveseasonalitems');
+        if (!seasonalItemsResponse.ok) {
+            console.error('Failed to fetch seasonal items:', seasonalItemsResponse.statusText);
+            return;
+        }
+
+        const seasonalItems = await seasonalItemsResponse.json();
+        console.log('Fetched Seasonal Items:', seasonalItems);
+
+        const entreeContainer = document.getElementById('entree-buttons');
+        const sideContainer = document.getElementById('side-buttons');
+
+        if (!entreeContainer || !sideContainer) {
+            console.error('One or more containers are missing in the DOM.');
+            return;
+        }
+
+        // Process seasonal items for Bowls, Plates, and Bigger Plates
+        seasonalItems.forEach((item) => {
+            if (item.size === 'sm') {
+                // Seasonal Entrees
+                if (item.type === 'entree') {
+                    const button = document.createElement('button');
+                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
+                    button.classList.add('menu-item-button');
+                    button.dataset.menuId = item.menuitemid;
+                    button.onclick = () => addComponentToCurrentOrder('entree', item.menuitemid, item.menuitem);
+                    entreeContainer.appendChild(button);
+                }
+
+                // Seasonal Sides
+                if (item.type === 'side') {
+                    const button = document.createElement('button');
+                    button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
+                    button.classList.add('menu-item-button');
+                    button.dataset.menuId = item.menuitemid;
+                    button.onclick = () => addComponentToCurrentOrder('side', item.menuitemid, item.menuitem);
+                    sideContainer.appendChild(button);
+                }
+            }
+        });
+
+        const alacarteEntreeContainer = document.getElementById('ALaCarte-entrees');
+        const alacarteSideContainer = document.getElementById('ALaCarte-sides');
+
+        if (!alacarteEntreeContainer || !alacarteSideContainer) {
+            console.error('One or more À La Carte containers are missing in the DOM.');
+            return;
+        }
+
+        // Process seasonal items for À La Carte
+        seasonalItems.forEach((item) => {
+            if (item.size === 'sm') {
+                // Seasonal Entrees
+                if (item.type === 'entree') {
+                    const button = document.createElement('button');
+                    button.classList.add('menu-item-button');
+                    button.dataset.menuId = item.menuitemid;
+                    button.onclick = () => addAlaCarteItem('entree', item.menuitemid, item.menuitem, 'sm', item.price);
+
+                    // Add the text
+                    const text = document.createElement('div');
+                    text.innerText = camelCaseToNormal(item.menuitem);
+                    text.classList.add('button-text');
+                    button.appendChild(text);
+
+                    alacarteEntreeContainer.appendChild(button);
+                }
+
+                // Seasonal Sides
+                if (item.type === 'side') {
+                    const button = document.createElement('button');
+                    button.classList.add('menu-item-button');
+                    button.dataset.menuId = item.menuitemid;
+                    button.onclick = () => addAlaCarteItem('side', item.menuitemid, item.menuitem, 'sm', item.price);
+
+                    // Add the text
+                    const text = document.createElement('div');
+                    text.innerText = camelCaseToNormal(item.menuitem);
+                    text.classList.add('button-text');
+                    button.appendChild(text);
+
+                    alacarteSideContainer.appendChild(button);
+                }
+            }
+        });
+
+        const appetizersPanelContent = document.getElementById('appetizer-buttons');
+        if (!appetizersPanelContent) {
+            console.error('Appetizers panel-content not found');
+            return;
+        }
+
+        // Process seasonal items for appetizers
+        seasonalItems.forEach((item) => {
+            if (item.type === 'appetizer') {
+                console.log('Processing Seasonal Appetizer:', item); // Debug log
+
+                // Create a button for the seasonal appetizer
+                const button = document.createElement('button');
+                button.innerText = `${camelCaseToNormal(item.menuitem)} (${item.size})`;
+                button.classList.add('menu-item-button');
+                button.dataset.menuId = item.menuitemid;
+                button.dataset.size = item.size;
+                button.dataset.price = item.price;
+
+                // Attach click handler to open the modal or perform the action
+                button.onclick = () => addAppetizerToOrder(item.menuitem, item.price);
+
+                // Append the button to the appetizersPanelContent
+                appetizersPanelContent.appendChild(button);
+                console.log('Seasonal Appetizer Button Added:', button);
+            }
+        });
+
+        console.log('Seasonal Appetizers Loaded Successfully.');
+    } catch (error) {
+        console.error('Error loading seasonal items:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadSeasonalItems();
+});
+
 // Handle size selection and panel toggling
 function setSize(size) {
     // Hide all size-specific panels

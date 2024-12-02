@@ -289,6 +289,13 @@ Drink / Appetizer Columns
 }
 
 
+#appetizersPanel .panel-content {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping to a new line */
+    gap: 10px; /* Add space between buttons (optional) */
+    justify-content: center; /* Center align the buttons (optional) */
+    align-items: center; /* Vertically align buttons within rows (optional) */
+}
 
 
 

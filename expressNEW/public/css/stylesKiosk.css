@@ -324,7 +324,7 @@ body {
 .button-image {
     width: calc(10vw + 40px); /* Dynamically adjust size with viewport */
     max-width: 110px; /* Prevent it from growing too large */
-    height: auto;
+    height: 80px;
     margin-bottom: 8px; /* Space between image and text */
 }
 
