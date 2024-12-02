@@ -330,12 +330,17 @@ app.post('/api/login', async (req, res) =>
       userQuery = "SELECT * FROM employees WHERE employeeid = " + username;
       const result = await pool.query(userQuery);  
 
-      const user = result.rows[0];
-
-    if (user.password !== password) {
-        return res.status(401).json({ error: 'Invalid username or password' });
+    if (result.rows.length === 0) {
+        return res.json({ status: false, position: null });
     }
-    return res.json({ message: 'Login successful', user });
+
+    const user = result.rows[0];
+
+    if (user.password !== password || !user.status) { 
+        return res.json({ status: false, position: null });
+    }
+
+    return res.json({ status: true, position: user.position });
     }
     catch (err)
     {

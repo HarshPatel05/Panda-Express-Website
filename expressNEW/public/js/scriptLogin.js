@@ -6,6 +6,7 @@ function googleTranslateElementInit(){
     )
 }
 
+/*
 async function googleOAuthURL() {
     const URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 
@@ -38,10 +39,8 @@ async function googleOAuthURL() {
 
     }
 }
-
-
-
 document.addEventListener('DOMContentLoaded', googleOAuthURL);
+*/
 
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -62,11 +61,16 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         const result = await response.json();
 
-        if (response.ok) {
-            window.location.href = '/register'; 
+        if (result.status) { 
+            if (result.position === 'Server') {
+                window.location.href = '/register';
+            } else if (result.position === 'Manager') {
+                window.location.href = '/manager';
+            }
         } else {
             alert(result.error || 'Login failed');
         }
+
     } catch (err) {
         console.error('Error during login:', err);
         alert('An error occurred. Please try again later.');
