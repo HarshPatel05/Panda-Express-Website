@@ -1727,14 +1727,11 @@ function showRetry() {
 }
 
 async function proceedWithCheckout(userInput) {
-<<<<<<< HEAD
-=======
     // Check if user is signed in
     if (globalEmail && globalEmail.trim() !== '') {
         // If signed in, add points and proceed with account-specific actions
         // Flatten the array of menuIds from each order item
         const menuItemIDs = orderItems.flatMap(item => item.menuIds).filter(id => id !== undefined);
->>>>>>> 3ce5f14398d1f06d6374489646799e0297ce8d86
 
         console.log('Total Amount:', totalAmount);
         console.log('Menu Item IDs:', menuItemIDs);
