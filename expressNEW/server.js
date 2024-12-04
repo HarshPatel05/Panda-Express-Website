@@ -111,24 +111,106 @@ app.get('/specialboard', (req, res) => {
 ////////////////////////////////////////////                                                                       //////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-app.post('/api/createEmployee', async (req, res) => {
-  const { name, id, password, status, phone, position } = req.body;
+app.post('/api/addIngredient', async (req, res) => {
+  const { name, unit, quantity, vendor, lastShipmentDate, minQuantity } = req.body;
 
-  if (!name || !id || !password || !status || !phone || !position) {
+  if (!name || !unit || !quantity || !vendor || !lastShipmentDate || !minQuantity) {
       return res.status(400).json({ message: 'All fields are required.' });
   }
 
+  const query = `
+      INSERT INTO inventory (ingredient, unit, quantityavailable, quantity, vendor, lastshipment, minimumquantity)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *;
+  `;
+
+  try {
+      const result = await pool.query(query, [name, unit, 0, quantity, vendor, lastShipmentDate, minQuantity]);
+      res.status(201).json({ message: 'Ingredient added successfully.', ingredient: result.rows[0] });
+  } catch (error) {
+      res.status(500).json({ message: 'Error adding ingredient.', error: error.message });
+  }
+});
+
+app.delete('/api/deleteIngredient/:name', async (req, res) => {
+  const ingredientName = req.params.name;
+
+  const query = `
+      DELETE FROM inventory
+      WHERE ingredient = $1
+      RETURNING *;
+  `;
+
+  try {
+      const result = await pool.query(query, [ingredientName]);
+      
+      if (result.rowCount === 0) {
+          return res.status(404).json({ message: 'Ingredient not found.' });
+      }
+
+      res.status(200).json({ message: `Ingredient ${ingredientName} deleted successfully.`, ingredient: result.rows[0] });
+  } catch (error) {
+      res.status(500).json({ message: 'Error deleting ingredient.', error: error.message });
+  }
+});
+
+app.put('/api/updateIngredient/:name', async (req, res) => {
+  const ingredientName = req.params.name;
+  const { field, value } = req.body;
+
+  if (!field || !value) {
+      return res.status(400).json({ message: 'Field and value are required.' });
+  }
+
+  const query = `
+      UPDATE inventory
+      SET ${field} = $1
+      WHERE ingredient = $2
+      RETURNING *;
+  `;
+
+  try {
+      const result = await pool.query(query, [value, ingredientName]);
+      
+      if (result.rowCount === 0) {
+          return res.status(404).json({ message: 'Ingredient not found.' });
+      }
+
+      res.status(200).json({ message: 'Ingredient updated successfully.', ingredient: result.rows[0] });
+  } catch (error) {
+      res.status(500).json({ message: 'Error updating ingredient.', error: error.message });
+  }
+});
+
+app.post('/api/createEmployee', async (req, res) => {
+  const { name, id, password, status, phone, position } = req.body;
+  if (!name || !id || !password || !status || !phone || !position) {
+      return res.status(400).json({ message: 'All fields are required.' });
+  }
   const query = `
       INSERT INTO employees (employeeid, name, password, status, phonenumber, position)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
   `;
-
   try {
       const result = await pool.query(query, [id, name, password, status, phone, position]);
       res.status(201).json({ message: 'Employee created successfully.', employee: result.rows[0] });
   } catch (error) {
       res.status(500).json({ message: 'Error creating employee.', error: error.message });
+  }
+});
+
+app.delete('/api/deleteEmployee/:id', async (req, res) => {
+  const { id } = req.params;
+  const query = `DELETE FROM employees WHERE employeeid = $1 RETURNING *;`;
+  try {
+      const result = await pool.query(query, [id]);
+      if (result.rowCount === 0) {
+          return res.status(404).json({ message: `Employee with ID ${id} not found.` });
+      }
+      res.status(200).json({ message: `Employee with ID ${id} deleted successfully.` });
+  } catch (error) {
+      res.status(500).json({ message: 'Error deleting employee.', error: error.message });
   }
 });
 
@@ -321,7 +403,7 @@ app.get('/api/inventory', async (req, res) =>
   {
     try
     {
-      const result = await pool.query('SELECT * FROM inventory;');
+      const result = await pool.query('SELECT ingredient, unit, quantity, vendor, lastshipment, minimumquantity FROM inventory;');
       res.json(result.rows);
     }
     catch (err)
@@ -338,7 +420,7 @@ app.get('/api/menuitems', async (req, res) =>
   {
     try 
     {
-      const result = await pool.query('SELECT menuItemId, menuItem, price, size, status, type, displayName FROM menuItems ORDER BY menuitemid ASC;');
+      const result = await pool.query('SELECT menuItemId, menuItem, price, size FROM menuItems ORDER BY menuitemid ASC;');
       res.json(result.rows);
     } 
     catch (error) 

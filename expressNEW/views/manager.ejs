@@ -130,32 +130,70 @@
             </div>
         </div>
 
-
         <div id="inventoryDiv" class="tabContent">
-            <h3>Current Inventory</h3>
-            <div class="inventoryControls">
-                <label for="removeIngredient">Remove Ingredient:</label>
-                <input type="text" id="removeIngredient" name="removeIngredient" placeholder="Enter ingredient name">
-                <label for="removeQuantity">Quantity to Remove:</label>
-                <input type="number" id="removeQuantity" name="removeQuantity" placeholder="Enter quantity to remove">
-                
-                <button id="removeButton" onclick="removeIngredient()">Remove Ingredient</button>
+            <h3>Inventory</h3>
+            <button id="toggleButtonInventory" onclick="toggleViewInventory()">Manage Inventory</button>
+        
+            <div id="inventoryTable">
+                <table id="inventory" border="2">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Vendor</th>
+                            <th>Last Shipment Date</th>
+                            <th>Minimum Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         
-            <table id="inventory" border="2">
-                <thead>
-                    <th>Item</th>
-                    <th>Unit</th>
-                    <th>Quantity Available</th>
-                    <th>Quantity</th>
-                    <th>Vendor</th>
-                    <th>Last Shipment Date</th>
-                    <th>Minimum Quantity</th>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
+            <div id="inventoryForm" style="display: none;">
+                <h4>Add New Ingredient</h4>
+        
+                <label for="ingredientName">Ingredient Name:</label>
+                <input type="text" id="ingredientName" name="ingredientName" placeholder="Enter ingredient name">
+        
+                <label for="ingredientUnit">Unit:</label>
+                <input type="text" id="ingredientUnit" name="ingredientUnit" placeholder="Enter unit">
+        
+                <label for="ingredientQuantity">Quantity Available:</label>
+                <input type="number" id="ingredientQuantity" name="ingredientQuantity" placeholder="Enter quantity">
+        
+                <label for="ingredientVendor">Vendor:</label>
+                <input type="text" id="ingredientVendor" name="ingredientVendor" placeholder="Enter vendor">
+        
+                <label for="ingredientDate">Last Shipment Date:</label>
+                <input type="date" id="ingredientDate" name="ingredientDate">
+        
+                <label for="ingredientMinQty">Minimum Quantity:</label>
+                <input type="number" id="ingredientMinQty" name="ingredientMinQty" placeholder="Enter minimum quantity">
+        
+                <button onclick="addIngredient()">Add Ingredient</button>
+        
+                <h4>Delete Ingredient</h4>
+        
+                <label for="deleteIngredientId">Item Name:</label>
+                <input type="text" id="deleteIngredientId" name="deleteIngredientId" placeholder="Enter ingredient name">
+        
+                <button onclick="deleteIngredient()">Delete Ingredient</button>
+        
+                <h4>Update Ingredient</h4>
+        
+                <label for="updateIngredientId">Item Name:</label>
+                <input type="text" id="updateIngredientId" name="updateIngredientId" placeholder="Enter ingredient name">
+        
+                <label for="updateFieldIngredient">Field to Update:</label>
+                <input type="text" id="updateFieldIngredient" name="updateFieldIngredient" placeholder="Enter field (e.g., Quantity, Vendor)">
+        
+                <label for="updateValueIngredient">New Value:</label>
+                <input type="text" id="updateValueIngredient" name="updateValueIngredient" placeholder="Enter new value">
+        
+                <button onclick="updateIngredient()">Update Ingredient</button>
+            </div>
         </div>
         
 
@@ -177,7 +215,6 @@
                     <th>Item</th>
                     <th>Price</th>
                     <th>Size</th>
-                    <th>Display Name</th>
                 </thead>
             </table>
             <tbody>

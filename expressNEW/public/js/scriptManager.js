@@ -22,6 +22,118 @@ function toggleView() {
     }
 }
 
+function toggleViewInventory() {
+    var table = document.getElementById("inventoryTable");
+    var form = document.getElementById("inventoryForm");
+    const button = document.getElementById('toggleButtonInventory');
+
+    if (form.style.display === "none") {
+        form.style.display = "block";
+        table.style.display = "none";
+        button.textContent = 'Manage Inventory';
+
+    } else {
+        form.style.display = "none";
+        table.style.display = "block";
+        button.textContent = 'View Inventory';
+
+    }
+}
+
+async function addIngredient() {
+    const name = document.getElementById('ingredientName').value;
+    const unit = document.getElementById('ingredientUnit').value;
+    const quantity = document.getElementById('ingredientQuantity').value;
+    const vendor = document.getElementById('ingredientVendor').value;
+    const lastShipmentDate = document.getElementById('ingredientDate').value;
+    const minQuantity = document.getElementById('ingredientMinQty').value;
+
+    if (!name || !unit || !quantity || !vendor || !lastShipmentDate || !minQuantity) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const ingredientData = { name, unit, quantity, vendor, lastShipmentDate, minQuantity };
+
+    try {
+        const response = await fetch('/api/addIngredient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ingredientData),
+        });
+
+        const data = await response.json();
+        if (response.status === 201) {
+            alert(`Ingredient added successfully: ${data.ingredient.name}`);
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error adding ingredient:', error);
+        alert('There was an error adding the ingredient.');
+    }
+}
+
+async function deleteIngredient() {
+    const ingredientName = document.getElementById('deleteIngredientId').value;
+
+    if (!ingredientName) {
+        alert("Please enter the ingredient name to delete.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/deleteIngredient/${ingredientName}`, {
+            method: 'DELETE',
+        });
+
+        const data = await response.json();
+        if (response.status === 200) {
+            alert(`Ingredient with name ${ingredientName} deleted successfully.`);
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error deleting ingredient:', error);
+        alert('There was an error deleting the ingredient.');
+    }
+}
+
+async function updateIngredient() {
+    const ingredientName = document.getElementById('updateIngredientId').value;
+    const field = document.getElementById('updateFieldIngredient').value;
+    const value = document.getElementById('updateValueIngredient').value;
+
+    if (!ingredientName || !field || !value) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const updateData = { field, value };
+
+    try {
+        const response = await fetch(`/api/updateIngredient/${ingredientName}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData),
+        });
+
+        const data = await response.json();
+        if (response.status === 200) {
+            alert(`Ingredient with name ${ingredientName} updated successfully.`);
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error updating ingredient:', error);
+        alert('There was an error updating the ingredient.');
+    }
+}
+
 async function createEmployee() {
     const name = document.getElementById('employeeName').value;
     const id = document.getElementById('employeeId').value;
