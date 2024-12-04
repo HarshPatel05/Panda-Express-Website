@@ -5,6 +5,12 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+/**
+ * Required modules and configurations.
+ * - Sets up Express for routing and middleware.
+ * - Configures PostgreSQL connectivity using environment variables.
+ * - Includes utilities like axios, luxon, and PlayHT.
+*/
 const qs = require('qs');
 const express = require('express');
 const { Pool } = require('pg');
@@ -19,15 +25,26 @@ const PlayHT = require('playht');
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Set up view engine and middleware
+
+/**
+ * Sets up view engine and middleware.
+ * - View engine: EJS for rendering HTML views.
+ * - Middleware: Static file serving, JSON parsing, and CORS.
+*/
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// PostgreSQL connection pool
-const pool = new Pool({
+
+/**
+ * PostgreSQL connection pool setup.
+ * - Reads database connection details from environment variables.
+ * - Supports optional SSL for secure connections.
+ */
+const pool = new Pool
+({
   user: process.env.PSQL_USER,
   host: process.env.PSQL_HOST,
   database: process.env.PSQL_DATABASE,
@@ -47,8 +64,11 @@ const pool = new Pool({
 
 
 
-
-// Routes to render pages
+/**
+ * Routes for rendering pages.
+ * - Renders different views (e.g., index, register, menuBoard) using EJS.
+ * - Each route serves a specific webpage.
+*/
 app.get('/', (req, res) => {
   res.render('index'); // Render the views/index.ejs file
 });
@@ -169,8 +189,12 @@ app.delete('/api/orders/:id', async (req, res) => {
 });
 
 
-// added steps for Google OAuth
-// need more steps after reward system is added in database 
+/**
+ * API Endpoint for Google OAuth authentication.
+ * @route GET /api/sessions/oauth/google
+ * @query {string} code - Authorization code from Google OAuth.
+ * @returns Redirects to kiosk page with user's email if successful, or an error message otherwise.
+ */ 
 app.get('/api/sessions/oauth/google', async (req, res) => {
   const code = req.query.code;
 
