@@ -91,6 +91,64 @@ app.get('/specialboard', (req, res) => {
 ////////////////////////////////////////////                                                                       //////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+app.post('/api/createEmployee', async (req, res) => {
+  const { name, id, password, status, phone, position } = req.body;
+
+  if (!name || !id || !password || !status || !phone || !position) {
+      return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  const query = `
+      INSERT INTO employees (employeeid, name, password, status, phonenumber, position)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+  `;
+
+  try {
+      const result = await pool.query(query, [id, name, password, status, phone, position]);
+      res.status(201).json({ message: 'Employee created successfully.', employee: result.rows[0] });
+  } catch (error) {
+      res.status(500).json({ message: 'Error creating employee.', error: error.message });
+  }
+});
+
+app.delete('/api/deleteEmployee/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const query = `DELETE FROM employees WHERE employeeid = $1 RETURNING *;`;
+
+  try {
+      const result = await pool.query(query, [id]);
+      if (result.rowCount === 0) {
+          return res.status(404).json({ message: `Employee with ID ${id} not found.` });
+      }
+      res.status(200).json({ message: `Employee with ID ${id} deleted successfully.` });
+  } catch (error) {
+      res.status(500).json({ message: 'Error deleting employee.', error: error.message });
+  }
+});
+
+app.put('/api/updateEmployee/:id', async (req, res) => {
+  const { id } = req.params;
+  const { field, value } = req.body;
+
+  const allowedFields = ['name', 'password', 'status', 'phonenumber', 'position'];
+  if (!allowedFields.includes(field)) {
+      return res.status(400).json({ message: 'Invalid field to update.' });
+  }
+
+  const query = `UPDATE employees SET ${field} = $1 WHERE employeeid = $2 RETURNING *;`;
+
+  try {
+      const result = await pool.query(query, [value, id]);
+      if (result.rowCount === 0) {
+          return res.status(404).json({ message: `Employee with ID ${id} not found.` });
+      }
+      res.status(200).json({ message: `Employee with ID ${id} updated successfully.`, employee: result.rows[0] });
+  } catch (error) {
+      res.status(500).json({ message: 'Error updating employee.', error: error.message });
+  }
+});
 
 // API endpoint to delete an order by ID
 app.delete('/api/orders/:id', async (req, res) => {

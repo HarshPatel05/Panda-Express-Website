@@ -22,6 +22,100 @@ function toggleView() {
     }
 }
 
+async function createEmployee() {
+    const name = document.getElementById('employeeName').value;
+    const id = document.getElementById('employeeId').value;
+    const password = document.getElementById('employeePassword').value;
+    const status = document.getElementById('employeeStatus').value;
+    const phone = document.getElementById('employeePhone').value;
+    const position = document.getElementById('employeePosition').value;
+
+    if (!name || !id || !password || !status || !phone || !position) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const employeeData = { name, id, password, status, phone, position };
+
+    try {
+        const response = await fetch('/api/createEmployee', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(employeeData),
+        });
+
+        const data = await response.json();
+        if (response.status === 201) {
+            alert(`Employee created successfully: ${data.employee.name}`);
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error creating employee:', error);
+        alert('There was an error creating the employee.');
+    }
+}
+
+async function deleteEmployee() {
+    const employeeId = document.getElementById('deleteEmployeeId').value;
+
+    if (!employeeId) {
+        alert("Please enter the employee ID to delete.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/deleteEmployee/${employeeId}`, {
+            method: 'DELETE',
+        });
+
+        const data = await response.json();
+        if (response.status === 200) {
+            alert(`Employee with ID ${employeeId} deleted successfully.`);
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error deleting employee:', error);
+        alert('There was an error deleting the employee.');
+    }
+}
+
+async function updateEmployee() {
+    const employeeId = document.getElementById('updateEmployeeId').value;
+    const field = document.getElementById('updateField').value;
+    const value = document.getElementById('updateValue').value;
+
+    if (!employeeId || !field || !value) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const updateData = { field, value };
+
+    try {
+        const response = await fetch(`/api/updateEmployee/${employeeId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData),
+        });
+
+        const data = await response.json();
+        if (response.status === 200) {
+            alert(`Employee with ID ${employeeId} updated successfully.`);
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error updating employee:', error);
+        alert('There was an error updating the employee.');
+    }
+}
+
 async function deleteOrder() {
     const orderId = document.getElementById('deleteOrderId').value.trim();
 
