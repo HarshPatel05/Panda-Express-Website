@@ -111,6 +111,19 @@ app.get('/specialboard', (req, res) => {
 ////////////////////////////////////////////                                                                       //////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Endpoint to add a new ingredient.
+ * @route POST /api/addIngredient
+ * @param {string} name - Ingredient's name.
+ * @param {string} unit - Ingredient's unit (e.g., kg, lb).
+ * @param {number} quantity - Quantity of the ingredient.
+ * @param {string} vendor - Ingredient's vendor.
+ * @param {string} lastShipmentDate - Date of the last shipment.
+ * @param {number} minQuantity - Minimum quantity for the ingredient.
+ * @returns {object} 201 - Ingredient added successfully with the new ingredient's data.
+ * @returns {object} 400 - Missing required fields.
+ * @returns {object} 500 - Error adding ingredient.
+ */
 app.post('/api/addIngredient', async (req, res) => {
   const { name, unit, quantity, vendor, lastShipmentDate, minQuantity } = req.body;
 
@@ -132,6 +145,15 @@ app.post('/api/addIngredient', async (req, res) => {
   }
 });
 
+
+/**
+ * Endpoint to delete an ingredient by name.
+ * @route DELETE /api/deleteIngredient/:name
+ * @param {string} name - Ingredient's name to delete.
+ * @returns {object} 200 - Ingredient deleted successfully.
+ * @returns {object} 404 - Ingredient not found.
+ * @returns {object} 500 - Error deleting ingredient.
+ */
 app.delete('/api/deleteIngredient/:name', async (req, res) => {
   const ingredientName = req.params.name;
 
@@ -154,6 +176,17 @@ app.delete('/api/deleteIngredient/:name', async (req, res) => {
   }
 });
 
+/**
+ * Endpoint to update an ingredient by name.
+ * @route PUT /api/updateIngredient/:name
+ * @param {string} name - Ingredient's name to update.
+ * @param {string} field - Field to update (e.g., 'quantity', 'vendor').
+ * @param {string|number} value - New value for the field.
+ * @returns {object} 200 - Ingredient updated successfully with the updated data.
+ * @returns {object} 400 - Missing required fields or invalid data.
+ * @returns {object} 404 - Ingredient not found.
+ * @returns {object} 500 - Error updating ingredient.
+ */
 app.put('/api/updateIngredient/:name', async (req, res) => {
   const ingredientName = req.params.name;
   const { field, value } = req.body;
@@ -226,22 +259,6 @@ app.post('/api/createEmployee', async (req, res) => {
 app.delete('/api/deleteEmployee/:id', async (req, res) => {
   const { id } = req.params;
   const query = `DELETE FROM employees WHERE employeeid = $1 RETURNING *;`;
-  try {
-      const result = await pool.query(query, [id]);
-      if (result.rowCount === 0) {
-          return res.status(404).json({ message: `Employee with ID ${id} not found.` });
-      }
-      res.status(200).json({ message: `Employee with ID ${id} deleted successfully.` });
-  } catch (error) {
-      res.status(500).json({ message: 'Error deleting employee.', error: error.message });
-  }
-});
-
-app.delete('/api/deleteEmployee/:id', async (req, res) => {
-  const { id } = req.params;
-
-  const query = `DELETE FROM employees WHERE employeeid = $1 RETURNING *;`;
-
   try {
       const result = await pool.query(query, [id]);
       if (result.rowCount === 0) {
