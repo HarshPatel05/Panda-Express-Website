@@ -22,6 +22,163 @@ function toggleView() {
     }
 }
 
+function toggleViewInventory() {
+    var table = document.getElementById("inventoryTable");
+    var form = document.getElementById("inventoryForm");
+    const button = document.getElementById('toggleButtonInventory');
+
+    if (form.style.display === "none") {
+        form.style.display = "block";
+        table.style.display = "none";
+        button.textContent = 'Manage Inventory';
+
+    } else {
+        form.style.display = "none";
+        table.style.display = "block";
+        button.textContent = 'View Inventory';
+
+    }
+}
+
+/**
+ * Endpoint to add a new ingredient to the inventory.
+ * @route POST /api/addIngredient
+ * @param {string} name - Ingredient's name.
+ * @param {string} unit - Ingredient's unit (e.g., kg, liters).
+ * @param {string} quantity - Quantity of the ingredient.
+ * @param {string} vendor - Vendor name for the ingredient.
+ * @param {string} lastShipmentDate - Date when the ingredient was last shipped.
+ * @param {string} minQuantity - Minimum quantity threshold for restocking.
+ * @returns {object} 201 - Ingredient added successfully with the new ingredient's data.
+ * @returns {object} 400 - Missing required fields.
+ * @returns {object} 500 - Error adding ingredient.
+ */
+async function addIngredient() {
+    const name = document.getElementById('ingredientName').value;
+    const unit = document.getElementById('ingredientUnit').value;
+    const quantity = document.getElementById('ingredientQuantity').value;
+    const vendor = document.getElementById('ingredientVendor').value;
+    const lastShipmentDate = document.getElementById('ingredientDate').value;
+    const minQuantity = document.getElementById('ingredientMinQty').value;
+
+    if (!name || !unit || !quantity || !vendor || !lastShipmentDate || !minQuantity) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const ingredientData = { name, unit, quantity, vendor, lastShipmentDate, minQuantity };
+
+    try {
+        const response = await fetch('/api/addIngredient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ingredientData),
+        });
+
+        const data = await response.json();
+        if (response.status === 201) {
+            alert(`Ingredient added successfully: ${data.ingredient.name}`);
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error adding ingredient:', error);
+        alert('There was an error adding the ingredient.');
+    }
+}
+
+/**
+ * Endpoint to delete an ingredient from the inventory.
+ * @route DELETE /api/deleteIngredient/{ingredientName}
+ * @param {string} ingredientName - The name of the ingredient to delete.
+ * @returns {object} 200 - Ingredient deleted successfully.
+ * @returns {object} 400 - Ingredient not found.
+ * @returns {object} 500 - Error deleting ingredient.
+ */
+async function deleteIngredient() {
+    const ingredientName = document.getElementById('deleteIngredientId').value;
+
+    if (!ingredientName) {
+        alert("Please enter the ingredient name to delete.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/deleteIngredient/${ingredientName}`, {
+            method: 'DELETE',
+        });
+
+        const data = await response.json();
+        if (response.status === 200) {
+            alert(`Ingredient with name ${ingredientName} deleted successfully.`);
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error deleting ingredient:', error);
+        alert('There was an error deleting the ingredient.');
+    }
+}
+
+/**
+ * Endpoint to update an ingredient's details in the inventory.
+ * @route PUT /api/updateIngredient/{ingredientName}
+ * @param {string} ingredientName - The name of the ingredient to update.
+ * @param {string} field - The field to update (e.g., 'quantity', 'vendor').
+ * @param {string} value - The new value for the field.
+ * @returns {object} 200 - Ingredient updated successfully.
+ * @returns {object} 400 - Invalid field or value.
+ * @returns {object} 500 - Error updating ingredient.
+ */
+async function updateIngredient() {
+    const ingredientName = document.getElementById('updateIngredientId').value;
+    const field = document.getElementById('updateFieldIngredient').value;
+    const value = document.getElementById('updateValueIngredient').value;
+
+    if (!ingredientName || !field || !value) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const updateData = { field, value };
+
+    try {
+        const response = await fetch(`/api/updateIngredient/${ingredientName}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData),
+        });
+
+        const data = await response.json();
+        if (response.status === 200) {
+            alert(`Ingredient with name ${ingredientName} updated successfully.`);
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    } catch (error) {
+        console.error('Error updating ingredient:', error);
+        alert('There was an error updating the ingredient.');
+    }
+}
+
+
+/**
+ * Endpoint to create a new employee.
+ * @route POST /api/createEmployee
+ * @param {string} name - Employee's name.
+ * @param {string} id - Employee ID.
+ * @param {string} password - Employee password.
+ * @param {string} status - Employment status (e.g., active, inactive).
+ * @param {string} phone - Employee's phone number.
+ * @param {string} position - Employee's position.
+ * @returns {object} 201 - Employee created successfully with the new employee's data.
+ * @returns {object} 400 - Missing required fields.
+ * @returns {object} 500 - Error creating employee.
+ */
 async function createEmployee() {
     const name = document.getElementById('employeeName').value;
     const id = document.getElementById('employeeId').value;
@@ -58,6 +215,14 @@ async function createEmployee() {
     }
 }
 
+/**
+ * Endpoint to delete an employee from the system.
+ * @route DELETE /api/deleteEmployee/{employeeId}
+ * @param {string} employeeId - The ID of the employee to delete.
+ * @returns {object} 200 - Employee deleted successfully.
+ * @returns {object} 400 - Employee not found.
+ * @returns {object} 500 - Error deleting employee.
+ */
 async function deleteEmployee() {
     const employeeId = document.getElementById('deleteEmployeeId').value;
 
@@ -82,7 +247,17 @@ async function deleteEmployee() {
         alert('There was an error deleting the employee.');
     }
 }
-
+/**
+ * Endpoint to update an employee's information.
+ * @route PUT /api/updateEmployee/{employeeId}
+ * @param {string} employeeId - The ID of the employee to update.
+ * @param {object} updateData - The fields and values to update for the employee.
+ * @param {string} updateData.field - The field to update (e.g., 'name', 'position').
+ * @param {string} updateData.value - The new value for the field.
+ * @returns {object} 200 - Employee updated successfully.
+ * @returns {object} 400 - Missing or invalid input.
+ * @returns {object} 500 - Error updating employee.
+ */
 async function updateEmployee() {
     const employeeId = document.getElementById('updateEmployeeId').value;
     const field = document.getElementById('updateField').value;
@@ -116,6 +291,14 @@ async function updateEmployee() {
     }
 }
 
+/**
+ * Deletes an order based on the provided order ID.
+ * @route DELETE /api/orders/{orderId}
+ * @param {string} orderId - The ID of the order to delete.
+ * @returns {object} 200 - Order deleted successfully.
+ * @returns {object} 400 - Invalid order ID or order not found.
+ * @returns {object} 500 - Error deleting the order.
+ */
 async function deleteOrder() {
     const orderId = document.getElementById('deleteOrderId').value.trim();
 
@@ -153,6 +336,10 @@ function updateTimeframeInputs() {
     }
 }
 
+/**
+ * Function to handle product usage query and display the results in a table format.
+ * @returns {void}
+ */
 async function getProductUsage() {
         const ingredient = document.getElementById('ingredient').value;
         const timeframe = document.getElementById('timeframe').value;
@@ -198,102 +385,7 @@ async function getProductUsage() {
     }
 }
 
-async function removeIngredient() {
-    const ingredientName = document.getElementById('removeIngredient').value;
-    const quantityToRemove = document.getElementById('removeQuantity').value;
 
-    if (!ingredientName || !quantityToRemove || quantityToRemove <= 0) {
-        alert("Please fill both required fields with valid data.");
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/removeStock?ingredientName=${ingredientName}&quantity=${quantityToRemove}`, {
-            method: 'POST', 
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert(`Success: ${data.message}`);
-        } else {
-            alert(`Error: ${data.error}`);
-        }
-    } catch (error) {
-        console.error('Error removing ingredient:', error);
-        alert('An error occurred while trying to remove the ingredient.');
-    }
-}
-
-async function changePrice() {
-
-    let ID = document.getElementById('menuItemID').value;
-
-    let price = document.getElementById('newPrice').value;
-
-    if (!ID || !price) {
-        alert("Please fill both required parts");
-        return;
-    }
-
-    try  {
-        const response = await fetch('/api/changePrice', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                menuItemID: ID,
-                newPrice: price
-            }),
-        });
-        // Parse the response
-        const data = await response.json();
-
-        if (response.ok) {
-            // Success message
-            alert(`Success: ${data.message}`);
-        } else {
-            // Error message
-            alert(`Error: ${data.error}`);
-        }
-    }
-
-    catch (error) {
-        console.error('Error changing price:', error);
-        alert('An error occurred while trying to change the price.');
-    }
-
-}
-
-async function restockIngredient() {
-    // Get the ingredient name from a user input or specify it directly
-    const ingredientName = document.getElementById('restockIngredient').value;
-
-    if (!ingredientName) {
-        alert("Please provide an ingredient name.");
-        return;
-    }
-
-    try {
-        // Make the API request to restock the ingredient
-        const response = await fetch(`/api/restockInventory?ingredientName=${ingredientName}`);
-
-        // Parse the response
-        const data = await response.json();
-
-        if (response.ok) {
-            // Success message
-            alert(`Success: ${data.message}`);
-        } else {
-            // Error message
-            alert(`Error: ${data.error}`);
-        }
-    } catch (error) {
-        console.error('Error restocking ingredient:', error);
-        alert('An error occurred while trying to restock the ingredient.');
-    }
-}
 
 async function populateTable(APIEndpoint, tableID) {
     const response = await fetch(APIEndpoint);
@@ -313,6 +405,15 @@ async function populateTable(APIEndpoint, tableID) {
     });
 }
 
+/**
+ * Fetches and populates the sales report based on a date range.
+ * @route GET /api/salesReport
+ * @param {string} startDate - The start date for the sales report in YYYY-MM-DD format.
+ * @param {string} endDate - The end date for the sales report in YYYY-MM-DD format.
+ * @returns {array} 200 - Sales report data for the specified date range.
+ * @returns {object} 400 - Invalid date range or missing parameters.
+ * @returns {object} 500 - Error fetching the sales report.
+ */
 async function populateSales() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
@@ -346,6 +447,15 @@ async function populateSales() {
     }
 }
 
+/**
+ * Fetches and populates a report (X or Z report) for the current date.
+ * @route GET /api/xReport or /api/zReport
+ * @param {string} APIEndpoint - The endpoint for the report to be populated (either `/api/xReport` or `/api/zReport`).
+ * @param {string} tableID - The ID of the table to populate with the report data.
+ * @returns {array} 200 - Report data for the specified date.
+ * @returns {object} 400 - Invalid date or missing parameters.
+ * @returns {object} 500 - Error fetching the report.
+ */
 async function populateReports(APIEndpoint, tableID) {
     let currDate = new Intl.DateTimeFormat('en-US', {
         timeZone: 'America/Chicago', 
@@ -421,26 +531,6 @@ function setupTabs() {
     populateTable(APIEndpoint, tableID);
 }
 
-
-function populateProductUsageTable(data) {
-    const tableBody = document.querySelector('#product-usage');
-
-    if (data && data.length > 0) {
-        data.forEach(row => {
-            const tableRow = document.createElement('tr');
-            tableRow.innerHTML = `
-                <td>${row.ingredient_name}</td>
-                <td>${row.total_usage}</td>
-                <td>${row.time_period}</td>
-            `;
-            tableBody.appendChild(tableRow);
-        });
-    } else {
-        const noDataRow = document.createElement('tr');
-        noDataRow.innerHTML = '<td colspan="3">No usage data found for the given ingredient.</td>';
-        tableBody.appendChild(noDataRow);
-    }
-}
 
 let reportDate = new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/Chicago',  

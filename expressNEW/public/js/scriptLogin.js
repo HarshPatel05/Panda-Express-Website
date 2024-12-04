@@ -42,7 +42,14 @@ async function googleOAuthURL() {
 document.addEventListener('DOMContentLoaded', googleOAuthURL);
 */
 
-
+/**
+ * Event listener for the login submission.
+ * sends the login credentials to the server,
+ * and handles the server's response to navigate the user to the appropriate page based on their role.
+ * 
+ * @param {Event} e - The submission event.
+ * @returns {void}
+ */
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
     e.preventDefault();
