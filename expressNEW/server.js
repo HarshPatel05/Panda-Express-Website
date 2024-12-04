@@ -88,6 +88,23 @@ app.get('/kitchen', (req, res) => {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+// API endpoint to delete an order by ID
+app.delete('/api/orders/:id', async (req, res) => {
+  const orderId = req.params.id;
+
+  try {
+      const result = await pool.query('DELETE FROM orderhistory WHERE orderid = $1 RETURNING *', [orderId]);
+
+      if (result.rowCount > 0) {
+          res.status(200).json({ message: `Order ${orderId} deleted successfully.` });
+      } else {
+          res.status(404).json({ message: `Order ${orderId} not found.` });
+      }
+  } catch (error) {
+      console.error('Error deleting order:', error);
+      res.status(500).json({ message: 'An error occurred while deleting the order.' });
+  }
+});
 
 
 // added steps for Google OAuth

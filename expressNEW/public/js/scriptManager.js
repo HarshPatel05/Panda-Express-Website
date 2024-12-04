@@ -5,6 +5,44 @@ function googleTranslateElementInit() {
         "googleTranslateElement"
     )
 }
+
+function toggleView() {
+    const table = document.getElementById('employeeTable');
+    const form = document.getElementById('employeeForm');
+    const button = document.getElementById('toggleButton');
+
+    if (table.style.display === 'none') {
+        table.style.display = 'block';
+        form.style.display = 'none';
+        button.textContent = 'Manage Employees';
+    } else {
+        table.style.display = 'none';
+        form.style.display = 'block';
+        button.textContent = 'View Employees';
+    }
+}
+
+async function deleteOrder() {
+    const orderId = document.getElementById('deleteOrderId').value.trim();
+
+    if (!orderId) {
+        alert('Please enter a valid Order ID.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/orders/${orderId}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+        alert(data.message);
+    } catch (error) {
+        console.error('Error deleting order:', error);
+        alert('An error occurred while deleting the order.');
+    }
+}
+
 function updateTimeframeInputs() {
     const timeframe = document.getElementById('timeframe').value;
     const dateInput = document.getElementById('dateInput');
