@@ -22,7 +22,6 @@
                 <div class="dropdownContent" id="dropdownMenu">
                     <a href="/register">Register View</a>
                     <a href="/menuboard">Menu Board View</a>
-                    <a href="/specialboard">Specials Board View</a>
                     <a href="/kitchen">Kitchen View</a>
                     <a href="/kiosk">Kiosk View</a>
                 </div>
@@ -64,11 +63,11 @@
             </table>
         </div>
 
-        <div id="employeesDiv">
+        <div id="employeesDiv" class="tabContent">
             <h3>Employees</h3>
             <button id="toggleButton" onclick="toggleView()">Manage Employees</button>
         
-            <div id="employeeTable" class="tabContent">
+            <div id="employeeTable">
                 <table id="employees" border="2">
                     <thead>
                         <tr>
@@ -86,7 +85,7 @@
                 </table>
             </div>
         
-            <div id="employeeForm" class="tabContent" style="display: none;">
+            <div id="employeeForm" style="display: none;">
                 <h4>Create New Employee</h4>
         
                 <label for="employeeName">Name:</label>
@@ -129,7 +128,6 @@
         
                 <button onclick="updateEmployee()">Update Employee</button>
             </div>
-        </div>
         </div>
 
 
