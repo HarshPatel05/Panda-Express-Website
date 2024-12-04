@@ -1,4 +1,6 @@
-//Translation Functionality
+/**
+ * Creates a Google Translate Element for page translation
+ */
 function googleTranslateElementInit() {
     new google.translate.TranslateElement(
         { pageLanguage: "en" },
@@ -541,6 +543,9 @@ let reportDate = new Intl.DateTimeFormat('en-US', {
 
 window.onload = setupTabs;
 
+/**
+ * Allows for view control drop down to appear when needed.
+ */
 function toggleDropdown() {
     const dropdown = document.getElementById("dropdownMenu");
     if (dropdown.style.display === "block") {
@@ -559,6 +564,11 @@ window.onclick = function (event) {
     }
 };
 
+/**
+ * Converts a string to camelCase.
+ * @param str the string to be converted to camelCase
+ * @return the camelCase formatted string
+ */
 function toCamelCase(str) {
     return str
         .toLowerCase() 
@@ -572,6 +582,10 @@ function toCamelCase(str) {
         .join(''); 
 }
 
+/**
+ * Applies camelCase to the input of a field.
+ * @param input the field whose input is to be converted to camelCase
+ */
 function enforceCamelCase(input) {
     input.value = toCamelCase(input.value);
 }

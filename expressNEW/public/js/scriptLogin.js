@@ -1,4 +1,6 @@
-//Functionality for Translation
+/**
+ * Creates a Google Translate Element for page translation
+ */
 function googleTranslateElementInit(){
     new google.translate.TranslateElement(
         {pageLanguage: "en"},
