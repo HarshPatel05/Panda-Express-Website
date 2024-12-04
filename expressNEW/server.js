@@ -77,6 +77,10 @@ app.get('/kitchen', (req, res) => {
   res.render('kitchen'); // Render the views/kitchen.ejs file
 });
 
+app.get('/specialboard', (req, res) => {
+  res.render('specialBoard'); // Render the views/specialBoard.ejs file
+});
+
 
 
 
@@ -252,7 +256,7 @@ app.get('/api/menuitems', async (req, res) =>
   {
     try 
     {
-      const result = await pool.query('SELECT menuItemId, menuItem, price, size, displayName FROM menuItems ORDER BY menuitemid ASC;');
+      const result = await pool.query('SELECT menuItemId, menuItem, price, size, status, type, displayName FROM menuItems ORDER BY menuitemid ASC;');
       res.json(result.rows);
     } 
     catch (error) 
