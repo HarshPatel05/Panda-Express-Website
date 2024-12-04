@@ -1,4 +1,32 @@
-let menuItemDetails = {}; // Global variable to store menu item details
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: scriptKitchen.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: scriptKitchen.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>let menuItemDetails = {}; // Global variable to store menu item details
 
 /**
  * Fetches menu item details from the API and populates the `menuItemDetails` object.
@@ -113,7 +141,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Event listener for "in-progress" order clicks
     inProgressContainer.addEventListener("click", async (e) => {
         const order = e.target.closest(".orderCard"); // Get the clicked order card
-        if (order && order.dataset.status === "in-progress") {
+        if (order &amp;&amp; order.dataset.status === "in-progress") {
             // Move the order to "completed" status
             order.dataset.status = "completed";
             completedContainer.appendChild(order); // Move order to the completed section
@@ -220,7 +248,7 @@ async function loadPendingOrders() {
             const items = convertToArray(order.menuitemids);
 
             let i = 0; // Index to track position in the items array
-            while (i < items.length) {
+            while (i &lt; items.length) {
                 const itemId = items[i];
                 const itemDetails = menuItemDetails[itemId];
 
@@ -237,7 +265,7 @@ async function loadPendingOrders() {
                     const bowlList = document.createElement("ul");
 
                     // Add up to 3 components for the bowl
-                    for (let j = 1; j <= 3 && i + j < items.length; j++) {
+                    for (let j = 1; j &lt;= 3 &amp;&amp; i + j &lt; items.length; j++) {
                         const subItemId = items[i + j];
                         const subItemDetails = menuItemDetails[subItemId];
                         const subListItem = document.createElement("li");
@@ -250,13 +278,13 @@ async function loadPendingOrders() {
                     bowlItem.appendChild(bowlList);
                     orderList.appendChild(bowlItem);
                     i += 4; // Skip the bowl and its components
-                } else if (itemDetails.name.toLowerCase().includes("plate") && !itemDetails.name.toLowerCase().includes("bigger")) {
+                } else if (itemDetails.name.toLowerCase().includes("plate") &amp;&amp; !itemDetails.name.toLowerCase().includes("bigger")) {
                     const plateItem = document.createElement("div");
                     plateItem.textContent = `Plate`;
                     const plateList = document.createElement("ul");
 
                     // Add up to 4 components for the plate
-                    for (let j = 1; j <= 4 && i + j < items.length; j++) {
+                    for (let j = 1; j &lt;= 4 &amp;&amp; i + j &lt; items.length; j++) {
                         const subItemId = items[i + j];
                         const subItemDetails = menuItemDetails[subItemId];
                         const subListItem = document.createElement("li");
@@ -275,7 +303,7 @@ async function loadPendingOrders() {
                     const biggerPlateList = document.createElement("ul");
 
                     // Add up to 5 components for the bigger plate
-                    for (let j = 1; j <= 5 && i + j < items.length; j++) {
+                    for (let j = 1; j &lt;= 5 &amp;&amp; i + j &lt; items.length; j++) {
                         const subItemId = items[i + j];
                         const subItemDetails = menuItemDetails[subItemId];
                         const subListItem = document.createElement("li");
@@ -323,7 +351,7 @@ async function loadPendingOrders() {
  * If the input is already an array, it is returned as is.
  * 
  * @param {string|Array} menuitemids - The menu item IDs in string or array format.
- * @returns {Array<number>} An array of parsed menu item IDs.
+ * @returns {Array&lt;number>} An array of parsed menu item IDs.
  */
 function convertToArray(menuitemids) {
     if (typeof menuitemids === "string") {
@@ -359,7 +387,7 @@ function startTimer(orderCard, timerElement) {
 
         // Update the timer display, if the element exists
         if (timerElement) {
-            timerElement.textContent = `Time: ${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+            timerElement.textContent = `Time: ${minutes}:${seconds &lt; 10 ? "0" + seconds : seconds}`;
         }
 
         // Update the order card background color based on elapsed time
@@ -385,7 +413,7 @@ function startTimer(orderCard, timerElement) {
  * - Deletes the pending order after a successful checkout.
  * 
  * @param {number} totalCost - The total cost of the order.
- * @param {Array<number>} menuItemIDs - The IDs of the menu items in the order.
+ * @param {Array&lt;number>} menuItemIDs - The IDs of the menu items in the order.
  * @param {number} pendingOrderID - The ID of the pending order to be removed.
  */
 async function checkoutOrder(totalCost, menuItemIDs, pendingOrderID) {
@@ -439,7 +467,7 @@ async function deletePendingOrder(pendingOrderID) {
 /**
  * Updates inventory levels based on the menu items in the order.
  * 
- * @param {Array<number>} menuItemIDs - The IDs of the menu items to update inventory for.
+ * @param {Array&lt;number>} menuItemIDs - The IDs of the menu items to update inventory for.
  */
 async function updateInventory(menuItemIDs) {
     try {
@@ -458,4 +486,26 @@ async function updateInventory(menuItemIDs) {
     } catch (error) {
         console.error('Error updating inventory:', error);
     }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Keyboard">Keyboard</a></li><li><a href="global.html#addAlaCarteItem">addAlaCarteItem</a></li><li><a href="global.html#addAlaCarteToOrder">addAlaCarteToOrder</a></li><li><a href="global.html#addAppetizerToOrder">addAppetizerToOrder</a></li><li><a href="global.html#addComponentToCurrentOrder">addComponentToCurrentOrder</a></li><li><a href="global.html#addDrinkToOrder">addDrinkToOrder</a></li><li><a href="global.html#addItemToOrder">addItemToOrder</a></li><li><a href="global.html#addPointsToAccount">addPointsToAccount</a></li><li><a href="global.html#applyDiscount">applyDiscount</a></li><li><a href="global.html#applyOrderDiscount">applyOrderDiscount</a></li><li><a href="global.html#autoSignInFromOAuth">autoSignInFromOAuth</a></li><li><a href="global.html#calculateTotal">calculateTotal</a></li><li><a href="global.html#camelCaseToNormal">camelCaseToNormal</a></li><li><a href="global.html#cancelCurrentCompositeItem">cancelCurrentCompositeItem</a></li><li><a href="global.html#capitalize">capitalize</a></li><li><a href="global.html#checkForProfanity">checkForProfanity</a></li><li><a href="global.html#checkoutOrder">checkoutOrder</a></li><li><a href="global.html#clearOrder">clearOrder</a></li><li><a href="global.html#closeAlaCarteModal">closeAlaCarteModal</a></li><li><a href="global.html#closeAppetizerModal">closeAppetizerModal</a></li><li><a href="global.html#closeDrinkModal">closeDrinkModal</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#closeRewardsPanel">closeRewardsPanel</a></li><li><a href="global.html#convertCamelCaseToReadable">convertCamelCaseToReadable</a></li><li><a href="global.html#convertToArray">convertToArray</a></li><li><a href="global.html#decreaseAlaCarteQuantity">decreaseAlaCarteQuantity</a></li><li><a href="global.html#decreaseAppetizerQuantity">decreaseAppetizerQuantity</a></li><li><a href="global.html#decreaseDrinkQuantity">decreaseDrinkQuantity</a></li><li><a href="global.html#deletePendingOrder">deletePendingOrder</a></li><li><a href="global.html#fetchMenuItemDetails">fetchMenuItemDetails</a></li><li><a href="global.html#finalizeCompositeItem">finalizeCompositeItem</a></li><li><a href="global.html#formatWithSize">formatWithSize</a></li><li><a href="global.html#getFullSizeName">getFullSizeName</a></li><li><a href="global.html#goBackToMain">goBackToMain</a></li><li><a href="global.html#handleCreateAccount">handleCreateAccount</a></li><li><a href="global.html#handleLogOut">handleLogOut</a></li><li><a href="global.html#handleNameValidation">handleNameValidation</a></li><li><a href="global.html#handleSignIn">handleSignIn</a></li><li><a href="global.html#increaseAlaCarteQuantity">increaseAlaCarteQuantity</a></li><li><a href="global.html#increaseAppetizerQuantity">increaseAppetizerQuantity</a></li><li><a href="global.html#increaseDrinkQuantity">increaseDrinkQuantity</a></li><li><a href="global.html#loadMenuItems">loadMenuItems</a></li><li><a href="global.html#loadPendingOrders">loadPendingOrders</a></li><li><a href="global.html#loadProhibitedWords">loadProhibitedWords</a></li><li><a href="global.html#openAlaCarteModal">openAlaCarteModal</a></li><li><a href="global.html#openDrinkModal">openDrinkModal</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#playAudioFromAPI">playAudioFromAPI</a></li><li><a href="global.html#proceedWithCheckout">proceedWithCheckout</a></li><li><a href="global.html#redirectToRewards">redirectToRewards</a></li><li><a href="global.html#removeItemFromOrder">removeItemFromOrder</a></li><li><a href="global.html#selectAlaCarteSize">selectAlaCarteSize</a></li><li><a href="global.html#selectAppetizerSize">selectAppetizerSize</a></li><li><a href="global.html#selectDrink">selectDrink</a></li><li><a href="global.html#selectDrinkSize">selectDrinkSize</a></li><li><a href="global.html#selectItemType">selectItemType</a></li><li><a href="global.html#setSize">setSize</a></li><li><a href="global.html#showAppetizerModal">showAppetizerModal</a></li><li><a href="global.html#showCreateAccount">showCreateAccount</a></li><li><a href="global.html#showRetry">showRetry</a></li><li><a href="global.html#showSignIn">showSignIn</a></li><li><a href="global.html#startTimer">startTimer</a></li><li><a href="global.html#updateCurrentItemPreview">updateCurrentItemPreview</a></li><li><a href="global.html#updateInventory">updateInventory</a></li><li><a href="global.html#updateOrderList">updateOrderList</a></li><li><a href="global.html#updatePendingOrders">updatePendingOrders</a></li><li><a href="global.html#updateUIAfterSignIn">updateUIAfterSignIn</a></li><li><a href="global.html#validateEmail">validateEmail</a></li><li><a href="global.html#validateEmailDB">validateEmailDB</a></li><li><a href="global.html#waitForKeyboardInput">waitForKeyboardInput</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 03:57:30 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
