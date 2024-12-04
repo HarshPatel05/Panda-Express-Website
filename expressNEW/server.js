@@ -182,6 +182,20 @@ app.put('/api/updateIngredient/:name', async (req, res) => {
   }
 });
 
+/**
+ * Endpoint to create a new employee.
+ * @route POST /api/createEmployee
+ * @param {string} name - Employee's name.
+ * @param {string} id - Employee ID.
+ * @param {string} password - Employee password.
+ * @param {string} status - Employment status (e.g., active, inactive).
+ * @param {string} phone - Employee's phone number.
+ * @param {string} position - Employee's position.
+ * @returns {object} 201 - Employee created successfully with the new employee's data.
+ * @returns {object} 400 - Missing required fields.
+ * @returns {object} 500 - Error creating employee.
+ */
+
 app.post('/api/createEmployee', async (req, res) => {
   const { name, id, password, status, phone, position } = req.body;
   if (!name || !id || !password || !status || !phone || !position) {
@@ -200,6 +214,15 @@ app.post('/api/createEmployee', async (req, res) => {
   }
 });
 
+
+/**
+ * Endpoint to delete an employee by ID.
+ * @route DELETE /api/deleteEmployee/:id
+ * @param {string} id - Employee ID.
+ * @returns {object} 200 - Employee deleted successfully.
+ * @returns {object} 404 - Employee not found.
+ * @returns {object} 500 - Error deleting employee.
+ */
 app.delete('/api/deleteEmployee/:id', async (req, res) => {
   const { id } = req.params;
   const query = `DELETE FROM employees WHERE employeeid = $1 RETURNING *;`;
@@ -230,6 +253,18 @@ app.delete('/api/deleteEmployee/:id', async (req, res) => {
   }
 });
 
+
+/**
+ * Endpoint to update an employee's field by ID.
+ * @route PUT /api/updateEmployee/:id
+ * @param {string} id - Employee ID.
+ * @param {string} field - Field to update (e.g., name, password, status, phonenumber, position)
+ * @param {string} value - New value for the specified field.
+ * @returns {object} 200 - Employee updated successfully with the updated employee's data.
+ * @returns {object} 400 - Invalid field to update.
+ * @returns {object} 404 - Employee not found.
+ * @returns {object} 500 - Error updating employee.
+ */
 app.put('/api/updateEmployee/:id', async (req, res) => {
   const { id } = req.params;
   const { field, value } = req.body;
@@ -252,7 +287,15 @@ app.put('/api/updateEmployee/:id', async (req, res) => {
   }
 });
 
-// API endpoint to delete an order by ID
+
+/**
+ * Endpoint to delete an order by ID.
+ * @route DELETE /api/orders/:id
+ * @param {string} id - Order ID.
+ * @returns {object} 200 - Order deleted successfully.
+ * @returns {object} 404 - Order not found.
+ * @returns {object} 500 - Error deleting order.
+ */
 app.delete('/api/orders/:id', async (req, res) => {
   const orderId = req.params.id;
 
@@ -272,11 +315,13 @@ app.delete('/api/orders/:id', async (req, res) => {
 
 
 /**
- * API Endpoint for Google OAuth authentication.
+ * Endpoint to authenticate a user via Google OAuth.
  * @route GET /api/sessions/oauth/google
- * @query {string} code - Authorization code from Google OAuth.
- * @returns Redirects to kiosk page with user's email if successful, or an error message otherwise.
- */ 
+ * @param {string} code - Authorization code from Google OAuth.
+ * @returns Redirect to kiosk page with user's email if successful.
+ * @returns {string} 403 - Google account is not verified.
+ * @returns {string} 500 - Server error.
+ */
 app.get('/api/sessions/oauth/google', async (req, res) => {
   const code = req.query.code;
 
@@ -324,7 +369,11 @@ app.get('/api/sessions/oauth/google', async (req, res) => {
 });
 
 
-//API Endpoint to get OAuth information
+/**
+ * Endpoint to retrieve OAuth configuration.
+ * @route GET /api/config
+ * @returns {object} 200 - Google OAuth configuration (client ID and redirect URL).
+ */
 app.get('/api/config', (req, res) => {
   res.json({
       googleClientId: process.env.GOOGLE_CLIENT_ID,
@@ -333,7 +382,12 @@ app.get('/api/config', (req, res) => {
 });
 
 
-// API Endpoint to get all the employees
+/**
+ * Endpoint to retrieve all employees.
+ * @route GET /api/employees
+ * @returns {array} 200 - Array of employees.
+ * @returns {string} 500 - Server error.
+ */
 app.get('/api/employees', async (req, res) => 
   {
     try
@@ -350,7 +404,12 @@ app.get('/api/employees', async (req, res) =>
 );
 
 
-// API Endpoint to get the weather for College Station
+/**
+ * Endpoint to fetch the current weather for College Station.
+ * @route GET /api/weather
+ * @returns {object} 200 - Current weather data.
+ * @returns {string} 500 - Server error.
+ */
 app.get('/api/weather', async (req, res) => {
   const apiKey = process.env.WEATHER_KEY;  
   const lat = 30.6280;
@@ -377,8 +436,14 @@ PlayHT.init({
 
 const CUSTOM_VOICE_ID = 's3://voice-cloning-zero-shot/92519089-3c97-4f31-8743-ab4f06047b88/larrysaad/manifest.json'; // Replace with your custom voice ID
 
-
-// API Endpoint to generate audio
+/**
+ * Generate audio using PlayHT API.
+ * @route GET /api/generate-audio
+ * @param {string} text - Text to convert to audio.
+ * @returns {audio/mpeg} 200 - Audio stream.
+ * @returns {string} 400 - Missing text parameter.
+ * @returns {string} 500 - Error generating audio.
+ */
 app.get('/api/generate-audio', async (req, res) => {
     const text = req.query.text;
     if (!text) {
@@ -398,7 +463,13 @@ app.get('/api/generate-audio', async (req, res) => {
     }
 });
 
-// API Endpoint to get the inventory
+
+/**
+ * Endpoint to retrieve inventory items.
+ * @route GET /api/inventory
+ * @returns {array} 200 - Array of inventory items.
+ * @returns {string} 500 - Server error.
+ */
 app.get('/api/inventory', async (req, res) => 
   {
     try
@@ -415,7 +486,12 @@ app.get('/api/inventory', async (req, res) =>
 );
 
 
-// API Endpoint to get all the menu items
+/**
+ * Endpoint to retrieve all menu items.
+ * @route GET /api/menuitems
+ * @returns {array} 200 - Array of menu items.
+ * @returns {string} 500 - Server error.
+ */
 app.get('/api/menuitems', async (req, res) => 
   {
     try 
@@ -432,7 +508,12 @@ app.get('/api/menuitems', async (req, res) =>
 );
 
 
-// API Endpoint to get the orderhistory
+/**
+ * Endpoint to retrieve order history.
+ * @route GET /api/orderHistory
+ * @returns {array} 200 - Array of recent orders (up to 1000).
+ * @returns {string} 500 - Server error.
+ */
 app.get('/api/orderHistory', async (req, res) =>
   {
     try
@@ -449,7 +530,12 @@ app.get('/api/orderHistory', async (req, res) =>
 );
 
 
-// API Endpoint to get restock report 
+/**
+ * Endpoint to get the restock report for inventory.
+ * @route GET /api/restockReport
+ * @returns {array} 200 - Array of ingredients needing restock, with quantity and minimum quantity.
+ * @returns {string} 500 - Server error.
+ */ 
 app.get('/api/restockReport', async (req, res) => {
   try {
     const query = `SELECT ingredient, quantity, minimumquantity
@@ -464,6 +550,16 @@ app.get('/api/restockReport', async (req, res) => {
   }
 });
 
+
+/**
+ * Endpoint to restock a specific inventory item.
+ * @route GET /api/restockInventory
+ * @param {string} ingredientName - The name of the ingredient to restock.
+ * @returns {string} 200 - Success message about restocking.
+ * @returns {string} 400 - Missing ingredient name in the request.
+ * @returns {string} 404 - Ingredient not found in inventory.
+ * @returns {string} 500 - Server error.
+ */
 app.get('/api/restockInventory', async (req, res) => {
   const { ingredientName } = req.query;
 
@@ -505,7 +601,15 @@ app.get('/api/restockInventory', async (req, res) => {
   }
 });
 
-// API Endpoint for login
+
+/**
+ * Handle user login.
+ * @route POST /api/login
+ * @param {string} username - Employee ID.
+ * @param {string} password - Employee password.
+ * @returns {object} 200 - Login status and position.
+ * @returns {string} 500 - Server error.
+ */
 app.post('/api/login', async (req, res) =>
   {
     const {username, password} = req.body;
@@ -535,7 +639,16 @@ app.post('/api/login', async (req, res) =>
 );
 
 
-// API Endpoint to get sales report
+/**
+ * Enpoint to get the sales report for a date range.
+ * @route GET /api/salesReport
+ * @param {string} startDate - The start date (ISO format).
+ * @param {string} endDate - The end date (ISO format).
+ * @returns {array} 200 - Sales report data with menu items, total sales, and units sold.
+ * @returns {string} 400 - Missing start or end date.
+ * @returns {string} 404 - No sales data found for the given dates.
+ * @returns {string} 500 - Server error.
+ */
 app.get('/api/salesReport', async (req, res) => {
   const { startDate, endDate } = req.query;
 
@@ -626,21 +739,13 @@ app.get('/api/salesReport', async (req, res) => {
 });
 
 
-// API request to update an order
 /**
- * fetch('/api/updateorders', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(
-    {
-      totalCost: 25.50,
-      menuItemIDs: [1, 2, 3]  // Example data
-    })
-  })
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error updating order:', error));
-
+ * Endpoint to update order history and order items.
+ * @route POST /api/updateorders
+ * @param {number} totalCost - Total cost of the order.
+ * @param {array} menuItemIDs - Array of menu item IDs for the order.
+ * @returns {string} 200 - Success message.
+ * @returns {string} 500 - Server error.
  */
 app.post('/api/updateorders', async (req, res) => 
   {
@@ -702,21 +807,14 @@ app.post('/api/updateorders', async (req, res) =>
 );
 
 
-// Endpoint to update inventory based on menu items
 /**
-  fetch('/api/updateinventory', 
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ menuItemIDs: [1, 2, 3] }) // Sending an example array of menuItemIDs
-    }
-  )
-  .then(response => response.json()) // Parse JSON response
-  .then(data => console.log(data))    // Log the response data
-  .catch(error => console.error('Error:', error)); // Handle any errors
-*/
+ * Endpoint to update inventory based on menu item usage.
+ * @route POST /api/updateinventory
+ * @param {array} menuItemIDs - Array of menu item IDs.
+ * @returns {string} 200 - Success message.
+ * @returns {string} 400 - Missing menu item IDs in the request.
+ * @returns {string} 500 - Server error.
+ */
 app.post('/api/updateinventory', async (req, res) => 
   {
     const { menuItemIDs } = req.body; // Get menuItemIDs from the request body
@@ -802,7 +900,17 @@ app.post('/api/updateinventory', async (req, res) =>
 );
 
 
-// Endpoint to update pending orders table
+// 
+/**
+ * Endpoint to update the pending orders table
+ * @route POST /api/updatependingorders
+ * @param {number} totalCost - The total cost of the order.
+ * @param {Array} menuItemIDs - Array of menu item IDs for the order.
+ * @param {string} inputName - The name of the customer placing the order.
+ * @returns {Object} 200 - Success message with the newly created order ID.
+ * @returns {Object} 400 - Error if any required input is missing or invalid.
+ * @returns {Object} 500 - Error if there's a server failure.
+ */
 app.post('/api/updatependingorders', async (req, res) =>
 {
   const { totalCost, menuItemIDs, inputName } = req.body;
@@ -860,8 +968,13 @@ app.post('/api/updatependingorders', async (req, res) =>
 });
 
 
-
-// API enpoint to get pending orders to display it on the screen
+// 
+/**
+ * Endpoint to get all pending orders from the database.
+ * @route GET /api/getpendingorders
+ * @returns {Object} 200 - A list of all pending orders.
+ * @returns {Object} 500 - Error if there's a server failure.
+ */
 app.get('/api/getpendingorders', async (req, res) =>
 {
   try
@@ -877,22 +990,15 @@ app.get('/api/getpendingorders', async (req, res) =>
 });
 
 
-const fetchPendingOrdersFromAPI = async () =>
-{
-  try
-  {
-    const response = await fetch('http://localhost:5000/api/getpendingorders'); // Full URL for the API
-    if (!response.ok) throw new Error('Failed to fetch pending orders');
-    return await response.json();  // Parse JSON data from API
-  }
-  catch (error)
-  {
-    console.error('Error fetching pending orders:', error);
-    throw error;  // Rethrow error to handle it in the route
-  }
-};
-
-
+/**
+ * Endpoint to get the display name of a menu item using its ID.
+ * @route GET /api/getdisplayname
+ * @param {string} menuitemID - The ID of the menu item.
+ * @returns {string} 200 - The display name of the menu item.
+ * @returns {Object} 400 - Error if the menu item ID is missing.
+ * @returns {Object} 404 - Error if the menu item is not found.
+ * @returns {Object} 500 - Error if there's a server failure.
+ */
 app.get('/api/getdisplayname', async (req, res) =>
 {
   const menuitemID = req.query.menuitemID; // Extract menuitemID from the query string
@@ -926,6 +1032,14 @@ app.get('/api/getdisplayname', async (req, res) =>
   };
 });
 
+
+/**
+ * Endpoint to delete a pending order from the database by ID.
+ * @route DELETE /api/deletependingorder/:id
+ * @param {string} id - The ID of the pending order to delete.
+ * @returns {Object} 200 - Success message indicating the order was deleted.
+ * @returns {Object} 500 - Error if deletion fails.
+ */
 app.delete('/api/deletependingorder/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -938,10 +1052,19 @@ app.delete('/api/deletependingorder/:id', async (req, res) => {
 });
 
 
+
+
 //######################################################################  FEATURES ENDPOINTS  #######################################################################
 
 
-//endpoint to get x report 
+/**
+ * Endpoint for generating an X report for the given date showing hourly totals.
+ * @route GET /api/xReport
+ * @param {string} date - The date for the report in 'YYYY-MM-DD' format.
+ * @returns {Object} 200 - The hourly totals and overall total for the report.
+ * @returns {Object} 400 - Error if date is missing.
+ * @returns {Object} 500 - Error if there's a server failure.
+ */
 app.get('/api/xReport', async (req, res) => {
   const { date } = req.query; // Expecting date in 'YYYY-MM-DD' 
 
@@ -978,6 +1101,18 @@ app.get('/api/xReport', async (req, res) => {
   } 
 });
 
+
+
+/**
+ * Endpoint to remove stock of an ingredient by reducing its quantity in the inventory.
+ * @route POST /api/removeStock
+ * @param {string} ingredientName - The name of the ingredient to remove stock from.
+ * @param {number} quantity - The quantity of the ingredient to remove.
+ * @returns {Object} 200 - Success message indicating stock removal.
+ * @returns {Object} 400 - Error if invalid data is provided.
+ * @returns {Object} 404 - Error if ingredient not found.
+ * @returns {Object} 500 - Error if stock removal fails.
+ */
 app.post('/api/removeStock', async (req, res) => {
   const { ingredientName, quantity } = req.query;
 
@@ -1003,6 +1138,16 @@ app.post('/api/removeStock', async (req, res) => {
 });
 
 
+/**
+ * Endpoint to change the price of a menu item by ID.
+ * @route POST /api/changePrice
+ * @param {number} menuItemID - The ID of the menu item to change the price of.
+ * @param {number} newPrice - The new price for the menu item.
+ * @returns {Object} 200 - Success message with updated item details.
+ * @returns {Object} 400 - Error if invalid data is provided.
+ * @returns {Object} 404 - Error if menu item not found.
+ * @returns {Object} 500 - Error if price change fails.
+ */
 app.post('/api/changePrice', async (req, res) => {
 
   let { menuItemID, newPrice } = req.body;
@@ -1058,24 +1203,18 @@ async function isIngredientValid(ingredient)
 }
 
 
-
-/** API endpoint to get product usage
- *  This endpoint retrieves the product usage data for a specific ingredient based on the given timeframe (hourly, daily, or monthly).
- * 
- * The timeframe can be:
-
-    1. 'hourly' - For hourly data on a specific day (requires 'day' parameter in the format YYYY-MM-DD).
-      Example: /api/product-usage?ingredient=chicken&timeframe=hourly&day=2024-03-19
-      This will fetch the ingredient usage for 'chicken' on August 15, 2024, broken down by hour.
-
-    2. 'daily' - For daily data in a specific month (requires 'month' parameter in the format YYYY-MM).
-      Example: /api/product-usage?ingredient=chicken&timeframe=daily&month=2024-03
-      This will fetch the ingredient usage for 'chicken' for the entire month of August 2024, broken down by day.
-
-    3. 'monthly' - For monthly data in a specific year (requires 'year' parameter in the format YYYY).
-      Example: /api/product-usage?ingredient=chicken&timeframe=monthly&year=2024
-      This will fetch the ingredient usage for 'chicken' for the year 2024, broken down by month.
-
+/**
+ * Endpoint to retrieve product usage data for an ingredient based on timeframe (hourly, daily, monthly).
+ * @route GET /api/product-usage
+ * @param {string} ingredient - The name of the ingredient to retrieve usage data for.
+ * @param {string} timeframe - The timeframe for data retrieval ('hourly', 'daily', 'monthly').
+ * @param {string} year - The year (for 'monthly' timeframe).
+ * @param {string} month - The month (for 'daily' timeframe).
+ * @param {string} day - The day (for 'hourly' timeframe).
+ * @returns {Object} 200 - Success response with usage data.
+ * @returns {Object} 400 - Error if invalid timeframe or missing data.
+ * @returns {Object} 404 - Error if ingredient not found.
+ * @returns {Object} 500 - Error if fetching usage data fails.
  */
 app.get('/api/product-usage', async (req, res) =>
 {
@@ -1190,33 +1329,18 @@ app.get('/api/product-usage', async (req, res) =>
 });
 
 
-
-// API Endpoint to add a seasonal item
 /**
- *  EXAMPLE API CALL
- * 
-  fetch('/api/addseasonalitem',
-  {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify
-    ({
-      itemName: "newChicken",
-      itemIngredients: ["chicken", "onions", "chiliSauce"],
-      quantities: [1, 2, 2],
-      displayname: "New<br>Chicken",
-      type: "entree"
-    })
-  })
-  .then(response =>
-  {
-    if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-    return response.json();
-  })
-  .then(data => console.log(data)) // Log success response
-  .catch(error => console.error('Error:', error)); // Handle errors
+ * Endpoint to add a seasonal item to the menu with ingredients and quantities.
+ * @route POST /api/addseasonalitem
+ * @param {string} itemName - The name of the seasonal item to add.
+ * @param {Array<string>} itemIngredients - List of ingredients required for the seasonal item.
+ * @param {Array<number>} quantities - Corresponding quantities for each ingredient.
+ * @param {string} displayname - Display name of the seasonal item.
+ * @param {string} type - The type of menu item (e.g., 'entree').
+ * @returns {Object} 201 - Success message indicating the item was added successfully.
+ * @returns {Object} 400 - Error if missing fields or mismatched arrays.
+ * @returns {Object} 500 - Error if adding seasonal item fails.
  */
-
 app.post('/api/addseasonalitem', async (req, res) =>
 {
   const { itemName, itemIngredients, quantities, displayname, type } = req.body;
@@ -1300,27 +1424,14 @@ app.post('/api/addseasonalitem', async (req, res) =>
 });
 
 
-
-// API endpoint to remove/deactivate seasonal item
 /**
- *  EXAMPLE API CALL
- * 
-  fetch('/api/removeseasonalitem',
-  {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify
-    ({
-      itemName: "newChicken",
-    })
-  })
-  .then(response =>
-  {
-    if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-    return response.json();
-  })
-  .then(data => console.log(data)) // Log success response
-  .catch(error => console.error('Error:', error)); // Handle errors
+ * Endpoint to remove or deactivate a seasonal item from the menu.
+ * @route POST /api/removeseasonalitem
+ * @param {string} itemName - The name of the seasonal item to deactivate.
+ * @returns {Object} 200 - Success message indicating the seasonal item was deactivated.
+ * @returns {Object} 400 - Error if itemName is missing.
+ * @returns {Object} 404 - Error if item not found or already inactive.
+ * @returns {Object} 500 - Error if deactivating seasonal item fails.
  */
 app.post('/api/removeseasonalitem', async (req, res) =>
 {
@@ -1372,6 +1483,12 @@ app.post('/api/removeseasonalitem', async (req, res) =>
 });
 
 
+/**
+ * Endpoint to retrieve all active seasonal items.
+ * @route GET /api/getactiveseasonalitems
+ * @returns {Array<Object>} 200 - List of active seasonal items with details (menuitem, price, size, type, displayname).
+ * @returns {Object} 500 - Error if fetching active seasonal items fails.
+ */
 app.get('/api/getactiveseasonalitems', async (req, res) =>
 {
   try
@@ -1394,29 +1511,17 @@ app.get('/api/getactiveseasonalitems', async (req, res) =>
 });
 
 
-// API endpoint to add rewards account
 /**
- *  EXAMPLE API CALL
- * 
-  fetch('/api/addrewardsaccount',
-  {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify
-    ({
-      name: "John",
-      email: "johnsmith@gmail.com",
-      points: 10
-    })
-  })
-  .then(response =>
-  {
-    if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-    return response.json();
-  })
-  .then(data => console.log(data)) // Log success response
-  .catch(error => console.error('Error:', error)); // Handle errors
-*/
+ * Endpoint to create a new rewards account.
+ * @route POST /api/addrewardsaccount
+ * @param {string} name - The name of the user.
+ * @param {string} email - The email address of the user.
+ * @param {number} points - The points to be assigned to the user.
+ * @returns {Object} 201 - Success message with the created user's details.
+ * @returns {Object} 400 - Error if required fields are missing.
+ * @returns {Object} 409 - Error if email already exists in the database.
+ * @returns {Object} 500 - Error if creating the rewards account fails.
+ */
 app.post('/api/addrewardsaccount', async (req, res) =>
 {
   const { name, email, points } = req.body;
@@ -1472,28 +1577,16 @@ app.post('/api/addrewardsaccount', async (req, res) =>
 });
 
 
-// API endpoint to add points to a specific user
 /**
- *  EXAMPLE API CALL
- * 
-  fetch('/api/addpoints',
-  {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify
-    ({
-      email: "johnsmith@gmail.com",
-      points: 15
-    })
-  })
-  .then(response =>
-  {
-    if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-    return response.json();
-  })
-  .then(data => console.log(data)) // Log success response
-  .catch(error => console.error('Error:', error)); // Handle errors
-*/
+ * Endpoint to add points to a user's rewards account.
+ * @route POST /api/addpoints
+ * @param {string} email - The email address of the user.
+ * @param {number} points - The points to be added to the user's account.
+ * @returns {Object} 200 - Success message with the updated user's details.
+ * @returns {Object} 400 - Error if email or points are missing or invalid.
+ * @returns {Object} 404 - Error if the user is not found.
+ * @returns {Object} 500 - Error if adding points fails.
+ */
 app.post('/api/addpoints', async (req, res) => {
   const { email, points } = req.body;
 
@@ -1549,7 +1642,15 @@ app.post('/api/addpoints', async (req, res) => {
 
 
 
-// API endpoint to check if an account exsits with the given email
+/**
+ * Endpoint to check if a rewards account exists for a given email.
+ * @route GET /api/checkaccount
+ * @param {string} email - The email address to check.
+ * @returns {Object} 200 - Success message with an indicator if the account exists.
+ * @returns {Object} 400 - Error if the email is missing.
+ * @returns {Object} 404 - Error if no account is found for the given email.
+ * @returns {Object} 500 - Error if checking the account fails.
+ */
 app.get('/api/checkaccount', async (req, res) =>
 {
   const { email } = req.query;  // Get email from query parameters
@@ -1587,6 +1688,16 @@ app.get('/api/checkaccount', async (req, res) =>
 
 });
 
+
+/**
+ * Endpoint to retrieve the user details for a given email.
+ * @route GET /api/getuserdetails
+ * @param {string} email - The email address of the user whose details are to be fetched.
+ * @returns {Object} 200 - User's name and points.
+ * @returns {Object} 400 - Error if email is missing.
+ * @returns {Object} 404 - Error if no user is found for the provided email.
+ * @returns {Object} 500 - Error if fetching user details fails.
+ */
 app.get('/api/getuserdetails', async (req, res) => {
   const { email } = req.query;
 
@@ -1635,6 +1746,13 @@ const tailorMenuData = (data) => {
   }));
 };
 
+
+/**
+ * Endpoint to download the menu items in JSON format.
+ * @route GET /download-menu
+ * @returns {Object} 200 - Success message with file path of the saved JSON file.
+ * @returns {Object} 500 - Error if downloading the file fails.
+ */
 app.get('/download-menu', async (req, res) => {
   try {
     const response = await axios.get(`http://localhost:${port}/api/menuitems`);
