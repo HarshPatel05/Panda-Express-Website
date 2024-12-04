@@ -1,26 +1,47 @@
+/**
+ * Event listener for when the DOM content is fully loaded. 
+ * Initializes the image carousel and calls the loadMenuItems function to fetch and display menu items.
+ */
 document.addEventListener("DOMContentLoaded", () => {
+  // Get all elements with the class 'animated-img' (for the image carousel)
   const animatedImages = document.querySelectorAll('.animated-img');
 
+  // Loop through each image element to set up the carousel animation
   animatedImages.forEach(imgElement => {
+      // Get the list of image URLs from the 'data-images' attribute
       const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
       let currentIndex = 0;
 
+      // If images exist, start the carousel animation
       if (images.length > 0) {
           setInterval(() => {
+              // Increment the index and reset when reaching the end of the images array
               currentIndex = (currentIndex + 1) % images.length;
+
+              // Fade out the image to prepare for the transition
               imgElement.style.opacity = 0;
 
+              // After the fade-out transition, change the image source and fade it back in
               setTimeout(() => {
                   imgElement.src = images[currentIndex];
                   imgElement.style.opacity = 1;
-              }, 500); // Matches CSS transition duration
-          }, 7000); // Adjust interval time as needed
+              }, 500); // Matches the CSS transition duration
+          }, 7000); // Set interval for changing images (in milliseconds)
       }
   });
 
+  // Load the menu items after setting up the image carousel
   loadMenuItems();
 });
 
+
+/**
+ * Fetches menu item data from the API, processes it, and updates the corresponding elements in the HTML.
+ * 
+ * @async
+ * @function loadMenuItems
+ * @throws {Error} Throws an error if fetching the menu items fails or if an item is not found.
+ */
 async function loadMenuItems() {
   try {
     const response = await fetch('/api/menuitems');
