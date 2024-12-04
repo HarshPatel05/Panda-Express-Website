@@ -22,6 +22,7 @@
                 <div class="dropdownContent" id="dropdownMenu">
                     <a href="/register">Register View</a>
                     <a href="/menuboard">Menu Board View</a>
+                    <a href="/specialboard">Specials Board View</a>
                     <a href="/kitchen">Kitchen View</a>
                     <a href="/kiosk">Kiosk View</a>
                 </div>
@@ -45,8 +46,12 @@
             <button class="tabLinks">Z Report</button>
         </div>
 
-        <div id="orderHistoryDiv" class="tabContent">
-            <h3>Past Orders</h3>
+        <div class="tabContent" id =orderHistoryDiv>
+            <div>
+            <label for="deleteOrderId">Delete Order by ID:</label>
+            <input type="text" id="deleteOrderId" name="deleteOrderId" placeholder="Enter Order ID">
+            <button id="deleteOrderButton" onclick="deleteOrder()">Delete Order</button>
+            </div>
             <table id="orderHistory" border="2">
                 <thead>
                     <th>Order Id</th>
@@ -54,28 +59,79 @@
                     <th>Date</th>
                 </thead>
                 <tbody>
-
+    
                 </tbody>
             </table>
-
         </div>
 
-        <div id="employeesDiv" class="tabContent">
+        <div id="employeesDiv">
             <h3>Employees</h3>
-            <table id="employees" border="2">
-                <thead>
-                    <th>Employee Name</th>
-                    <th>ID Number</th>
-                    <th>Password</th>
-                    <th>Status</th>
-                    <th>Phone Number</th>
-                    <th>Position</th>
-                </thead>
-                <tbody>
+            <button id="toggleButton" onclick="toggleView()">Manage Employees</button>
+        
+            <div id="employeeTable" class="tabContent">
+                <table id="employees" border="2">
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th>ID Number</th>
+                            <th>Password</th>
+                            <th>Status</th>
+                            <th>Phone Number</th>
+                            <th>Position</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+        
+            <div id="employeeForm" class="tabContent" style="display: none;">
+                <h4>Create New Employee</h4>
+        
+                <label for="employeeName">Name:</label>
+                <input type="text" id="employeeName" name="employeeName" placeholder="Enter employee name">
+        
+                <label for="employeeId">ID Number:</label>
+                <input type="text" id="employeeId" name="employeeId" placeholder="Enter ID number">
+        
+                <label for="employeePassword">Password:</label>
+                <input type="password" id="employeePassword" name="employeePassword" placeholder="Enter password">
+        
+                <label for="employeeStatus">Status:</label>
+                <input type="text" id="employeeStatus" name="employeeStatus" placeholder="Enter status">
+        
+                <label for="employeePhone">Phone Number:</label>
+                <input type="text" id="employeePhone" name="employeePhone" placeholder="Enter phone number">
+        
+                <label for="employeePosition">Position:</label>
+                <input type="text" id="employeePosition" name="employeePosition" placeholder="Enter position">
+        
+                <button onclick="createEmployee()">Create Employee</button>
+        
+                <h4>Delete Employee</h4>
+        
+                <label for="deleteEmployeeId">ID Number:</label>
+                <input type="text" id="deleteEmployeeId" name="deleteEmployeeId" placeholder="Enter ID number">
+        
+                <button onclick="deleteEmployee()">Delete Employee</button>
+        
+                <h4>Update Employee</h4>
+        
+                <label for="updateEmployeeId">ID Number:</label>
+                <input type="text" id="updateEmployeeId" name="updateEmployeeId" placeholder="Enter ID number">
+        
+                <label for="updateField">Field to Update:</label>
+                <input type="text" id="updateField" name="updateField" placeholder="Enter field (e.g., Position, Status)">
+        
+                <label for="updateValue">New Value:</label>
+                <input type="text" id="updateValue" name="updateValue" placeholder="Enter new value">
+        
+                <button onclick="updateEmployee()">Update Employee</button>
+            </div>
         </div>
+        </div>
+
 
         <div id="inventoryDiv" class="tabContent">
             <h3>Current Inventory</h3>
@@ -109,7 +165,7 @@
             <h3>Menu Items</h3>
             <div class="menuItemsControls">
                 <label for="menuItemID">Item ID:</label>
-                <input type="text" id="menuItemID" name="menuItemID" placeholder="Enter item ID">
+                <input type="number" id="menuItemID" name="menuItemID" placeholder="Enter item ID">
         
                 <label for="newPrice">New Price:</label>
                 <input type="number" id="newPrice" name="newPrice" placeholder="Enter new price" step="0.01" min="0">
