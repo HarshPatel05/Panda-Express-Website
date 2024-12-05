@@ -8,6 +8,9 @@ function googleTranslateElementInit() {
     )
 }
 
+/**
+ * Toggles the view between employee table and form.
+ */
 function toggleView() {
     const table = document.getElementById('employeeTable');
     const form = document.getElementById('employeeForm');
@@ -24,6 +27,9 @@ function toggleView() {
     }
 }
 
+/**
+ * Toggles the view between the inventory table and form
+ */
 function toggleViewInventory() {
     var table = document.getElementById("inventoryTable");
     var form = document.getElementById("inventoryForm");
@@ -321,7 +327,9 @@ async function deleteOrder() {
         alert('An error occurred while deleting the order.');
     }
 }
-
+/**
+ * Updates the field type based on the input
+ */
 function updateTimeframeInputs() {
     const timeframe = document.getElementById('timeframe').value;
     const dateInput = document.getElementById('dateInput');
