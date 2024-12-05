@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // speechSynthesis.speak(speech);
 
             // AI Zone for playing audio via API (uncomment to enable)
-            // playAudioFromAPI(text);
+            playAudioFromAPI(text);
 
             // Process the completed order for checkout
             const menuItemIDs = JSON.parse(order.dataset.menuItemIDs); // Convert menu item IDs to array
