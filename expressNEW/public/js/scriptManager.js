@@ -388,7 +388,12 @@ async function getProductUsage() {
 }
 
 
-
+/**
+ * Gets data from API endpoint and populates the table with the  data.
+ * @param APIEndpoint the API endpoint URL to get data from
+ * @param tableID the ID of the table to be populated 
+ * @throws {Error} if the fetch request fails or if the JSON response cannot be parsed
+ */
 async function populateTable(APIEndpoint, tableID) {
     const response = await fetch(APIEndpoint);
     const data = await response.json();
@@ -492,7 +497,9 @@ async function populateReports(APIEndpoint, tableID) {
     }
 }
 
-
+/**
+ * Sets up the tab functionality and populates each tab with appropritate data.
+ */
 function setupTabs() {
     const tabs = document.querySelectorAll('.tabLinks');
     const contents = document.querySelectorAll('.tabContent');
