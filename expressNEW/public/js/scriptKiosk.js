@@ -596,6 +596,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Michael
 // Function to get the weather information for the kiosk
+/**
+ * Gets and displays College Station weather
+ */
 async function getWeather() {
     try {
         const response = await fetch('/api/weather');
