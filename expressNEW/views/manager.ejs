@@ -221,24 +221,50 @@
             </tbody>
         </div>
     
-        <div id="seasonalItems" class="tabContent">
+        <div id="seasonalItemsDiv" class="tabContent">
             <h3>Seasonal Menu Items</h3>
-            <div class="seasonalControls">
-                <label for="seasonalItemInput">New Seasonal Item:</label>
-                <input
-                    type="text"
-                    id="seasonalItemInput"
-                    name="seasonalItemInput"
-                    placeholder="Enter seasonal item"
-                    onblur="enforceCamelCase(this)"
-                >
-                <button id="addSeasonalItemButton" onclick="addSeasonalItem()">Add Seasonal Item</button>
+            <button id="toggleButtonSeasonal" onclick="toggleViewSeasonal()">Manage Seasonal Items</button>
+        
+            <!-- Table View -->
+            <div id="seasonalTable">
+                <table id="seasonalItems" border="2">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Price</th>
+                            <th>Size</th>
+                            <th>Type</th>
+                            <th>Display Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be dynamically added here -->
+                    </tbody>
+                </table>
             </div>
-            <tbody>
-
-            </tbody>
-
+        
+            <!-- Form View -->
+            <div id="seasonalForm" style="display: none;">
+                <h4>Add New Seasonal Item</h4>
+                <label for="seasonalItemName">Item Name:</label>
+                <input type="text" id="seasonalItemName" name="seasonalItemName" placeholder="Enter item name">
+        
+                <label for="seasonalItemDisplayName">Display Name:</label>
+                <input type="text" id="seasonalItemDisplayName" name="seasonalItemDisplayName" placeholder="Enter display name">
+        
+                <label for="seasonalItemType">Type:</label>
+                <input type="text" id="seasonalItemType" name="seasonalItemType" placeholder="Enter item type (e.g., entree)">
+        
+                <button onclick="addSeasonalItem()">Add Seasonal Item</button>
+        
+                <h4>Remove Seasonal Item</h4>
+                <label for="removeSeasonalItemName">Item Name:</label>
+                <input type="text" id="removeSeasonalItemName" name="removeSeasonalItemName" placeholder="Enter item name">
+        
+                <button onclick="removeSeasonalItem()">Remove Seasonal Item</button>
+            </div>
         </div>
+        
 
         <div id="restock" class="tabContent">
             <h3>Items for Restock</h3>

@@ -654,3 +654,19 @@ async function restockIngredient() {
         alert('An error occurred while trying to restock the ingredient.');
     }
 }
+
+function toggleViewSeasonal() {
+    const table = document.getElementById("seasonalTable");
+    const form = document.getElementById("seasonalForm");
+    const button = document.getElementById("toggleButtonSeasonal");
+
+    if (form.style.display === "none") {
+        form.style.display = "block";
+        table.style.display = "none";
+        button.textContent = "View Seasonal Items";
+    } else {
+        form.style.display = "none";
+        table.style.display = "block";
+        button.textContent = "Manage Seasonal Items";
+    }
+}
