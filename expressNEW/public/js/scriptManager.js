@@ -575,3 +575,53 @@ function toCamelCase(str) {
 function enforceCamelCase(input) {
     input.value = toCamelCase(input.value);
 }
+
+async function changePrice() {
+    let ID = document.getElementById('menuItemID').value;
+    let price = document.getElementById('newPrice').value;
+    if (!ID || !price) {
+        alert("Please fill both required parts");
+        return;
+    }
+    try  {
+        const response = await fetch('/api/changePrice', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                menuItemID: ID,
+                newPrice: price
+            }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert(`Success: ${data.message}`);
+        } else {
+            alert(`Error: ${data.error}`);
+        }
+    }
+    catch (error) {
+        console.error('Error changing price:', error);
+        alert('An error occurred while trying to change the price.');
+    }
+}
+async function restockIngredient() {
+    const ingredientName = document.getElementById('restockIngredient').value;
+    if (!ingredientName) {
+        alert("Please provide an ingredient name.");
+        return;
+    }
+    try {
+        const response = await fetch(`/api/restockInventory?ingredientName=${ingredientName}`);
+        const data = await response.json();
+        if (response.ok) {
+            alert(`Success: ${data.message}`);
+        } else {
+            alert(`Error: ${data.error}`);
+        }
+    } catch (error) {
+        console.error('Error restocking ingredient:', error);
+        alert('An error occurred while trying to restock the ingredient.');
+    }
+}

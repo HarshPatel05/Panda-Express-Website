@@ -1668,6 +1668,36 @@ app.get('/api/getuserdetails', async (req, res) => {
 });
 
 
+/**
+ * Endpoint to change the price of a menu item by ID.
+ * @route POST /api/changePrice
+ * @param {number} menuItemID - The ID of the menu item to change the price of.
+ * @param {number} newPrice - The new price for the menu item.
+ * @returns {Object} 200 - Success message with updated item details.
+ * @returns {Object} 400 - Error if invalid data is provided.
+ * @returns {Object} 404 - Error if menu item not found.
+ * @returns {Object} 500 - Error if price change fails.
+ */
+app.post('/api/changePrice', async (req, res) => {
+  let { menuItemID, newPrice } = req.body;
+  if (!menuItemID || !newPrice) {
+    return res.status(400).json({ error: 'Invalid data' });
+  }
+  try {
+    const result = await pool.query('UPDATE menuitems SET price = $1 WHERE menuitemid = $2 RETURNING *;', [newPrice, menuItemID]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    menuItemID = parseInt(menuItemID, 10);
+    newPrice = parseFloat(newPrice);
+    res.json({ message: `Price updated successfully for item ${menuItemID}`, item: result.rows[0] });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'An error occurred while updating the price' });
+  }
+});
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////                                                                       //////////////////////////////////////////////////
 ////////////////////////////////////////////                           FILE DOWNLOAD                               //////////////////////////////////////////////////
