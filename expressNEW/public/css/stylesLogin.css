@@ -33,16 +33,6 @@ body {
     box-shadow: 0 2vw 5vw rgba(0, 0, 0, 0.2); 
 }
 
-.apiContainer{
-    background-color: white;
-    width: 50%; 
-    max-width: 400px; 
-    padding: 5vh 2vw; 
-    border-radius: 1.5vw; 
-    text-align: center;
-    box-shadow: 0 2vw 5vw rgba(0, 0, 0, 0.2); 
-}
-
 
 h1 {
     color: #e60000;
@@ -77,4 +67,36 @@ form button {
 form button:hover {
     background-color: #cc0000;
 }
+.apiContainer {
+    background-color: white;
+    width: 70%;
+    max-width: 600px;
+    padding: 2vh 1vw; 
+    border-radius: 1.5vw;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    box-shadow: 0 1vw 2vw rgba(0, 0, 0, 0.1);
+    margin-top: 1vh; 
+}
 
+.apiContainer a {
+    font-size: 1.2vw; 
+    padding: 0.5vh 1.5vw; 
+    background-color: black; 
+    color: white;
+    text-decoration: none;
+    border-radius: 0.3vw;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: bold;
+}
+
+.apiContainer a:hover {
+    background-color: #333; 
+    transform: scale(1.05);
+}
+
+#googleTranslateElement {
+    flex: 1; 
+    text-align: right; 
+}
