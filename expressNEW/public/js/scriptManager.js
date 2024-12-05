@@ -1,4 +1,6 @@
-//Translation Functionality
+/**
+ * Creates a Google Translate Element for page translation
+ */
 function googleTranslateElementInit() {
     new google.translate.TranslateElement(
         { pageLanguage: "en" },
@@ -6,6 +8,9 @@ function googleTranslateElementInit() {
     )
 }
 
+/**
+ * Toggles the view between employee table and form.
+ */
 function toggleView() {
     const table = document.getElementById('employeeTable');
     const form = document.getElementById('employeeForm');
@@ -22,6 +27,9 @@ function toggleView() {
     }
 }
 
+/**
+ * Toggles the view between the inventory table and form
+ */
 function toggleViewInventory() {
     var table = document.getElementById("inventoryTable");
     var form = document.getElementById("inventoryForm");
@@ -319,7 +327,9 @@ async function deleteOrder() {
         alert('An error occurred while deleting the order.');
     }
 }
-
+/**
+ * Updates the field type based on the input
+ */
 function updateTimeframeInputs() {
     const timeframe = document.getElementById('timeframe').value;
     const dateInput = document.getElementById('dateInput');
@@ -386,7 +396,12 @@ async function getProductUsage() {
 }
 
 
-
+/**
+ * Gets data from API endpoint and populates the table with the  data.
+ * @param APIEndpoint the API endpoint URL to get data from
+ * @param tableID the ID of the table to be populated 
+ * @throws {Error} if the fetch request fails or if the JSON response cannot be parsed
+ */
 async function populateTable(APIEndpoint, tableID) {
     const response = await fetch(APIEndpoint);
     const data = await response.json();
@@ -490,7 +505,9 @@ async function populateReports(APIEndpoint, tableID) {
     }
 }
 
-
+/**
+ * Sets up the tab functionality and populates each tab with appropritate data.
+ */
 function setupTabs() {
     const tabs = document.querySelectorAll('.tabLinks');
     const contents = document.querySelectorAll('.tabContent');
@@ -541,6 +558,9 @@ let reportDate = new Intl.DateTimeFormat('en-US', {
 
 window.onload = setupTabs;
 
+/**
+ * Allows for view control drop down to appear when needed.
+ */
 function toggleDropdown() {
     const dropdown = document.getElementById("dropdownMenu");
     if (dropdown.style.display === "block") {
@@ -559,6 +579,11 @@ window.onclick = function (event) {
     }
 };
 
+/**
+ * Converts a string to camelCase.
+ * @param str the string to be converted to camelCase
+ * @return the camelCase formatted string
+ */
 function toCamelCase(str) {
     return str
         .toLowerCase() 
@@ -572,6 +597,10 @@ function toCamelCase(str) {
         .join(''); 
 }
 
+/**
+ * Applies camelCase to the input of a field.
+ * @param input the field whose input is to be converted to camelCase
+ */
 function enforceCamelCase(input) {
     input.value = toCamelCase(input.value);
 }

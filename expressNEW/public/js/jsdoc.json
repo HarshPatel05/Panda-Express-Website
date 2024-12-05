@@ -1,9 +1,13 @@
 {
     "source": {
-        "include": ["C:/Users/Roger/OneDrive/Documents/CSCE 331/project-3-43-codepandas/expressNEW/public/js"],
-        "includePattern": ".+\\.js(doc|x)?$"
+      "include": [
+        "C:/Users/Roger/OneDrive/Documents/CSCE 331/project-3-43-codepandas/expressNEW/public/js/*.js"
+      ],
+      "exclude": ["node_modules"]
     },
     "opts": {
-        "destination": "C:/Users/Roger/OneDrive/Documents/CSCE 331/project-3-43-codepandas/expressNEW/public/docs"
+      "destination": "C:/Users/Roger/OneDrive/Documents/CSCE 331/project-3-43-codepandas/expressNEW/docs"
     }
-}
+  }
+  
+  

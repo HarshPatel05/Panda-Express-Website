@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: scriptSpecial.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: scriptSpecial.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Event listener for when the DOM is fully loaded. 
+ * Calls the loadMenuItems function to fetch and display the menu items.
+ */
+document.addEventListener("DOMContentLoaded", () => {
+    loadMenuItems();
+});
+
+/**
+ * Fetches the menu items from the API, processes the data, and displays them 
+ * in their respective sections (Entrees, Sides, Appetizers).
+ * 
+ * @async
+ * @function loadMenuItems
+ * @throws {Error} Throws an error if fetching the menu items fails.
+ */
+async function loadMenuItems() {
+    try {
+        // Fetch the menu items from the API endpoint
+        const response = await fetch('/api/menuitems');
+
+        // If the response is not ok, throw an error
+        if (!response.ok) {
+            throw new Error(`Failed to fetch menu items: ${response.statusText}`);
+        }
+
+        // Parse the fetched data as JSON
+        const menuItems = await response.json();
+        console.log('Fetched Menu Items:', menuItems);
+
+        // Section containers for Entrees, Sides, and Appetizers
+        const entreeSection = document.querySelector('#entreeSection .specials-grid');
+        const sideSection = document.querySelector('#sideSection .specials-grid');
+        const appetizerSection = document.querySelector('#appetizerSection .specials-grid');
+
+        // Clear any existing content in the sections
+        entreeSection.innerHTML = '';
+        sideSection.innerHTML = '';
+        appetizerSection.innerHTML = '';
+
+        /**
+         * Filter the menu items to include only active ones, 
+         * and ensure there are no duplicate menu items.
+         */
+        const uniqueItems = [];
+        const activeItems = menuItems.filter(item => {
+            // Check if the item is active and if it hasn't already been added
+            if (item.status === "active" &amp;&amp; !uniqueItems.includes(item.menuitem)) {
+                uniqueItems.push(item.menuitem);
+                return true; // Include this item
+            }
+            return false; // Exclude duplicate or inactive items
+        });
+
+        // Loop through the active items and create the HTML elements to display them
+        activeItems.forEach(item => {
+            // Create a new div for each special item
+            const specialItem = document.createElement('div');
+            specialItem.classList.add('special-item');
+
+            // Add the display name of the item to the special item
+            specialItem.innerHTML = `
+                &lt;div class="special-name">${item.displayname}&lt;/div>
+            `;
+
+            // Append the special item to the appropriate section based on its type
+            if (item.type === "entree") {
+                entreeSection.appendChild(specialItem);
+            } else if (item.type === "side") {
+                sideSection.appendChild(specialItem);
+            } else if (item.type === "appetizer") {
+                appetizerSection.appendChild(specialItem);
+            }
+        });
+
+        // Display fallback message if any section is empty (no active items)
+        if (entreeSection.children.length === 0) {
+            entreeSection.innerHTML = '&lt;p>No active entrees available at the moment.&lt;/p>';
+        }
+        if (sideSection.children.length === 0) {
+            sideSection.innerHTML = '&lt;p>No active sides available at the moment.&lt;/p>';
+        }
+        if (appetizerSection.children.length === 0) {
+            appetizerSection.innerHTML = '&lt;p>No active appetizers available at the moment.&lt;/p>';
+        }
+
+    } catch (error) {
+        // Log any errors that occur during the fetch or processing of menu items
+        console.error('Error loading menu items:', error);
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Keyboard">Keyboard</a></li><li><a href="global.html#addAlaCarteItem">addAlaCarteItem</a></li><li><a href="global.html#addAlaCarteToOrder">addAlaCarteToOrder</a></li><li><a href="global.html#addAppetizerToOrder">addAppetizerToOrder</a></li><li><a href="global.html#addComponentToCurrentOrder">addComponentToCurrentOrder</a></li><li><a href="global.html#addDrinkToOrder">addDrinkToOrder</a></li><li><a href="global.html#addIngredient">addIngredient</a></li><li><a href="global.html#addItemToOrder">addItemToOrder</a></li><li><a href="global.html#addPointsToAccount">addPointsToAccount</a></li><li><a href="global.html#applyDiscount">applyDiscount</a></li><li><a href="global.html#applyOrderDiscount">applyOrderDiscount</a></li><li><a href="global.html#autoSignInFromOAuth">autoSignInFromOAuth</a></li><li><a href="global.html#calculateTotal">calculateTotal</a></li><li><a href="global.html#camelCaseToNormal">camelCaseToNormal</a></li><li><a href="global.html#cancelCurrentCompositeItem">cancelCurrentCompositeItem</a></li><li><a href="global.html#capitalize">capitalize</a></li><li><a href="global.html#checkForProfanity">checkForProfanity</a></li><li><a href="global.html#checkoutOrder">checkoutOrder</a></li><li><a href="global.html#clearOrder">clearOrder</a></li><li><a href="global.html#closeAlaCarteModal">closeAlaCarteModal</a></li><li><a href="global.html#closeAppetizerModal">closeAppetizerModal</a></li><li><a href="global.html#closeDrinkModal">closeDrinkModal</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#closeRewardsPanel">closeRewardsPanel</a></li><li><a href="global.html#convertCamelCaseToReadable">convertCamelCaseToReadable</a></li><li><a href="global.html#convertToArray">convertToArray</a></li><li><a href="global.html#createEmployee">createEmployee</a></li><li><a href="global.html#decreaseAlaCarteQuantity">decreaseAlaCarteQuantity</a></li><li><a href="global.html#decreaseAppetizerQuantity">decreaseAppetizerQuantity</a></li><li><a href="global.html#decreaseDrinkQuantity">decreaseDrinkQuantity</a></li><li><a href="global.html#deleteEmployee">deleteEmployee</a></li><li><a href="global.html#deleteIngredient">deleteIngredient</a></li><li><a href="global.html#deleteOrder">deleteOrder</a></li><li><a href="global.html#deletePendingOrder">deletePendingOrder</a></li><li><a href="global.html#enforceCamelCase">enforceCamelCase</a></li><li><a href="global.html#fetchMenuItemDetails">fetchMenuItemDetails</a></li><li><a href="global.html#finalizeCompositeItem">finalizeCompositeItem</a></li><li><a href="global.html#formatWithSize">formatWithSize</a></li><li><a href="global.html#getFullSizeName">getFullSizeName</a></li><li><a href="global.html#getProductUsage">getProductUsage</a></li><li><a href="global.html#getWeather">getWeather</a></li><li><a href="global.html#goBackToMain">goBackToMain</a></li><li><a href="global.html#googleTranslateElementInit">googleTranslateElementInit</a></li><li><a href="global.html#handleCreateAccount">handleCreateAccount</a></li><li><a href="global.html#handleLogOut">handleLogOut</a></li><li><a href="global.html#handleNameValidation">handleNameValidation</a></li><li><a href="global.html#handleSignIn">handleSignIn</a></li><li><a href="global.html#increaseAlaCarteQuantity">increaseAlaCarteQuantity</a></li><li><a href="global.html#increaseAppetizerQuantity">increaseAppetizerQuantity</a></li><li><a href="global.html#increaseDrinkQuantity">increaseDrinkQuantity</a></li><li><a href="global.html#isIngredientValid">isIngredientValid</a></li><li><a href="global.html#loadMenuItems">loadMenuItems</a></li><li><a href="global.html#loadPendingOrders">loadPendingOrders</a></li><li><a href="global.html#loadProhibitedWords">loadProhibitedWords</a></li><li><a href="global.html#openAlaCarteModal">openAlaCarteModal</a></li><li><a href="global.html#openDrinkModal">openDrinkModal</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#playAudioFromAPI">playAudioFromAPI</a></li><li><a href="global.html#pool">pool</a></li><li><a href="global.html#populateReports">populateReports</a></li><li><a href="global.html#populateSales">populateSales</a></li><li><a href="global.html#populateTable">populateTable</a></li><li><a href="global.html#proceedWithCheckout">proceedWithCheckout</a></li><li><a href="global.html#qs">qs</a></li><li><a href="global.html#redirectToRewards">redirectToRewards</a></li><li><a href="global.html#removeItemFromOrder">removeItemFromOrder</a></li><li><a href="global.html#selectAlaCarteSize">selectAlaCarteSize</a></li><li><a href="global.html#selectAppetizerSize">selectAppetizerSize</a></li><li><a href="global.html#selectDrink">selectDrink</a></li><li><a href="global.html#selectDrinkSize">selectDrinkSize</a></li><li><a href="global.html#selectItemType">selectItemType</a></li><li><a href="global.html#setSize">setSize</a></li><li><a href="global.html#setupTabs">setupTabs</a></li><li><a href="global.html#showAppetizerModal">showAppetizerModal</a></li><li><a href="global.html#showCreateAccount">showCreateAccount</a></li><li><a href="global.html#showRetry">showRetry</a></li><li><a href="global.html#showSignIn">showSignIn</a></li><li><a href="global.html#startTimer">startTimer</a></li><li><a href="global.html#toCamelCase">toCamelCase</a></li><li><a href="global.html#toggleDropdown">toggleDropdown</a></li><li><a href="global.html#toggleView">toggleView</a></li><li><a href="global.html#toggleViewInventory">toggleViewInventory</a></li><li><a href="global.html#updateCurrentItemPreview">updateCurrentItemPreview</a></li><li><a href="global.html#updateEmployee">updateEmployee</a></li><li><a href="global.html#updateIngredient">updateIngredient</a></li><li><a href="global.html#updateInventory">updateInventory</a></li><li><a href="global.html#updateOrderList">updateOrderList</a></li><li><a href="global.html#updatePendingOrders">updatePendingOrders</a></li><li><a href="global.html#updateTimeframeInputs">updateTimeframeInputs</a></li><li><a href="global.html#updateUIAfterSignIn">updateUIAfterSignIn</a></li><li><a href="global.html#validateEmail">validateEmail</a></li><li><a href="global.html#validateEmailDB">validateEmailDB</a></li><li><a href="global.html#waitForKeyboardInput">waitForKeyboardInput</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 19:20:30 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

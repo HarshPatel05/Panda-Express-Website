@@ -204,7 +204,7 @@ body {
     padding: 10px; /* Slightly increased padding for a balanced look */
 }
 
-.button h3 {
+.button h1 {
     font-size: clamp(16px, 1vw, 18px); /* Adjust font size to match wider buttons */
     font-weight: bold;
     margin: 8px 0;
@@ -374,7 +374,7 @@ body {
     margin-bottom: 10px;
 }
 
-.modal h3 {
+.modal h1 {
     font-size: 18px;
     margin-bottom: 15px;
     font-weight: bold;
