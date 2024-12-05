@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: scriptLogin.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: scriptLogin.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Creates a Google Translate Element for page translation
+ */
+function googleTranslateElementInit(){
+    new google.translate.TranslateElement(
+        {pageLanguage: "en"},
+        "googleTranslateElement"
+    )
+}
+
+/*
+async function googleOAuthURL() {
+    const URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+    try {
+        const response = await fetch('/api/config');
+        const config = await response.json();
+
+        const scopes = [
+            'https://www.googleapis.com/auth/userinfo.profile',
+            'https://www.googleapis.com/auth/userinfo.email'
+        ]
+        const options = {
+            redirect_uri: config.redirectUrl,
+            client_id: config.googleClientId,
+            access_type: 'offline',
+            response_type: 'code',
+            prompt: 'consent',
+            scope: scopes.join(' ')
+        }
+    
+        const qs = new URLSearchParams(options)
+    
+        const oauthURL = `${URL}?${qs.toString()}`;
+    
+        const authLink = document.getElementById('OAuthLogin');
+        if (authLink) {
+            authLink.href = oauthURL;
+        }
+    }catch (err) {
+
+    }
+}
+document.addEventListener('DOMContentLoaded', googleOAuthURL);
+*/
+
+/**
+ * Event listener for the login submission.
+ * sends the login credentials to the server,
+ * and handles the server's response to navigate the user to the appropriate page based on their role.
+ * 
+ * @param {Event} e - The submission event.
+ * @returns {void}
+ */
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        });
+
+        const result = await response.json();
+
+        if (result.status) { 
+            if (result.position === 'Server') {
+                window.location.href = '/register';
+            } else if (result.position === 'Manager') {
+                window.location.href = '/manager';
+            }
+        } else {
+            alert(result.error || 'Login failed');
+        }
+
+    } catch (err) {
+        console.error('Error during login:', err);
+        alert('An error occurred. Please try again later.');
+    }
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Keyboard">Keyboard</a></li><li><a href="global.html#addAlaCarteItem">addAlaCarteItem</a></li><li><a href="global.html#addAlaCarteToOrder">addAlaCarteToOrder</a></li><li><a href="global.html#addAppetizerToOrder">addAppetizerToOrder</a></li><li><a href="global.html#addComponentToCurrentOrder">addComponentToCurrentOrder</a></li><li><a href="global.html#addDrinkToOrder">addDrinkToOrder</a></li><li><a href="global.html#addIngredient">addIngredient</a></li><li><a href="global.html#addItemToOrder">addItemToOrder</a></li><li><a href="global.html#addPointsToAccount">addPointsToAccount</a></li><li><a href="global.html#applyDiscount">applyDiscount</a></li><li><a href="global.html#applyOrderDiscount">applyOrderDiscount</a></li><li><a href="global.html#autoSignInFromOAuth">autoSignInFromOAuth</a></li><li><a href="global.html#calculateTotal">calculateTotal</a></li><li><a href="global.html#camelCaseToNormal">camelCaseToNormal</a></li><li><a href="global.html#cancelCurrentCompositeItem">cancelCurrentCompositeItem</a></li><li><a href="global.html#capitalize">capitalize</a></li><li><a href="global.html#checkForProfanity">checkForProfanity</a></li><li><a href="global.html#checkoutOrder">checkoutOrder</a></li><li><a href="global.html#clearOrder">clearOrder</a></li><li><a href="global.html#closeAlaCarteModal">closeAlaCarteModal</a></li><li><a href="global.html#closeAppetizerModal">closeAppetizerModal</a></li><li><a href="global.html#closeDrinkModal">closeDrinkModal</a></li><li><a href="global.html#closePanel">closePanel</a></li><li><a href="global.html#closeRewardsPanel">closeRewardsPanel</a></li><li><a href="global.html#convertCamelCaseToReadable">convertCamelCaseToReadable</a></li><li><a href="global.html#convertToArray">convertToArray</a></li><li><a href="global.html#createEmployee">createEmployee</a></li><li><a href="global.html#decreaseAlaCarteQuantity">decreaseAlaCarteQuantity</a></li><li><a href="global.html#decreaseAppetizerQuantity">decreaseAppetizerQuantity</a></li><li><a href="global.html#decreaseDrinkQuantity">decreaseDrinkQuantity</a></li><li><a href="global.html#deleteEmployee">deleteEmployee</a></li><li><a href="global.html#deleteIngredient">deleteIngredient</a></li><li><a href="global.html#deleteOrder">deleteOrder</a></li><li><a href="global.html#deletePendingOrder">deletePendingOrder</a></li><li><a href="global.html#enforceCamelCase">enforceCamelCase</a></li><li><a href="global.html#fetchMenuItemDetails">fetchMenuItemDetails</a></li><li><a href="global.html#finalizeCompositeItem">finalizeCompositeItem</a></li><li><a href="global.html#formatWithSize">formatWithSize</a></li><li><a href="global.html#getFullSizeName">getFullSizeName</a></li><li><a href="global.html#getProductUsage">getProductUsage</a></li><li><a href="global.html#getWeather">getWeather</a></li><li><a href="global.html#goBackToMain">goBackToMain</a></li><li><a href="global.html#googleTranslateElementInit">googleTranslateElementInit</a></li><li><a href="global.html#handleCreateAccount">handleCreateAccount</a></li><li><a href="global.html#handleLogOut">handleLogOut</a></li><li><a href="global.html#handleNameValidation">handleNameValidation</a></li><li><a href="global.html#handleSignIn">handleSignIn</a></li><li><a href="global.html#increaseAlaCarteQuantity">increaseAlaCarteQuantity</a></li><li><a href="global.html#increaseAppetizerQuantity">increaseAppetizerQuantity</a></li><li><a href="global.html#increaseDrinkQuantity">increaseDrinkQuantity</a></li><li><a href="global.html#isIngredientValid">isIngredientValid</a></li><li><a href="global.html#loadMenuItems">loadMenuItems</a></li><li><a href="global.html#loadPendingOrders">loadPendingOrders</a></li><li><a href="global.html#loadProhibitedWords">loadProhibitedWords</a></li><li><a href="global.html#openAlaCarteModal">openAlaCarteModal</a></li><li><a href="global.html#openDrinkModal">openDrinkModal</a></li><li><a href="global.html#openPanel">openPanel</a></li><li><a href="global.html#playAudioFromAPI">playAudioFromAPI</a></li><li><a href="global.html#pool">pool</a></li><li><a href="global.html#populateReports">populateReports</a></li><li><a href="global.html#populateSales">populateSales</a></li><li><a href="global.html#populateTable">populateTable</a></li><li><a href="global.html#proceedWithCheckout">proceedWithCheckout</a></li><li><a href="global.html#qs">qs</a></li><li><a href="global.html#redirectToRewards">redirectToRewards</a></li><li><a href="global.html#removeItemFromOrder">removeItemFromOrder</a></li><li><a href="global.html#selectAlaCarteSize">selectAlaCarteSize</a></li><li><a href="global.html#selectAppetizerSize">selectAppetizerSize</a></li><li><a href="global.html#selectDrink">selectDrink</a></li><li><a href="global.html#selectDrinkSize">selectDrinkSize</a></li><li><a href="global.html#selectItemType">selectItemType</a></li><li><a href="global.html#setSize">setSize</a></li><li><a href="global.html#setupTabs">setupTabs</a></li><li><a href="global.html#showAppetizerModal">showAppetizerModal</a></li><li><a href="global.html#showCreateAccount">showCreateAccount</a></li><li><a href="global.html#showRetry">showRetry</a></li><li><a href="global.html#showSignIn">showSignIn</a></li><li><a href="global.html#startTimer">startTimer</a></li><li><a href="global.html#toCamelCase">toCamelCase</a></li><li><a href="global.html#toggleDropdown">toggleDropdown</a></li><li><a href="global.html#toggleView">toggleView</a></li><li><a href="global.html#toggleViewInventory">toggleViewInventory</a></li><li><a href="global.html#updateCurrentItemPreview">updateCurrentItemPreview</a></li><li><a href="global.html#updateEmployee">updateEmployee</a></li><li><a href="global.html#updateIngredient">updateIngredient</a></li><li><a href="global.html#updateInventory">updateInventory</a></li><li><a href="global.html#updateOrderList">updateOrderList</a></li><li><a href="global.html#updatePendingOrders">updatePendingOrders</a></li><li><a href="global.html#updateTimeframeInputs">updateTimeframeInputs</a></li><li><a href="global.html#updateUIAfterSignIn">updateUIAfterSignIn</a></li><li><a href="global.html#validateEmail">validateEmail</a></li><li><a href="global.html#validateEmailDB">validateEmailDB</a></li><li><a href="global.html#waitForKeyboardInput">waitForKeyboardInput</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 19:20:30 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
