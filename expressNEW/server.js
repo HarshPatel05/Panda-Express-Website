@@ -1233,12 +1233,13 @@ app.get('/api/xReport', async (req, res) => {
     const formattedRows = Object.keys(groupedRows).sort((a, b) => moment(a, 'h A').isBefore(moment(b, 'h A')) ? -1 : 1)
       .map(hour => ({
         hour,
-        total_sum: groupedRows[hour]
+        total_sum: parseFloat(groupedRows[hour].toFixed(2))  
       }));
+
 
     formattedRows.push({
       hour: 'Total',
-      total_sum: totalSum
+      total_sum: parseFloat(totalSum.toFixed(2))  
     });
 
     res.json(formattedRows);
