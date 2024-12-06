@@ -1192,6 +1192,7 @@ app.delete('/api/deletependingorder/:id', async (req, res) => {
  *    - The last object is a summary row with the `hour` set to "Total" and `total_sum` showing the total sales.
  */
 
+
 app.get('/api/xReport', async (req, res) => {
   try {
     const latestReportResult = await pool.query(
@@ -1216,36 +1217,38 @@ app.get('/api/xReport', async (req, res) => {
       [startDate, endDate]
     );
 
-    const totalSum = resultQuery.rows.reduce((acc, row) => acc + (row.total_sum || 0), 0);
-
-    const groupedRows = resultQuery.rows.reduce((acc, row) => {
-      const hourFormatted = moment({ hour: row.hour }).subtract(6, 'hours').format('h A'); 
-
-      if (!acc[hourFormatted]) {
-        acc[hourFormatted] = 0;
+    const groupedRows = {};
+    resultQuery.rows.forEach(row => {
+      const hourFormatted = moment({ hour: row.hour }).subtract(6, 'hours').format('h A');
+      if (!groupedRows[hourFormatted]) {
+        groupedRows[hourFormatted] = 0;
       }
+      groupedRows[hourFormatted] += row.total_sum;
+    });
 
-      acc[hourFormatted] += row.total_sum;  
-      return acc;
-    }, {});
+    const formattedRows = [];
+    let totalSum = 0;
 
-    const formattedRows = Object.keys(groupedRows).sort((a, b) => moment(a, 'h A').isBefore(moment(b, 'h A')) ? -1 : 1)
-      .map(hour => ({
+    for (const hour in groupedRows) {
+      const hourSum = groupedRows[hour].toFixed(2); 
+      formattedRows.push({
         hour,
-        total_sum: parseFloat(groupedRows[hour].toFixed(2))  
-      }));
-
+        total_sum: parseFloat(hourSum)
+      });
+      totalSum += parseFloat(hourSum);
+    }
 
     formattedRows.push({
       hour: 'Total',
-      total_sum: parseFloat(totalSum.toFixed(2))  
+      total_sum: totalSum.toFixed(2)  
     });
 
     res.json(formattedRows);
+
   } catch (error) {
     console.error("Error fetching x report:", error);
     res.status(500).json({ error: "Internal Server Error" });
-  }  
+  }
 });
 
 
