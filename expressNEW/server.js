@@ -582,7 +582,7 @@ app.get('/api/menuitems', async (req, res) =>
   {
     try 
     {
-      const result = await pool.query('SELECT menuItemId, menuItem, price, size, status FROM menuItems ORDER BY menuitemid ASC;');
+      const result = await pool.query('SELECT * FROM menuItems ORDER BY menuitemid ASC;');
       res.json(result.rows);
     } 
     catch (error) 
@@ -593,6 +593,26 @@ app.get('/api/menuitems', async (req, res) =>
   }
 );
 
+/**
+ * Endpoint to retrieve all menu items for the table.
+ * @route GET /api/menuitemsTable
+ * @returns {array} 200 - Array of menu items.
+ * @returns {string} 500 - Server error.
+ */
+app.get('/api/menuitemsTable', async (req, res) => 
+  {
+    try 
+    {
+      const result = await pool.query('SELECT menuItemId, menuItem, price, size FROM menuItems ORDER BY menuitemid ASC;');
+      res.json(result.rows);
+    } 
+    catch (error) 
+    {
+      console.error('Error fetching menu items:', error.stack);
+      res.status(500).json({ error: 'Server Error' });
+    }
+  }
+);
 
 /**
  * Endpoint to retrieve order history.
