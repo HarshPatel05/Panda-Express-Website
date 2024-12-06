@@ -1207,8 +1207,7 @@ app.get('/api/xReport', async (req, res) => {
     const startDate = moment(latestReportDate).format('YYYY-MM-DD HH:mm:ss');
     const endDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
-    const client = await pool.connect();
-    const resultQuery = await client.query(
+    const resultQuery = await pool.query(
       'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum ' +
       'FROM orderhistory ' +
       'WHERE date >= $1 AND date <= $2 ' +
