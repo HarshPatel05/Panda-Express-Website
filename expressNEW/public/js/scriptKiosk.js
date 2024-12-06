@@ -374,7 +374,8 @@ async function loadSeasonalItems() {
                 (menuItem) =>
                     menuItem.menuitem === item.menuitem &&
                     menuItem.menuitemid > 72 &&
-                    menuItem.size === item.size
+                    menuItem.size === item.size &&
+                    menuItem.status === item.status
             );
 
             if (!matchedMenuItem) {
@@ -388,7 +389,7 @@ async function loadSeasonalItems() {
             const price = matchedMenuItem.price;
 
             // Create buttons for seasonal entrees
-            if (item.type === 'entree' && item.size === 'sm') {
+            if (item.type === 'entree' && item.size === 'sm' && item.status === 'active') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
                 button.dataset.menuId = menuId;
@@ -411,7 +412,7 @@ async function loadSeasonalItems() {
                 entreeContainer.appendChild(button);
             }
             // Create buttons for seasonal sides
-            else if (item.type === 'side' && item.size === 'sm') {
+            else if (item.type === 'side' && item.size === 'sm' && item.status === 'active') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
                 button.dataset.menuId = menuId;
@@ -445,7 +446,8 @@ async function loadSeasonalItems() {
                 (menuItem) =>
                     menuItem.menuitem === item.menuitem &&
                     menuItem.menuitemid > 72 &&
-                    menuItem.size === item.size
+                    menuItem.size === item.size &&
+                    menuItem.status === item.status
             );
 
             if (!matchedMenuItem) {
@@ -459,7 +461,7 @@ async function loadSeasonalItems() {
             const price = matchedMenuItem.price;
 
             // Create buttons for seasonal entrees in the À La Carte section
-            if (item.type === 'entree' && item.size === 'sm') {
+            if (item.type === 'entree' && item.size === 'sm' && item.status === 'active') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
                 button.dataset.menuId = menuId;
@@ -482,7 +484,7 @@ async function loadSeasonalItems() {
                 alacarteEntreeContainer.appendChild(button);
             }
             // Create buttons for seasonal sides in the À La Carte section
-            else if (item.type === 'side' && item.size === 'sm') {
+            else if (item.type === 'side' && item.size === 'sm' && item.status === 'active') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
                 button.dataset.menuId = menuId;
@@ -515,7 +517,7 @@ async function loadSeasonalItems() {
         seasonalAppetizers.forEach((item) => {
             // Match seasonal appetizer with a corresponding menu item
             const matchedMenuItem = menuItems.find(
-                menuItem => menuItem.menuitem === item.menuitem && menuItem.size === item.size
+                menuItem => menuItem.menuitem === item.menuitem && menuItem.size === item.size && menuItem.status === "active"
             );
 
             if (!matchedMenuItem) {
