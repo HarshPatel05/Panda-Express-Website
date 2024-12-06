@@ -514,7 +514,7 @@ app.get('/api/menuitems', async (req, res) =>
   {
     try 
     {
-      const result = await pool.query('SELECT menuItemId, menuItem, price, size FROM menuItems ORDER BY menuitemid ASC;');
+      const result = await pool.query('SELECT menuItemId, menuItem, price, size, status FROM menuItems ORDER BY menuitemid ASC;');
       res.json(result.rows);
     } 
     catch (error) 
