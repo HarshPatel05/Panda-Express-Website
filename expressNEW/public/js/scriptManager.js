@@ -38,12 +38,12 @@ function toggleViewInventory() {
     if (form.style.display === "none") {
         form.style.display = "block";
         table.style.display = "none";
-        button.textContent = 'Manage Inventory';
+        button.textContent = 'Manage/View Inventory';
 
     } else {
         form.style.display = "none";
         table.style.display = "block";
-        button.textContent = 'View Inventory';
+        button.textContent = 'Manage/View Inventory';
 
     }
 }

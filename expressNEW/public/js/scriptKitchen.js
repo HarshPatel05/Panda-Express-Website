@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Periodic real-time updates for pending orders
     setInterval(async () => {
         await loadPendingOrders(); // Refresh pending orders every 30 seconds
-    }, 30000); // 30 seconds in milliseconds
+    }, 20000); // 30 seconds in milliseconds
 });
 
 /**
@@ -364,9 +364,9 @@ function startTimer(orderCard, timerElement) {
 
         // Update the order card background color based on elapsed time
         if (orderCard.dataset.status === "in-progress") {
-            if (elapsedTime >= 300) {
+            if (elapsedTime >= 120) {
                 orderCard.style.backgroundColor = "#FF6347"; // Red for orders older than 5 minutes
-            } else if (elapsedTime >= 180) {
+            } else if (elapsedTime >= 60) {
                 orderCard.style.backgroundColor = "#FFD700"; // Yellow for orders between 3 and 5 minutes
             } else {
                 orderCard.style.backgroundColor = "#32CD32"; // Green for new orders
