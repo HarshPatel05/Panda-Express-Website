@@ -888,82 +888,50 @@ app.get('/api/salesReport', async (req, res) => {
  * @returns {string} 200 - Success message.
  * @returns {string} 500 - Server error.
  */
-app.post('/api/updateorders', async (req, res) => 
+app.post('/api/updateorders', async (req, res) => {
+  const { totalCost, menuItemIDs } = req.body;
+
+  const itemCountMap = {};
+
+  menuItemIDs.forEach(menuItemID => {
+      itemCountMap[menuItemID] = (itemCountMap[menuItemID] || 0) + 1;
+  });
+
+  const client = await pool.connect();
+
+  try
   {
-    const { totalCost, menuItemIDs } = req.body;
+      await client.query('BEGIN');
 
-    // // Create a map to count occurrences of each menuItemID
-    // const itemCountMap = new Map();
+      // Get the current UTC time
+      const currentUtcDate = new Date().toISOString(); // This returns the date in UTC
 
-    // Use a simple object to count occurrences of each menuitemid
-    const itemCountMap = {};
-
-    // menuItemIDs.forEach(item => {
-    //   const { menuitemid, quantity } = item;
-    //   itemCountMap.set(menuitemid, (itemCountMap.get(menuitemid) || 0) + quantity);
-    // });
-
-    menuItemIDs.forEach(item => {
-      const { menuitemid, quantity } = item;
-      itemCountMap[menuitemid] = (itemCountMap[menuitemid] || 0) + quantity;
-    });
-
-    const client = await pool.connect();
-
-    try 
-    {
-      // we use `BEGIN` like this, when we have to execute multiple queries in the same database connection
-      await client.query('BEGIN'); // Start transaction
-
-      // Insert into orderhistory and get the new orderID
-      const orderHistoryResult = await client.query
-      (
-        'INSERT INTO orderhistory (totalCost, date) VALUES ($1, $2) RETURNING orderid',
-        [totalCost, new Date()] // Insert current timestamp
+      const orderHistoryResult = await client.query(
+          'INSERT INTO orderhistory (totalCost, date) VALUES ($1, $2) RETURNING orderid',
+          [totalCost, currentUtcDate]
       );
 
       const newOrderID = orderHistoryResult.rows[0].orderid;
 
-      // Insert into orderitems
-      for (const menuItemID in itemCountMap)
-      {
-        const quantity = itemCountMap[menuItemID];
-        await client.query
-        (
-          'INSERT INTO orderitems (orderid, menuitemid, quantity) VALUES ($1, $2, $3)',
-          [newOrderID, parseInt(menuItemID), quantity]
-        );
+      for (const menuItemID in itemCountMap) {
+          const quantity = itemCountMap[menuItemID];
+          await client.query(
+              'INSERT INTO orderitems (orderid, menuitemid, quantity) VALUES ($1, $2, $3)',
+              [newOrderID, parseInt(menuItemID), quantity]
+          );
       }
 
-      // // Prepare to insert into orderitems
-      // const orderItemsQuery = 'INSERT INTO orderitems (orderid, menuitemid, quantity) VALUES ($1, $2, $3)';
-      // const orderItemsPromises = Object.entries(itemCountMap).map(([menuItemID, quantity]) => {
-      //   return client.query(orderItemsQuery, [newOrderID, parseInt(menuItemID), quantity]);
-      // });
-
-      // // Execute all insert queries in parallel
-      // await Promise.all(orderItemsPromises);
-
-      // Commit the transaction
       await client.query('COMMIT');
-      
-      // Respond with a simple success message
       res.status(200).json({ message: 'Order updated successfully!' });
-    }
-    catch (error)
-    {
+  } catch (error) {
       console.error('Error updating order:', error);
-
-      // Rollback transaction on error
       await client.query('ROLLBACK');
       res.status(500).json({ error: 'Failed to update order' });
-    }
-    finally
-    {
+  } finally {
       client.release();
-    }
   }
-);
+});
+
 
 
 /**
