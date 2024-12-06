@@ -1267,7 +1267,7 @@ app.get('/api/xReport', async (req, res) => {
  */
 app.post('/api/zReport', async (req, res) => {
   try {
-    await pool.query('INSERT INTO z_reports (created_at) DEFAULT VALUES');
+    await pool.query('INSERT INTO z_reports DEFAULT VALUES');
 
     res.status(201).json({ message: 'Z Report created successfully' });
   } catch (error) {
