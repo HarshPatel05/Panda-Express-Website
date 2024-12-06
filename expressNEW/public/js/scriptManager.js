@@ -717,3 +717,77 @@ function toggleViewSeasonal() {
         button.textContent = "Manage Seasonal Items";
     }
 }
+
+async function addSeasonalItem() {
+    const itemName = document.getElementById("seasonalItemName").value.trim();
+    const displayName = document.getElementById("seasonalItemDisplayName").value.trim();
+    const type = document.getElementById("seasonalItemType").value.trim();
+    const priceSmall = parseFloat(document.getElementById("priceSmall").value);
+    const priceMedium = parseFloat(document.getElementById("priceMedium").value);
+    const priceLarge = parseFloat(document.getElementById("priceLarge").value);
+    const ingredients = document.getElementById("seasonalItemIngredients").value.split(",").map(item => item.trim());
+    const quantities = document.getElementById("ingredientQuantities").value.split(",").map(Number);
+
+    if (!itemName || !displayName || !type || !ingredients.length || !quantities.length) {
+        alert("Please fill out all fields.");
+        return;
+    }
+
+    const data = {
+        itemName,
+        itemIngredients: ingredients,
+        quantities,
+        displayname: displayName,
+        type,
+        prices: [priceSmall, priceMedium, priceLarge]
+    };
+
+    try {
+        const response = await fetch('/api/addseasonalitem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+        } else {
+            alert(result.error);
+        }
+    } catch (error) {
+        console.error("Error adding seasonal item:", error);
+    }
+}
+
+async function removeSeasonalItem() {
+    const itemName = document.getElementById("removeSeasonalItemName").value.trim();
+
+    if (!itemName) {
+        alert("Please enter an item name to remove.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/removeseasonalitem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ itemName }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+        } else {
+            alert(result.error);
+        }
+    } catch (error) {
+        console.error("Error removing seasonal item:", error);
+    }
+}
