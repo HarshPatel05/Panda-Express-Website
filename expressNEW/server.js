@@ -903,13 +903,22 @@ app.post('/api/updateorders', async (req, res) => {
   {
       await client.query('BEGIN');
 
-      // Get the current UTC time
-      const currentUtcDate = new Date().toISOString(); // This returns the date in UTC
+      // Create a new Date object
+      let currentDate = new Date();
 
+      // Convert to CST (UTC - 6 hours for CST, but handle Daylight Saving Time as well)
+      let cstDate = new Date(currentDate.toLocaleString("en-US", { timeZone: "America/Chicago" }));
+
+      // Format the CST date in YYYY-MM-DD HH:MM:SS format (without the time zone)
+      let formattedDate = cstDate.toISOString().replace('T', ' ').split('.')[0];  // Remove 'T' and the milliseconds
+
+      console.log('CST Date (without time zone): ', formattedDate);
+
+      // Insert into the database
       const orderHistoryResult = await client.query(
           'INSERT INTO orderhistory (totalCost, date) VALUES ($1, $2) RETURNING orderid',
-          [totalCost, currentUtcDate]
-      );
+          [totalCost, formattedDate]
+      )
 
       const newOrderID = orderHistoryResult.rows[0].orderid;
 
