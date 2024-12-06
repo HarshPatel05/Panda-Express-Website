@@ -225,7 +225,7 @@
             <h3>Seasonal Menu Items</h3>
             <button id="toggleButtonSeasonal" onclick="toggleViewSeasonal()">Manage Seasonal Items</button>
         
-            <!-- Table View -->
+            
             <div id="seasonalTable">
                 <table id="seasonalItems" border="2">
                     <thead>
@@ -244,18 +244,19 @@
                 </table>
             </div>
         
-            <!-- Form View -->
+            
             <div id="seasonalForm" style="display: none;">
                 <h4>Add New Seasonal Item</h4>
+                
                 <label for="seasonalItemName">Item Name:</label>
                 <input type="text" id="seasonalItemName" name="seasonalItemName" placeholder="Enter item name">
-        
+                
                 <label for="seasonalItemDisplayName">Display Name:</label>
                 <input type="text" id="seasonalItemDisplayName" name="seasonalItemDisplayName" placeholder="Enter display name">
-        
+                
                 <label for="seasonalItemType">Type:</label>
                 <input type="text" id="seasonalItemType" name="seasonalItemType" placeholder="Enter item type (e.g., entree)">
-
+                
                 <h5>Enter Prices</h5>
                 <label for="priceSmall">Small Price:</label>
                 <input type="number" id="priceSmall" name="priceSmall" placeholder="Enter price for small" step="0.01" min="0">
@@ -266,14 +267,21 @@
                 <label for="priceLarge">Large Price:</label>
                 <input type="number" id="priceLarge" name="priceLarge" placeholder="Enter price for large" step="0.01" min="0">
                 
+                <label for="seasonalItemIngredients">Ingredients (comma-separated):</label>
+                <input type="text" id="seasonalItemIngredients" name="seasonalItemIngredients" placeholder="Enter ingredients">
+                
+                <label for="ingredientQuantities">Quantities (comma-separated):</label>
+                <input type="text" id="ingredientQuantities" name="ingredientQuantities" placeholder="Enter quantities">
+                
                 <button onclick="addSeasonalItem()">Add Seasonal Item</button>
-        
+                
                 <h4>Remove Seasonal Item</h4>
                 <label for="removeSeasonalItemName">Item Name:</label>
                 <input type="text" id="removeSeasonalItemName" name="removeSeasonalItemName" placeholder="Enter item name">
-        
+                
                 <button onclick="removeSeasonalItem()">Remove Seasonal Item</button>
             </div>
+            
         </div>
         
 
