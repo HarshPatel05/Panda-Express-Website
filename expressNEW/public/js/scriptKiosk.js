@@ -2473,3 +2473,10 @@ function applyDiscount(type) {
             break;
     }
 }
+
+function googleTranslateElementInit(){
+    new google.translate.TranslateElement(
+        {pageLanguage: "en"},
+        "googleTranslateElement"
+    )
+}

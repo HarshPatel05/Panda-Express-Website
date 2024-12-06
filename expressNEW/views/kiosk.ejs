@@ -11,6 +11,7 @@
         <!-- Your custom script -->
         <script src="/js/scriptKiosk.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+        <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     </head>
     
 <body>
@@ -41,7 +42,7 @@
                     <img src="/Panda Express Photos/Bowl.png" alt="Bowl">
                     <div class="content">
                         <h1>Bowl</h1>
-                        <p>1 Side & 1 Entree</p>
+                        <p>2 Side & 1 Entree</p>
                         <p class="price">$8.30+</p>
                     </div>
                 </div>
@@ -49,7 +50,7 @@
                     <img src="/Panda Express Photos/Plate.png" alt="Plate">
                     <div class="content">
                         <h1>Plate</h1>
-                        <p>1 Side & 2 Entrees</p>
+                        <p>2 Side & 2 Entrees</p>
                         <p class="price">$9.80+</p>
                     </div>
                 </div>
@@ -57,7 +58,7 @@
                     <img src="/Panda Express Photos/BgPlate.png" alt="Bigger Plate">
                     <div class="content">
                         <h1>Bigger Plate</h1>
-                        <p>1 Side & 3 Entrees</p>
+                        <p>2 Side & 3 Entrees</p>
                         <p class="price">$11.30+</p>
                     </div>
                 </div>
@@ -324,7 +325,9 @@
 
     <div class="bottom-bar">
         <p id="weatherInfo">ADD API STUFF HERE!</p>
+        <div id="googleTranslateElement"></div>
         <p id="pointsDisplay" style="position: absolute; right: 10px; bottom: 5px; font-weight: bold;">Points: 0</p>
     </div>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
