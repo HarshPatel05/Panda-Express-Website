@@ -17,6 +17,7 @@ const { Pool } = require('pg');
 const dotenv = require('dotenv').config();
 const cors = require('cors');
 const path = require('path');
+const moment = require('moment');
 const fs = require('fs');
 const axios = require('axios');
 const { DateTime } = require('luxon');
@@ -330,6 +331,61 @@ app.delete('/api/orders/:id', async (req, res) => {
   }
 });
 
+/**
+ * Endpoint to authenticate an employee via Google OAuth.
+ * @route GET /api/sessions/oauth/employee/google
+ * @param {string} code - Authorization code from Google OAuth.
+ * @returns Redirect to correct view with user's name if successful.
+ * @returns {string} 403 - Google account is not verified.
+ * @returns {string} 500 - Server error.
+ */
+app.get('/api/sessions/oauth/employee/google', async (req, res) => {
+  const code = req.query.code;
+
+  const url = 'https://oauth2.googleapis.com/token';
+  const values = {
+    code,
+    client_id: process.env.GOOGLE_EMPLOYEE_CLIENT_ID,  
+    client_secret: process.env.GOOGLE_EMPLOYEE_CLIENT_SECRET,  
+    redirect_uri: process.env.EMPLOYEE_REDIRECT_URL,  
+    grant_type: 'authorization_code',
+  };
+
+  try {
+    const result = await axios.post(url, qs.stringify(values), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    const { id_token, access_token } = result.data;
+
+    const result2 = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`, {
+      headers: {
+        Authorization: `Bearer ${id_token}`,
+      },
+    });
+
+    const googleEmployee = result2.data;
+
+    if (!googleEmployee.verified_email) {
+      return res.status(403).send('Google account is not verified');
+    }
+
+    const employee = {
+      email: googleEmployee.email,
+      name: googleEmployee.name,
+      picture: googleEmployee.picture,
+    };
+
+    return res.redirect(`/index?name=${encodeURIComponent(employee.name)}`);
+
+  } catch (err) {
+    console.error('Error fetching employee OAuth session', err.stack);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 /**
  * Endpoint to authenticate a user via Google OAuth.
@@ -397,6 +453,19 @@ app.get('/api/config', (req, res) => {
       redirectUrl: process.env.REDIRECT_URL,
   });
 });
+
+/**
+ * Endpoint to retrieve OAuth configuration for employees.
+ * @route GET /api/config
+ * @returns {object} 200 - Google OAuth configuration (client ID and redirect URL).
+ */
+app.get('/api/configEmployee', (req, res) => {
+  res.json({
+      googleClientId: process.env.GOOGLE_EMPLOYEE_CLIENT_ID,
+      redirectUrl: process.env.EMPLOYEE_REDIRECT_URL,
+  });
+});
+
 
 
 /**
@@ -642,6 +711,41 @@ app.post('/api/login', async (req, res) =>
     const user = result.rows[0];
 
     if (user.password !== password || !user.status) { 
+        return res.json({ status: false, position: null });
+    }
+
+    return res.json({ status: true, position: user.position });
+    }
+    catch (err)
+    {
+      console.error('Error during login:', err.stack);
+      res.status(500).json({ error: 'Server Error' });
+    }
+  }
+);
+
+/**
+ * Handle user login.
+ * @route POST /api/employee/login
+ * @param {string} name - Employee Name
+ * @returns {object} 200 - Login status and position.
+ * @returns {string} 500 - Server error.
+ */
+app.post('/api/employee/login', async (req, res) =>
+  {
+    const {name} = req.body;
+    try
+    {
+      const userQuery = "SELECT * FROM employees WHERE name = $1";
+      const result = await pool.query(userQuery, [name]);
+
+    if (result.rows.length === 0) {
+        return res.json({ status: false, position: null });
+    }
+
+    const user = result.rows[0];
+
+    if (!user.status) { 
         return res.json({ status: false, position: null });
     }
 
@@ -1075,50 +1179,82 @@ app.delete('/api/deletependingorder/:id', async (req, res) => {
 
 
 /**
- * Endpoint for generating an X report for the given date showing hourly totals.
- * @route GET /api/xReport
- * @param {string} date - The date for the report in 'YYYY-MM-DD' format.
- * @returns {Object} 200 - The hourly totals and overall total for the report.
- * @returns {Object} 400 - Error if date is missing.
- * @returns {Object} 500 - Error if there's a server failure.
+ * Fetches the sales data for the X report based on the latest Z report date.
+ * @route {GET} /api/xReport
+ * @returns {Object[]} - An array of sales data objects:
+ *    - Each object contains `hour` (time in adjusted format) and `total_sum` (total sales for that hour).
+ *    - The last object is a summary row with the `hour` set to "Total" and `total_sum` showing the total sales.
  */
 app.get('/api/xReport', async (req, res) => {
-  const { date } = req.query; // Expecting date in 'YYYY-MM-DD' 
-
-  if (!date) {
-    return res.status(400).json({ error: "Date is required" });
-  }
-
-  const client = await pool.connect();
-
   try {
-    const startDate = `${date} 10:00:00`;
-    const endDate = `${date} 22:00:00`;
+    const latestReportResult = await pool.query(
+      'SELECT created_at FROM z_reports ORDER BY created_at DESC LIMIT 1'
+    );
 
-    const result = await client.query(
-      'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum ' +
+    if (latestReportResult.rows.length === 0) {
+      return res.status(404).json({ error: 'No Z reports found' });
+    }
+
+    const latestReportDate = latestReportResult.rows[0].created_at;
+
+    const startDate = moment(latestReportDate).format('YYYY-MM-DD HH:mm:ss');
+    const endDate = moment().format('YYYY-MM-DD HH:mm:ss');
+
+    const client = await pool.connect();
+    const resultQuery = await client.query(
+      'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum, date ' +
       'FROM orderhistory ' +
-      'WHERE date >= $1 AND date < $2 ' +
-      'GROUP BY hour ' +
+      'WHERE date >= $1 AND date <= $2 ' +
+      'GROUP BY hour, date ' +
       'ORDER BY hour',
       [startDate, endDate]
     );
 
-    const totalSum = result.rows.reduce((acc, row) => acc + (row.total_sum || 0), 0);
+    const totalSum = resultQuery.rows.reduce((acc, row) => acc + (row.total_sum || 0), 0);
 
-    result.rows.push({
+    const formattedRows = resultQuery.rows.map(row => {
+      const originalTime = moment(row.date).subtract(6, 'hours'); 
+      return {
+        hour: originalTime.format('h A'), 
+        total_sum: row.total_sum
+      };
+    });
+
+    formattedRows.push({
       hour: 'Total',
       total_sum: totalSum
     });
 
-    res.json(result.rows);
+    res.json(formattedRows);
   } catch (error) {
     console.error("Error fetching x report:", error);
     res.status(500).json({ error: "Internal Server Error" });
-  } 
+  }
 });
 
 
+
+/**
+ * Creates a new Z report in the database.
+ * This function inserts a new record into the `z_reports` table with the current timestamp.
+ * The `created_at` column is automatically populated with the current date and time by the database.
+ * 
+ * 
+ * @route {POST} /api/zReport
+ * @returns {Object} - A JSON object with a message indicating success or failure:
+ *    - On success: { message: 'Z Report created successfully' }
+ *    - On failure: { error: 'Internal server error' }
+ */
+app.post('/api/zReport', async (req, res) => {
+  try {
+    await pool.query('INSERT INTO z_reports (created_at) DEFAULT VALUES');
+
+    res.status(201).json({ message: 'Z Report created successfully' });
+  } catch (error) {
+    console.error('Error creating Z report:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 /**

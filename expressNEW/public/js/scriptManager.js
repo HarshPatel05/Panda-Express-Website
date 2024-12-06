@@ -498,28 +498,20 @@ async function populateSales() {
 }
 
 /**
- * Fetches and populates a report (X or Z report) for the current date.
- * @route GET /api/xReport or /api/zReport
- * @param {string} APIEndpoint - The endpoint for the report to be populated (either `/api/xReport` or `/api/zReport`).
- * @param {string} tableID - The ID of the table to populate with the report data.
- * @returns {array} 200 - Report data for the specified date.
- * @returns {object} 400 - Invalid date or missing parameters.
- * @returns {object} 500 - Error fetching the report.
+ * Populates a table with sales data from the X report API and optionally inserts a new Z report.
+ * @param {string} APIEndpoint - The API endpoint used for additional actions. If the endpoint is "/api/zReport", a new Z report will be inserted.
+ * @param {string} tableID - The ID of the table element to populate with sales data.
+ * 
+ * @returns {void}
  */
 async function populateReports(APIEndpoint, tableID) {
-    let currDate = new Intl.DateTimeFormat('en-US', {
-        timeZone: 'America/Chicago', 
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-    }).format(new Date());
-    if (reportDate != currDate) {
-        alert("Store is closed");
+    const salesResponse = await fetch('/api/xReport');
+    if (!salesResponse.ok) {
+        alert("Failed to fetch sales data.");
         return;
     }
-    const response = await fetch(`/api/xReport?date=${reportDate}`);
-    const data = await response.json();
-    query = '#' + tableID; 
+
+    const salesData = await salesResponse.json();
 
     let tableBody = document.querySelector(`#${tableID} tbody`);
     let table = document.querySelector(`#${tableID}`);
@@ -532,10 +524,8 @@ async function populateReports(APIEndpoint, tableID) {
     while (tableBody.firstChild) {
         tableBody.removeChild(tableBody.firstChild);
     }
-    
 
-
-    data.forEach(row => {
+    salesData.forEach(row => {
         const tableRow = document.createElement('tr');
         Object.values(row).forEach(value => {
             const cell = document.createElement('td');
@@ -545,10 +535,23 @@ async function populateReports(APIEndpoint, tableID) {
         tableBody.appendChild(tableRow);
     });
 
-    if (APIEndpoint == "/api/zReport") {
-        const newDate = new Date(reportDate); 
-        newDate.setDate(newDate.getDate() + 1); 
-        reportDate = newDate.toISOString().split('T')[0]; 
+    if (APIEndpoint === "/api/zReport") {
+        try {
+            const zReportInsertResponse = await fetch('/api/zReport', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                })
+            });
+            if (!zReportInsertResponse.ok) {
+                alert("Failed to insert a new Z report.");
+            }
+        } catch (error) {
+            console.error("Error inserting Z report:", error);
+            alert("An error occurred while inserting a new Z report.");
+        }
     }
 }
 
