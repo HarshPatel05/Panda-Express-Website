@@ -63,8 +63,6 @@ async function loadMenuItems() {
             // Add item display name
             specialItem.innerHTML = `
                 <div class="special-name">${item.displayname}</div>
-                <div class="special-size">Size: ${item.size}</div>
-                <div class="special-price">Price: $${item.price.toFixed(2)}</div>
             `;
 
             // Append to the correct section based on item type
