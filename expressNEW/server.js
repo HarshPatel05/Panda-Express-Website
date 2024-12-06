@@ -1223,6 +1223,7 @@ app.delete('/api/deletependingorder/:id', async (req, res) => {
  *    - Each object contains `hour` (time in adjusted format) and `total_sum` (total sales for that hour).
  *    - The last object is a summary row with the `hour` set to "Total" and `total_sum` showing the total sales.
  */
+
 app.get('/api/xReport', async (req, res) => {
   try {
     const latestReportResult = await pool.query(
@@ -1240,23 +1241,32 @@ app.get('/api/xReport', async (req, res) => {
 
     const client = await pool.connect();
     const resultQuery = await client.query(
-      'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum, date ' +
+      'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum ' +
       'FROM orderhistory ' +
       'WHERE date >= $1 AND date <= $2 ' +
-      'GROUP BY hour, date ' +
+      'GROUP BY hour ' +  
       'ORDER BY hour',
       [startDate, endDate]
     );
 
     const totalSum = resultQuery.rows.reduce((acc, row) => acc + (row.total_sum || 0), 0);
 
-    const formattedRows = resultQuery.rows.map(row => {
-      const originalTime = moment(row.date).subtract(6, 'hours'); 
-      return {
-        hour: originalTime.format('h A'), 
-        total_sum: row.total_sum
-      };
-    });
+    const groupedRows = resultQuery.rows.reduce((acc, row) => {
+      const hourFormatted = moment({ hour: row.hour }).subtract(6, 'hours').format('h A'); 
+
+      if (!acc[hourFormatted]) {
+        acc[hourFormatted] = 0;
+      }
+
+      acc[hourFormatted] += row.total_sum;  
+      return acc;
+    }, {});
+
+    const formattedRows = Object.keys(groupedRows).sort((a, b) => moment(a, 'h A').isBefore(moment(b, 'h A')) ? -1 : 1)
+      .map(hour => ({
+        hour,
+        total_sum: groupedRows[hour]
+      }));
 
     formattedRows.push({
       hour: 'Total',
@@ -1267,9 +1277,8 @@ app.get('/api/xReport', async (req, res) => {
   } catch (error) {
     console.error("Error fetching x report:", error);
     res.status(500).json({ error: "Internal Server Error" });
-  }
+  }  
 });
-
 
 
 /**
