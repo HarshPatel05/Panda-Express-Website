@@ -272,7 +272,8 @@ async function loadSeasonalItems() {
                 (menuItem) =>
                     menuItem.menuitem === item.menuitem &&
                     menuItem.size === item.size &&
-                    menuItem.menuitemid > 72 // Ensure it's a seasonal item
+                    menuItem.menuitemid > 72 &&
+                    menuItem.status === item.status
             );
 
             if (matchedMenuItem) {
@@ -294,7 +295,7 @@ async function loadSeasonalItems() {
 
         // Populate Seasonal Entrees
         seasonalItems.forEach((item) => {
-            if (item.type === 'entree' && item.size === 'sm') {
+            if (item.type === 'entree' && item.size === 'sm' && item.status === 'active') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
                 button.dataset.menuId = Number(menuItemMap[item.menuitem]?.sm?.menuitemid || 'unknown'); // Ensure `menuId` is a number
@@ -313,7 +314,7 @@ async function loadSeasonalItems() {
 
         // Populate Seasonal Sides
         seasonalItems.forEach((item) => {
-            if (item.type === 'side' && item.size === 'sm') {
+            if (item.type === 'side' && item.size === 'sm' && item.status === 'active') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
                 button.dataset.menuId = Number(menuItemMap[item.menuitem]?.sm?.menuitemid || 'unknown'); // Ensure `menuId` is a number
@@ -338,7 +339,7 @@ async function loadSeasonalItems() {
             const matchedMenuId = Number(menuItemMap[item.menuitem]?.sm?.menuitemid || 'unknown'); // Ensure `menuitemid` is a valid number
 
             // Populate seasonal entrees
-            if (item.type === 'entree' && item.size === 'sm') {
+            if (item.type === 'entree' && item.size === 'sm' && item.status === 'active') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
                 button.dataset.menuId = matchedMenuId;
@@ -355,7 +356,7 @@ async function loadSeasonalItems() {
             }
 
             // Populate seasonal sides
-            if (item.type === 'side' && item.size === 'sm') {
+            if (item.type === 'side' && item.size === 'sm' && item.status === 'active') {
                 const button = document.createElement('button');
                 button.classList.add('menu-item-button');
                 button.dataset.menuId = matchedMenuId;
@@ -377,7 +378,7 @@ async function loadSeasonalItems() {
 
         // Populate Seasonal Appetizers
         seasonalItems.forEach((item) => {
-            if (item.type === 'appetizer') {
+            if (item.type === 'appetizer' && item.status === 'active') {
                 const matchedMenuId = Number(menuItemMap[item.menuitem]?.sm?.menuitemid || 'unknown'); // Ensure `menuitemid` is a valid number
 
                 // Create a button for the seasonal appetizer
