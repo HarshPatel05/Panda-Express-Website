@@ -374,7 +374,7 @@ async function getProductUsage() {
             const data = await response.json();
 
             if (response.ok) {
-                query = "#product-usage"; 
+                let tableID = "product-usage"; 
 
                 let tableBody = document.querySelector(`#${tableID} tbody`);
                 let table = document.querySelector(`#${tableID}`);
@@ -465,7 +465,7 @@ async function populateSales() {
         const response = await fetch(`/api/salesReport?startDate=${startDate}&endDate=${endDate}`);
         const data = await response.json();
 
-        query = "#salesReport"; 
+        let tableID = "salesReport"; 
 
         let tableBody = document.querySelector(`#${tableID} tbody`);
         let table = document.querySelector(`#${tableID}`);
