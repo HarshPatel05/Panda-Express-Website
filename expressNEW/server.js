@@ -331,6 +331,61 @@ app.delete('/api/orders/:id', async (req, res) => {
   }
 });
 
+/**
+ * Endpoint to authenticate an employee via Google OAuth.
+ * @route GET /api/sessions/oauth/employee/google
+ * @param {string} code - Authorization code from Google OAuth.
+ * @returns Redirect to correct view with user's name if successful.
+ * @returns {string} 403 - Google account is not verified.
+ * @returns {string} 500 - Server error.
+ */
+app.get('/api/sessions/oauth/employee/google', async (req, res) => {
+  const code = req.query.code;
+
+  const url = 'https://oauth2.googleapis.com/token';
+  const values = {
+    code,
+    client_id: process.env.GOOGLE_EMPLOYEE_CLIENT_ID,  
+    client_secret: process.env.GOOGLE_EMPLOYEE_CLIENT_SECRET,  
+    redirect_uri: process.env.EMPLOYEE_REDIRECT_URL,  
+    grant_type: 'authorization_code',
+  };
+
+  try {
+    const result = await axios.post(url, qs.stringify(values), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    const { id_token, access_token } = result.data;
+
+    const result2 = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`, {
+      headers: {
+        Authorization: `Bearer ${id_token}`,
+      },
+    });
+
+    const googleEmployee = result2.data;
+
+    if (!googleEmployee.verified_email) {
+      return res.status(403).send('Google account is not verified');
+    }
+
+    const employee = {
+      email: googleEmployee.email,
+      name: googleEmployee.name,
+      picture: googleEmployee.picture,
+    };
+
+    return res.redirect(`/index?name=${encodeURIComponent(employee.name)}`);
+
+  } catch (err) {
+    console.error('Error fetching employee OAuth session', err.stack);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 /**
  * Endpoint to authenticate a user via Google OAuth.
@@ -398,6 +453,19 @@ app.get('/api/config', (req, res) => {
       redirectUrl: process.env.REDIRECT_URL,
   });
 });
+
+/**
+ * Endpoint to retrieve OAuth configuration for employees.
+ * @route GET /api/config
+ * @returns {object} 200 - Google OAuth configuration (client ID and redirect URL).
+ */
+app.get('/api/configEmployee', (req, res) => {
+  res.json({
+      googleClientId: process.env.GOOGLE_EMPLOYEE_CLIENT_ID,
+      redirectUrl: process.env.EMPLOYEE_REDIRECT_URL,
+  });
+});
+
 
 
 /**
@@ -643,6 +711,41 @@ app.post('/api/login', async (req, res) =>
     const user = result.rows[0];
 
     if (user.password !== password || !user.status) { 
+        return res.json({ status: false, position: null });
+    }
+
+    return res.json({ status: true, position: user.position });
+    }
+    catch (err)
+    {
+      console.error('Error during login:', err.stack);
+      res.status(500).json({ error: 'Server Error' });
+    }
+  }
+);
+
+/**
+ * Handle user login.
+ * @route POST /api/employee/login
+ * @param {string} name - Employee Name
+ * @returns {object} 200 - Login status and position.
+ * @returns {string} 500 - Server error.
+ */
+app.post('/api/employee/login', async (req, res) =>
+  {
+    const {name} = req.body;
+    try
+    {
+      const userQuery = "SELECT * FROM employees WHERE name = $1";
+      const result = await pool.query(userQuery, [name]);
+
+    if (result.rows.length === 0) {
+        return res.json({ status: false, position: null });
+    }
+
+    const user = result.rows[0];
+
+    if (!user.status) { 
         return res.json({ status: false, position: null });
     }
 
