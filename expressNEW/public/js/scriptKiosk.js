@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadSeasonalItems() {
     try {
         // Fetch seasonal items from the API
-        const seasonalItemsResponse = await fetch('/api/getactiveseasonalitems');
+        const seasonalItemsResponse = await fetch('/api/seasonalItems');
         if (!seasonalItemsResponse.ok) {
             console.error('Failed to fetch seasonal items:', seasonalItemsResponse.statusText);
             return;

@@ -1435,13 +1435,13 @@ app.post('/api/removeseasonalitem', async (req, res) =>
  * @returns {Array<Object>} 200 - List of active seasonal items with details (menuitem, price, size, type, displayname).
  * @returns {Object} 500 - Error if fetching active seasonal items fails.
  */
-app.get('/api/getactiveseasonalitems', async (req, res) =>
+app.get('/api/seasonalItems', async (req, res) =>
 {
   try
   {
     // Query to get active seasonal items from the database
     const result = await pool.query(`
-      SELECT menuitem, price, size, type, displayname
+      SELECT menuitem, price, size, type, status, displayname
       FROM menuitems
       WHERE status = 'active'
       ORDER BY menuitemid;

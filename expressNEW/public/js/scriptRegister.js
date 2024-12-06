@@ -234,7 +234,7 @@ async function loadMenuItems() {
 async function loadSeasonalItems() {
     try {
         // Fetch seasonal items
-        const seasonalItemsResponse = await fetch('/api/getactiveseasonalitems');
+        const seasonalItemsResponse = await fetch('/api/seasonalItems');
         if (!seasonalItemsResponse.ok) {
             console.error('Failed to fetch seasonal items:', seasonalItemsResponse.statusText);
             return;

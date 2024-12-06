@@ -16,64 +16,70 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 async function loadMenuItems() {
     try {
-        // Fetch the menu items from the API endpoint
-        const response = await fetch('/api/menuitems');
-
-        // If the response is not ok, throw an error
+        console.log('Fetching seasonal items...');
+        
+        // Fetch seasonal items from the API endpoint
+        const response = await fetch('/api/seasonalItems');
         if (!response.ok) {
-            throw new Error(`Failed to fetch menu items: ${response.statusText}`);
+            throw new Error(`Failed to fetch seasonal items: ${response.statusText}`);
         }
-
-        // Parse the fetched data as JSON
+        
         const menuItems = await response.json();
-        console.log('Fetched Menu Items:', menuItems);
+        console.log('Fetched Seasonal Items:', menuItems);
 
         // Section containers for Entrees, Sides, and Appetizers
         const entreeSection = document.querySelector('#entreeSection .specials-grid');
         const sideSection = document.querySelector('#sideSection .specials-grid');
         const appetizerSection = document.querySelector('#appetizerSection .specials-grid');
 
-        // Clear any existing content in the sections
+        // Check for missing sections
+        if (!entreeSection || !sideSection || !appetizerSection) {
+            throw new Error('One or more sections are missing from the DOM.');
+        }
+
+        // Clear previous content
         entreeSection.innerHTML = '';
         sideSection.innerHTML = '';
         appetizerSection.innerHTML = '';
 
-        /**
-         * Filter the menu items to include only active ones, 
-         * and ensure there are no duplicate menu items.
-         */
-        const uniqueItems = [];
+        // Filter and ensure unique seasonal items
+        const uniqueItems = new Set();
         const activeItems = menuItems.filter(item => {
-            // Check if the item is active and if it hasn't already been added
-            if (item.status === "active" && !uniqueItems.includes(item.menuitem)) {
-                uniqueItems.push(item.menuitem);
-                return true; // Include this item
+            const uniqueKey = `${item.menuitem}-${item.status}`;
+            if (item.status === "active" && !uniqueItems.has(uniqueKey)) {
+                uniqueItems.add(uniqueKey);
+                return true;
             }
-            return false; // Exclude duplicate or inactive items
+            return false;
         });
 
-        // Loop through the active items and create the HTML elements to display them
+        console.log('Active Items:', activeItems);
+
+        // Render items to their respective sections
         activeItems.forEach(item => {
-            // Create a new div for each special item
             const specialItem = document.createElement('div');
             specialItem.classList.add('special-item');
 
-            // Add the display name of the item to the special item
+            // Add item display name
             specialItem.innerHTML = `
                 <div class="special-name">${item.displayname}</div>
+                <div class="special-size">Size: ${item.size}</div>
+                <div class="special-price">Price: $${item.price.toFixed(2)}</div>
             `;
 
-            // Append the special item to the appropriate section based on its type
+            // Append to the correct section based on item type
             if (item.type === "entree") {
                 entreeSection.appendChild(specialItem);
             } else if (item.type === "side") {
                 sideSection.appendChild(specialItem);
             } else if (item.type === "appetizer") {
                 appetizerSection.appendChild(specialItem);
+            } else {
+                console.warn(`Unknown item type: ${item.type}`);
             }
         });
 
-        // Display fallback message if any section is empty (no active items)
+        // Fallback messages for empty sections
         if (entreeSection.children.length === 0) {
             entreeSection.innerHTML = '<p>No active entrees available at the moment.</p>';
         }
@@ -85,7 +91,6 @@ async function loadMenuItems() {
         }
 
     } catch (error) {
-        // Log any errors that occur during the fetch or processing of menu items
-        console.error('Error loading menu items:', error);
+        console.error('Error loading seasonal items:', error);
     }
 }
