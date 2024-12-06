@@ -1391,7 +1391,7 @@ app.get('/api/product-usage', async (req, res) =>
     // SQL Query construction
     const query = `
       SELECT inv.ingredient AS ingredient_name,
-             ROUND(SUM(order_items.quantity * menu_ing.quantity)::numeric, 2) AS total_usage,
+             ROUND(ABS(SUM(order_items.quantity * menu_ing.quantity))::numeric, 2) AS total_usage,
              TO_CHAR(DATE_TRUNC('${dateTrunc}', oh.date), '${dateFormat}') AS time_period
       FROM orderhistory oh
       JOIN orderitems order_items ON oh.orderid = order_items.orderid
@@ -1437,6 +1437,7 @@ app.get('/api/product-usage', async (req, res) =>
  * @param {string} itemName - The name of the seasonal item to add.
  * @param {Array<string>} itemIngredients - List of ingredients required for the seasonal item.
  * @param {Array<number>} quantities - Corresponding quantities for each ingredient.
+ * @param {Array<number>} prices - Array of floats representing prices for ['sm', 'md', 'lg'] sizes.
  * @param {string} displayname - Display name of the seasonal item.
  * @param {string} type - The type of menu item (e.g., 'entree').
  * @returns {Object} 201 - Success message indicating the item was added successfully.
@@ -1445,7 +1446,7 @@ app.get('/api/product-usage', async (req, res) =>
  */
 app.post('/api/addseasonalitem', async (req, res) =>
 {
-  const { itemName, itemIngredients, quantities, displayname, type } = req.body;
+  const { itemName, itemIngredients, quantities, prices, displayname, type } = req.body;
 
   // Validate input
   if (!itemName || !itemIngredients || !quantities || !displayname || !type)
@@ -1458,6 +1459,11 @@ app.post('/api/addseasonalitem', async (req, res) =>
     return res.status(400).json({ error: 'itemIngredients and quantities arrays must have the same length.' });
   }
 
+  if (!Array.isArray(prices) || prices.length !== 3)
+  {
+    return res.status(400).json({ error: 'Prices must be an array of exactly 3 floats corresponding to sizes [\'sm\', \'md\', \'lg\'].' });
+  }
+
   const client = await pool.connect(); // Get a connection from the database pool
 
   try
@@ -1466,7 +1472,7 @@ app.post('/api/addseasonalitem', async (req, res) =>
 
     // Define sizes and prices
     const sizes = ['sm', 'md', 'lg'];
-    const prices = [6.7, 11.5, 15.7];
+    // const prices = [6.7, 11.5, 15.7];
 
     // Insert into menuitems
     const menuItemInsertQuery = `

@@ -740,9 +740,9 @@ async function addSeasonalItem() {
         itemName,
         itemIngredients: ingredients,
         quantities,
+        prices: [priceSmall, priceMedium, priceLarge],
         displayname: displayName,
-        type,
-        prices: [priceSmall, priceMedium, priceLarge]
+        type  
     };
 
     try {
