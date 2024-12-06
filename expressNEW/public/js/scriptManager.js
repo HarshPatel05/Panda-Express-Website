@@ -375,7 +375,20 @@ async function getProductUsage() {
 
             if (response.ok) {
                 query = "#product-usage"; 
-                const tableBody = document.querySelector(query);
+
+                let tableBody = document.querySelector(`#${tableID} tbody`);
+                let table = document.querySelector(`#${tableID}`);
+                
+                if (!tableBody) {
+                    tableBody = document.createElement('tbody');
+                    table.appendChild(tableBody);
+                }
+            
+                while (tableBody.firstChild) {
+                    tableBody.removeChild(tableBody.firstChild);
+                }
+                
+
                 data.forEach(row => {
                     const tableRow = document.createElement('tr');
                     Object.values(row).forEach(value => {
@@ -406,8 +419,18 @@ async function populateTable(APIEndpoint, tableID) {
     const response = await fetch(APIEndpoint);
     const data = await response.json();
     query = '#' + tableID; 
-    const tableBody = document.querySelector(query);
 
+    let tableBody = document.querySelector(`#${tableID} tbody`);
+    let table = document.querySelector(`#${tableID}`);
+    
+    if (!tableBody) {
+        tableBody = document.createElement('tbody');
+        table.appendChild(tableBody);
+    }
+
+    while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+    }
 
     data.forEach(row => {
         const tableRow = document.createElement('tr');
@@ -443,7 +466,19 @@ async function populateSales() {
         const data = await response.json();
 
         query = "#salesReport"; 
-        const tableBody = document.querySelector(query);
+
+        let tableBody = document.querySelector(`#${tableID} tbody`);
+        let table = document.querySelector(`#${tableID}`);
+        
+        if (!tableBody) {
+            tableBody = document.createElement('tbody');
+            table.appendChild(tableBody);
+        }
+    
+        while (tableBody.firstChild) {
+            tableBody.removeChild(tableBody.firstChild);
+        }
+        
 
 
         data.forEach(row => {
@@ -485,7 +520,19 @@ async function populateReports(APIEndpoint, tableID) {
     const response = await fetch(`/api/xReport?date=${reportDate}`);
     const data = await response.json();
     query = '#' + tableID; 
-    const tableBody = document.querySelector(query);
+
+    let tableBody = document.querySelector(`#${tableID} tbody`);
+    let table = document.querySelector(`#${tableID}`);
+    
+    if (!tableBody) {
+        tableBody = document.createElement('tbody');
+        table.appendChild(tableBody);
+    }
+
+    while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+    }
+    
 
 
     data.forEach(row => {
