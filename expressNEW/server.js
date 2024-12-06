@@ -892,15 +892,21 @@ app.post('/api/updateorders', async (req, res) =>
   {
     const { totalCost, menuItemIDs } = req.body;
 
-    // Create a map to count occurrences of each menuItemID
-    const itemCountMap = new Map();
+    // // Create a map to count occurrences of each menuItemID
+    // const itemCountMap = new Map();
 
-    menuItemIDs.forEach( 
-      id =>
-        { 
-          itemCountMap.set(id, (itemCountMap.get(id) || 0) + 1); 
-        } 
-    );
+    // Use a simple object to count occurrences of each menuitemid
+    const itemCountMap = {};
+
+    // menuItemIDs.forEach(item => {
+    //   const { menuitemid, quantity } = item;
+    //   itemCountMap.set(menuitemid, (itemCountMap.get(menuitemid) || 0) + quantity);
+    // });
+
+    menuItemIDs.forEach(item => {
+      const { menuitemid, quantity } = item;
+      itemCountMap[menuitemid] = (itemCountMap[menuitemid] || 0) + quantity;
+    });
 
     const client = await pool.connect();
 
@@ -910,21 +916,33 @@ app.post('/api/updateorders', async (req, res) =>
       await client.query('BEGIN'); // Start transaction
 
       // Insert into orderhistory and get the new orderID
-      const orderHistoryResult = await client.query(
+      const orderHistoryResult = await client.query
+      (
         'INSERT INTO orderhistory (totalCost, date) VALUES ($1, $2) RETURNING orderid',
         [totalCost, new Date()] // Insert current timestamp
       );
 
       const newOrderID = orderHistoryResult.rows[0].orderid;
 
-      // Prepare to insert into orderitems
-      const orderItemsQuery = 'INSERT INTO orderitems (orderid, menuitemid, quantity) VALUES ($1, $2, $3)';
-      const orderItemsPromises = Object.entries(itemCountMap).map(([menuItemID, quantity]) => {
-        return client.query(orderItemsQuery, [newOrderID, parseInt(menuItemID), quantity]);
-      });
+      // Insert into orderitems
+      for (const menuItemID in itemCountMap)
+      {
+        const quantity = itemCountMap[menuItemID];
+        await client.query
+        (
+          'INSERT INTO orderitems (orderid, menuitemid, quantity) VALUES ($1, $2, $3)',
+          [newOrderID, parseInt(menuItemID), quantity]
+        );
+      }
 
-      // Execute all insert queries in parallel
-      await Promise.all(orderItemsPromises);
+      // // Prepare to insert into orderitems
+      // const orderItemsQuery = 'INSERT INTO orderitems (orderid, menuitemid, quantity) VALUES ($1, $2, $3)';
+      // const orderItemsPromises = Object.entries(itemCountMap).map(([menuItemID, quantity]) => {
+      //   return client.query(orderItemsQuery, [newOrderID, parseInt(menuItemID), quantity]);
+      // });
+
+      // // Execute all insert queries in parallel
+      // await Promise.all(orderItemsPromises);
 
       // Commit the transaction
       await client.query('COMMIT');
