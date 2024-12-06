@@ -17,6 +17,7 @@ const { Pool } = require('pg');
 const dotenv = require('dotenv').config();
 const cors = require('cors');
 const path = require('path');
+const moment = require('moment');
 const fs = require('fs');
 const axios = require('axios');
 const { DateTime } = require('luxon');
@@ -1075,50 +1076,82 @@ app.delete('/api/deletependingorder/:id', async (req, res) => {
 
 
 /**
- * Endpoint for generating an X report for the given date showing hourly totals.
- * @route GET /api/xReport
- * @param {string} date - The date for the report in 'YYYY-MM-DD' format.
- * @returns {Object} 200 - The hourly totals and overall total for the report.
- * @returns {Object} 400 - Error if date is missing.
- * @returns {Object} 500 - Error if there's a server failure.
+ * Fetches the sales data for the X report based on the latest Z report date.
+ * @route {GET} /api/xReport
+ * @returns {Object[]} - An array of sales data objects:
+ *    - Each object contains `hour` (time in adjusted format) and `total_sum` (total sales for that hour).
+ *    - The last object is a summary row with the `hour` set to "Total" and `total_sum` showing the total sales.
  */
 app.get('/api/xReport', async (req, res) => {
-  const { date } = req.query; // Expecting date in 'YYYY-MM-DD' 
-
-  if (!date) {
-    return res.status(400).json({ error: "Date is required" });
-  }
-
-  const client = await pool.connect();
-
   try {
-    const startDate = `${date} 10:00:00`;
-    const endDate = `${date} 22:00:00`;
+    const latestReportResult = await pool.query(
+      'SELECT created_at FROM z_reports ORDER BY created_at DESC LIMIT 1'
+    );
 
-    const result = await client.query(
-      'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum ' +
+    if (latestReportResult.rows.length === 0) {
+      return res.status(404).json({ error: 'No Z reports found' });
+    }
+
+    const latestReportDate = latestReportResult.rows[0].created_at;
+
+    const startDate = moment(latestReportDate).format('YYYY-MM-DD HH:mm:ss');
+    const endDate = moment().format('YYYY-MM-DD HH:mm:ss');
+
+    const client = await pool.connect();
+    const resultQuery = await client.query(
+      'SELECT EXTRACT(HOUR FROM date) AS hour, SUM(totalcost) AS total_sum, date ' +
       'FROM orderhistory ' +
-      'WHERE date >= $1 AND date < $2 ' +
-      'GROUP BY hour ' +
+      'WHERE date >= $1 AND date <= $2 ' +
+      'GROUP BY hour, date ' +
       'ORDER BY hour',
       [startDate, endDate]
     );
 
-    const totalSum = result.rows.reduce((acc, row) => acc + (row.total_sum || 0), 0);
+    const totalSum = resultQuery.rows.reduce((acc, row) => acc + (row.total_sum || 0), 0);
 
-    result.rows.push({
+    const formattedRows = resultQuery.rows.map(row => {
+      const originalTime = moment(row.date).subtract(6, 'hours'); 
+      return {
+        hour: originalTime.format('h A'), 
+        total_sum: row.total_sum
+      };
+    });
+
+    formattedRows.push({
       hour: 'Total',
       total_sum: totalSum
     });
 
-    res.json(result.rows);
+    res.json(formattedRows);
   } catch (error) {
     console.error("Error fetching x report:", error);
     res.status(500).json({ error: "Internal Server Error" });
-  } 
+  }
 });
 
 
+
+/**
+ * Creates a new Z report in the database.
+ * This function inserts a new record into the `z_reports` table with the current timestamp.
+ * The `created_at` column is automatically populated with the current date and time by the database.
+ * 
+ * 
+ * @route {POST} /api/zReport
+ * @returns {Object} - A JSON object with a message indicating success or failure:
+ *    - On success: { message: 'Z Report created successfully' }
+ *    - On failure: { error: 'Internal server error' }
+ */
+app.post('/api/zReport', async (req, res) => {
+  try {
+    await pool.query('INSERT INTO z_reports (created_at) DEFAULT VALUES');
+
+    res.status(201).json({ message: 'Z Report created successfully' });
+  } catch (error) {
+    console.error('Error creating Z report:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 /**
