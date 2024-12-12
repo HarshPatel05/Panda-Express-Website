@@ -20,3 +20,38 @@ This is a web system for Panda Express, designed to improve order management and
 - Version Control: **Git**, **GitHub**
 
 ---
+
+### **How to Run Locally (Frontend Only)**
+
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/HarshPatel05/Panda-Express-Multi-View-Website-System.git
+   cd Panda-Express-Multi-View-Website-System
+   ```
+
+2. **Navigate to the expressNEW folder:**
+    ```bash
+    cd expressNEW
+    ```
+
+3. **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+4. **Start the server:**
+    ```bash
+    npm start
+    ```
+
+5. **Open the application:**
+   Visit [http://localhost:5000](http://localhost:5000) in your browser to view the app.
+
+
+---
+
+### **Important Note About Database Access:**
+
+- The database used in this project was provided by the school and might no longer be accessible.
+- You can view the frontend without needing the database. Some features (like placing orders or managing the menu) may not work due to the lack of a live backend connection.
+- The frontend will still display the menu, Register, Kiosk, and Manager views, but interaction with the database (e.g., placing orders or updating data) may not function unless the database is reconnected.
