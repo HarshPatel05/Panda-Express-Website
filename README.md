@@ -60,7 +60,7 @@ This is a web system for Panda Express, designed to improve order management and
    - Kiosk View: [http://localhost:5000/kiosk](http://localhost:5000/kiosk)
    - Kitchen View: [http://localhost:5000/kitchen](http://localhost:5000/kitchen)
    - Menu Board(Main Menu): [http://localhost:5000/menuboard](http://localhost:5000/menuboard)
-   - Special Menu Board(Seasonal Items): [http://localhost:5000/menuboard](http://localhost:5000/menuboard)
+   - Special Menu Board(Seasonal Items): [http://localhost:5000/specialboard](http://localhost:5000/specialboard)
 
 ---
 
