@@ -54,12 +54,13 @@ This is a web system for Panda Express, designed to improve order management and
 
 7. **Access each page directly by URL:**
    Since the database is no longer accessible, the login will not work. You can still preview each view by manually visiting these routes:
-   - Register View: [http://localhost:5000/index](http://localhost:5000/index)
+   - Login View: [http://localhost:5000/index](http://localhost:5000/index)
+   - Register View: [http://localhost:5000/register](http://localhost:5000/register)
    - Manager View: [http://localhost:5000/manager](http://localhost:5000/manager)
    - Kiosk View: [http://localhost:5000/kiosk](http://localhost:5000/kiosk)
    - Kitchen View: [http://localhost:5000/kitchen](http://localhost:5000/kitchen)
-   - Menu Board: [http://localhost:5000/menuboard](http://localhost:5000/menuboard)
-   - Special Menu Board: [http://localhost:5000/menuboard](http://localhost:5000/menuboard)
+   - Menu Board(Main Menu): [http://localhost:5000/menuboard](http://localhost:5000/menuboard)
+   - Special Menu Board(Seasonal Items): [http://localhost:5000/menuboard](http://localhost:5000/menuboard)
 
 ---
 
